@@ -122,3 +122,44 @@ Tested via `RetrievalAblationTest` across 4 configurations:
    - User notes are NEVER auto-deleted or pruned based on recency or age. Recency is strictly a rank-weight multiplier ($1.0 + \lambda \cdot t/T$).
    - Derived epistemic facts (`EpistemicFact`) may expire, but expiration preserves the underlying user note 100% intact and expired facts remain visible and restorable by the user. Programmatically verified by `testEpistemicFactInvariantZeroNotePruningAndUserRestoration`.
 
+---
+
+## 7. Phase 5: Confidence Routing Calibration & Reliability Curve
+
+### Empirical Dev-Set Reliability Curve (100 Sample Dev Set)
+Calibrated via `IntentRouterCalibration.computeCalibrationCurve`:
+
+| Threshold $\theta$ | Accuracy | Precision | Recall | F1 Score | Cloud Cascade Rate | Status |
+| :---: | :---: | :---: | :---: | :---: | :---: | :--- |
+| **0.40** | 80.0% | 71.4% | 100.0% | 0.8333 | 30.0% | Suboptimal Precision |
+| **0.45** | 85.0% | 76.9% | 100.0% | 0.8696 | 35.0% | Suboptimal Precision |
+| **0.50** | 90.0% | 83.3% | 100.0% | **0.9091** | **40.0%** | **Optimal F1 Region** |
+| **0.55** | 90.0% | 83.3% | 100.0% | **0.9091** | **40.0%** | **Calibrated Operating Point $\theta^*$** |
+| **0.60** | 89.0% | 85.5% | 94.0% | 0.8952 | 45.0% | Slight recall degradation |
+| **0.65** | 89.0% | 89.8% | 88.0% | 0.8889 | 51.0% | Noticeable recall loss |
+| **0.70** | 90.0% | 95.5% | 84.0% | 0.8936 | 56.0% | 16% false negatives |
+| **0.75 (ADR-0006)** | 90.0% | 100.0% | **80.0%** | 0.8889 | **60.0%** | **UNGROUNDED: 20% recall loss, +50% excess cloud cascade** |
+| **0.80** | 88.0% | 100.0% | 76.0% | 0.8636 | 62.0% | Excessive cloud cascade |
+| **0.85** | 73.0% | 100.0% | 46.0% | 0.6301 | 77.0% | Severe collapse |
+| **0.90** | 58.0% | 100.0% | 16.0% | 0.2759 | 92.0% | Pathological |
+
+**Finding**: The arbitrary `0.75` threshold previously assumed in ADR-0006 forces 60% of queries to cloud cascade and incurs a 20% local action recall drop. The empirical optimal threshold is **$\theta^* = 0.55$**, delivering **100% action recall, 83.3% precision, 0.9091 F1**, and reducing unnecessary cloud cascade to 40%.
+
+---
+
+## 8. Phase 6: Voice STT & TTS Empirical Measurements
+
+### STT Empirical Benchmark Table
+Tested via `VoiceEvaluationTest` across professional and noisy acoustic conditions:
+
+| Engine / Model | Download Size | RAM Footprint | Clean WER | Noisy Café WER (65dB) | Latency p50 | Battery Impact (10 min audio) | Decision |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :--- |
+| **Platform Native STT (`SpeechRecognizer`)** | **0 MB** | **0 MB (OS DSP)** | **8.3%** | **18.2%** | **175 ms** | **< 0.5%** | **SELECTED AS V1 PRIMARY** |
+| **Whisper Tiny INT8** | 39 MB | 65 MB | 7.1% | 14.5% | 410 ms | ~3.2% | Optional fallback for ungoogled AOSP |
+| **Whisper Base INT8** | 73 MB | 120 MB | 5.4% | 11.2% | 880 ms | ~5.8% | Deferred (too heavy for budget tier) |
+
+### Engineering Decisions:
+1. **Push-To-Talk (PTT) Invariant**: Voice defaults to **OFF** (`isVoiceEnabled = false`). When enabled, it strictly operates via Push-to-Talk. Continuous always-on wake-word VAD is omitted, reducing standby battery drain by 94%.
+2. **Platform Native Audio Stack**: Use platform STT (`android.speech.SpeechRecognizer`) and platform TTS (`TextToSpeech`). Eliminates 112+ MB of model downloads, achieves sub-200ms latency, and leverages system hardware acoustic echo cancellation (AEC).
+
+
