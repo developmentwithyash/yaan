@@ -8,10 +8,10 @@
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
 .DS_Store
-/build
-*/build
-.cxx
-*.hprof
+build/
+**/build/
+.gradle/
+**/.gradle/
 .attach_pid*
 
 # Android
