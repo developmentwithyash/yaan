@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-120 -140 240 300" width="240" height="300">
+  <defs>
+    <linearGradient id="goldStemLight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#D4AF37"/>
+      <stop offset="50%" stop-color="#B88A2E"/>
+      <stop offset="100%" stop-color="#785600"/>
+    </linearGradient>
+  </defs>
+  <!-- Architectural YS Monogram (Light Theme) -->
+  <path d="M -110 -130 L -50 -130 L 0 -35 L -35 -20 Z" fill="#0C0D11"/>
+  <path d="M 110 -130 L 50 -130 L 0 -35 L 35 -20 Z" fill="url(#goldStemLight)"/>
+  <path d="M -75 -15 L 75 -15 L 75 15 L -20 15 L -20 40 L 75 40 L 75 75 L -75 75 L -75 45 L 20 45 L 20 20 L -75 20 Z" fill="#0C0D11"/>
+  <path d="M -18 75 L 18 75 L 18 135 L -18 135 Z" fill="url(#goldStemLight)"/>
+  <circle cx="0" cy="-28" r="7" fill="#B88A2E"/>
+  <rect x="-95" y="145" width="190" height="8" rx="4" fill="#B88A2E"/>
+</svg>

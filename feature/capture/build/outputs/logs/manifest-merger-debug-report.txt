@@ -1,0 +1,16 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /Users/yash/Yash-Workspace/products/yaan/feature/capture/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest412214289996735678.xml:2:13-83
+INJECTED from /Users/yash/Yash-Workspace/products/yaan/feature/capture/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest412214289996735678.xml:2:13-83
+	package
+		INJECTED from /Users/yash/Yash-Workspace/products/yaan/feature/capture/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest412214289996735678.xml
+	xmlns:android
+		ADDED from /Users/yash/Yash-Workspace/products/yaan/feature/capture/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest412214289996735678.xml:2:23-81
+uses-sdk
+INJECTED from /Users/yash/Yash-Workspace/products/yaan/feature/capture/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest412214289996735678.xml reason: use-sdk injection requested
+INJECTED from /Users/yash/Yash-Workspace/products/yaan/feature/capture/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest412214289996735678.xml
+INJECTED from /Users/yash/Yash-Workspace/products/yaan/feature/capture/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest412214289996735678.xml
+	android:targetSdkVersion
+		INJECTED from /Users/yash/Yash-Workspace/products/yaan/feature/capture/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest412214289996735678.xml
+	android:minSdkVersion
+		INJECTED from /Users/yash/Yash-Workspace/products/yaan/feature/capture/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest412214289996735678.xml

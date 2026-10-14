@@ -1,0 +1,34 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="240"
+    android:viewportHeight="300">
+    <group
+        android:translateX="120"
+        android:translateY="138.5">
+        <!-- 1. Left Angled Wing (Sculpted Chamfer Stroke) -->
+        <path
+            android:fillColor="#F1F4F9"
+            android:pathData="M -110,-130 L -50,-130 L 0,-35 L -35,-20 Z"/>
+        <!-- 2. Right Angled Wing (Warm Gold Facet) -->
+        <path
+            android:fillColor="#E8C366"
+            android:pathData="M 110,-130 L 50,-130 L 0,-35 L 35,-20 Z"/>
+        <!-- 3. Central Interlocking S Tier -->
+        <path
+            android:fillColor="#F1F4F9"
+            android:pathData="M -75,-15 L 75,-15 L 75,15 L -20,15 L -20,40 L 75,40 L 75,75 L -75,75 L -75,45 L 20,45 L 20,20 L -75,20 Z"/>
+        <!-- 4. Stem of Y / Column Anchor -->
+        <path
+            android:fillColor="#E8C366"
+            android:pathData="M -18,75 L 18,75 L 18,135 L -18,135 Z"/>
+        <!-- 5. Optical Core Node -->
+        <path
+            android:fillColor="#E8C366"
+            android:pathData="M 0,-35 A 7,7 0 1,0 0,-21 A 7,7 0 1,0 0,-35 Z"/>
+        <!-- 6. Monogram Foundation Shelf -->
+        <path
+            android:fillColor="#D4A737"
+            android:pathData="M -91,145 L 91,145 A 4,4 0 0,1 95,149 L 95,149 A 4,4 0 0,1 91,153 L -91,153 A 4,4 0 0,1 -95,149 L -95,149 A 4,4 0 0,1 -91,145 Z"/>
+    </group>
+</vector>

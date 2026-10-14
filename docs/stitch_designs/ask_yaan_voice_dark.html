@@ -1,0 +1,145 @@
+<!DOCTYPE html><html class="dark" lang="en" style=""><svg class="inline-defs-container" aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden"></svg><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"><meta content="mobile_blank" name="shell-type"><title>YAAN</title><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style id="acoustic-animations">@keyframes dark-orb-breathe { 0%, 100% { transform: scale(1); filter: drop-shadow(0 0 25px rgba(212, 175, 55, 0.45)); } 50% { transform: scale(1.05); filter: drop-shadow(0 0 50px rgba(242, 202, 80, 0.75)); } } @keyframes dark-wave-undulate { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.08); } 100% { transform: rotate(360deg) scale(1); } } @keyframes dark-wave-reverse { 0% { transform: rotate(360deg) scale(1.05); } 50% { transform: rotate(180deg) scale(0.95); } 100% { transform: rotate(0deg) scale(1.05); } } @keyframes wave-ripple-expand { 0%, 100% { transform: scale(0.97); opacity: 0.4; } 50% { transform: scale(1.06); opacity: 0.85; } } @keyframes wave-spin-slow { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } } @keyframes ambient-glow { 0%, 100% { opacity: 0.4; transform: scale(0.95); } 50% { opacity: 0.8; transform: scale(1.15); } } @keyframes talk-glow { 0%, 100% { box-shadow: 0 0 16px rgba(242, 202, 80, 0.25); } 50% { box-shadow: 0 0 28px rgba(242, 202, 80, 0.55); } } .animate-orb-breathe { animation: dark-orb-breathe 4s ease-in-out infinite; will-change: transform, filter; } .animate-wave-orbit { animation: dark-wave-undulate 14s linear infinite; transform-origin: center; will-change: transform; } .animate-wave-reverse { animation: dark-wave-reverse 18s linear infinite; transform-origin: center; will-change: transform; } .animate-wave-ripple { animation: wave-ripple-expand 4.5s ease-in-out infinite; will-change: transform, opacity; } .animate-spin-slow { animation: wave-spin-slow 24s linear infinite; transform-origin: center; will-change: transform; } .animate-ambient-aura { animation: ambient-glow 5s ease-in-out infinite; will-change: transform, opacity; } .animate-talk-glow { animation: talk-glow 2.8s ease-in-out infinite; }</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "surface-container-highest": "#353437", "surface-container-high": "#2a2a2c", "on-surface": "#e5e1e4", "primary-container": "#d4af37", "on-background": "#e5e1e4", "on-primary-fixed-variant": "#574500", "on-tertiary-fixed": "#271900", "inverse-on-surface": "#303032", "on-secondary": "#3d2f00", "outline-variant": "#4d4635", "on-primary": "#3c2f00", "surface-container-lowest": "#0e0e10", "tertiary-fixed": "#ffdea6", "on-tertiary-container": "#5b4000", "secondary-fixed": "#ffe08b", "on-primary-fixed": "#241a00", "primary-fixed": "#ffe088", "on-surface-variant": "#d0c5af", "surface-dim": "#131315", "primary": "#f2ca50", "surface-bright": "#39393b", "tertiary-container": "#e1aa36", "error": "#ffb4ab", "surface-tint": "#e9c349", "outline": "#99907c", "on-secondary-fixed": "#241a00", "tertiary": "#ffc551", "secondary-container": "#896c00", "on-tertiary-fixed-variant": "#5d4200", "surface": "#131315", "surface-container-low": "#1b1b1d", "error-container": "#93000a", "tertiary-fixed-dim": "#f7bd48", "surface-container": "#201f21", "inverse-surface": "#e5e1e4", "on-error": "#690005", "background": "#131315", "inverse-primary": "#735c00", "secondary-fixed-dim": "#e7c35a", "on-primary-container": "#554300", "on-tertiary": "#412d00", "primary-fixed-dim": "#e9c349", "surface-variant": "#353437", "on-secondary-container": "#fff3dc", "on-error-container": "#ffdad6", "on-secondary-fixed-variant": "#584400", "secondary": "#e7c35a" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "space-sm": "0.5rem", "margin-mobile": "1rem", "gutter-mobile": "0.75rem", "space-md": "1rem", "space-xl": "2rem", "gutter": "1rem", "space-xs": "0.25rem", "space-lg": "1.5rem", "margin": "1.5rem" }, "fontFamily": { "headline-lg": ["Plus Jakarta Sans"], "label-sm": ["Plus Jakarta Sans"], "body-lg": ["Plus Jakarta Sans"], "headline-sm": ["Plus Jakarta Sans"], "body-md": ["Plus Jakarta Sans"], "label-md": ["Plus Jakarta Sans"], "headline-md": ["Plus Jakarta Sans"], "headline-xl-mobile": ["Plus Jakarta Sans"], "headline-xl": ["Plus Jakarta Sans"], "label-lg": ["Plus Jakarta Sans"], "body-sm": ["Plus Jakarta Sans"] }, "fontSize": { "headline-lg": ["28px", { "lineHeight": "34px", "letterSpacing": "-0.02em", "fontWeight": "600" }], "label-sm": ["10px", { "lineHeight": "14px", "letterSpacing": "0.06em", "fontWeight": "600" }], "body-lg": ["17px", { "lineHeight": "26px", "letterSpacing": "-0.005em", "fontWeight": "400" }], "headline-sm": ["18px", { "lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "body-md": ["15px", { "lineHeight": "23px", "letterSpacing": "0em", "fontWeight": "400" }], "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }], "headline-md": ["22px", { "lineHeight": "28px", "letterSpacing": "-0.015em", "fontWeight": "600" }], "headline-xl-mobile": ["30px", { "lineHeight": "36px", "letterSpacing": "-0.025em", "fontWeight": "600" }], "headline-xl": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.03em", "fontWeight": "600" }], "label-lg": ["14px", { "lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "600" }], "body-sm": ["13px", { "lineHeight": "19px", "letterSpacing": "0.005em", "fontWeight": "400" }] } } } }</script><style>@layer base{html,body{width:100vw;margin:0;padding:0;background-color:#131315;}body{overscroll-behavior:none;font-family:'Plus Jakarta Sans',sans-serif;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 350,'GRAD' 0,'opsz' 24;}</style></head><body class="bg-surface text-on-surface antialiased flex flex-col min-h-screen"><main class="flex flex-col relative w-full pt-safe pb-safe min-h-screen bg-surface"><div class="flex flex-col w-full relative px-margin-mobile pb-space-xl overflow-hidden select-none"><!-- Subtle Ambient Atmosphere Glows -->
+<div class="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 w-80 h-80 rounded-full bg-primary/10 blur-[110px]"></div>
+<div class="pointer-events-none absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-primary/10 blur-[110px]"></div>
+<div class="pointer-events-none absolute bottom-16 left-1/2 -translate-x-1/2 w-72 h-72 rounded-full bg-secondary-container/20 blur-[96px]"></div>
+
+<!-- Top Executive Header & Privacy Telemetry -->
+<header class="relative z-20 flex flex-col gap-2 pt-2">
+  <div class="flex items-center justify-between">
+    <!-- Mode & Status Indicator Pill -->
+    <div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-high/90 shadow-sm">
+      <span class="relative flex h-2 w-2">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+      </span>
+      <span class="font-label-md text-label-md text-on-surface tracking-wider uppercase font-semibold">YAAN Live</span>
+      <span class="text-on-surface-variant font-body-sm text-label-sm">· Whisper Neural</span>
+    </div>
+    <!-- Action Utilities -->
+    <div class="flex items-center gap-2">
+      <button aria-label="Minimize session" class="flex items-center justify-center w-10 h-10 rounded-full bg-surface-container hover:bg-surface-container-highest transition-colors active:scale-95 text-on-surface shadow-sm" id="minimize-btn" type="button">
+        <span class="material-symbols-outlined text-[20px]">keyboard_arrow_down</span>
+      </button>
+      <button aria-label="Close Live Mode" class="flex items-center justify-center w-10 h-10 rounded-full bg-surface-container hover:bg-surface-container-highest transition-colors active:scale-95 text-on-surface shadow-sm" id="dismiss-btn" type="button">
+        <span class="material-symbols-outlined text-[18px]">close</span>
+      </button>
+    </div>
+  </div>
+  <!-- Privacy & Security Affirmation Subtext -->
+  <div class="flex items-center gap-1.5 px-1">
+    <span class="material-symbols-outlined text-primary text-[14px]">verified_user</span>
+    <p class="font-body-sm text-label-sm text-on-surface-variant tracking-tight">
+      Zero-cloud private audio stream • 100% On-device executive core
+    </p>
+  </div>
+</header>
+
+<!-- Central Dynamic Living Sonic Visualizer with Harmonious Orbits -->
+<section class="relative z-10 flex flex-col items-center justify-center my-auto py-2">
+  <div class="relative w-72 h-72 sm:w-80 sm:h-80 flex items-center justify-center overflow-visible"><!-- Outer Ambient Aura Glows --><div class="absolute inset-0 rounded-full bg-primary/10 blur-3xl scale-125 animate-pulse duration-1000 animate-ambient-aura" id="wave-ring-outer-glow"></div><div class="absolute -inset-10 rounded-full bg-primary/10 blur-[64px] animate-pulse duration-700 pointer-events-none"></div><!-- Outermost Acoustic Resonator Ring (Wave 8) --><div class="absolute w-96 h-96 rounded-full border border-primary/10 scale-90 sm:scale-100 animate-pulse duration-1000 pointer-events-none" style="border-style: dashed; animation-duration: 5s;"></div><!-- Harmonic Frequency Orbit Ring (Wave 7) --><div class="absolute w-80 h-80 rounded-full border border-primary/20 animate-wave-reverse pointer-events-none" style="border-style: dotted;"></div><!-- Mid Atmospheric Diffusion Ring (Wave 6) --><div class="absolute w-72 h-72 rounded-full bg-primary/10 blur-xl animate-wave-ripple pointer-events-none"></div><!-- Glowing Resonance Border Ring (Wave 5) --><div class="absolute w-64 h-64 rounded-full border border-primary/30 bg-primary/10 blur-sm transition-transform duration-500 animate-pulse" id="wave-ring-1"></div><!-- Layer 1 SVG: Clockwise Flowing Organic Waveforms & Energy Arcs --><svg class="absolute inset-0 w-full h-full overflow-visible pointer-events-none z-10 animate-wave-orbit" fill="none" viewBox="0 0 320 320"><defs><linearGradient id="flow-grad-1" x1="0%" x2="100%" y1="0%" y2="100%"><stop offset="0%" stop-color="#ffd700" stop-opacity="0.95"></stop><stop offset="50%" stop-color="#f2ca50" stop-opacity="0.75"></stop><stop offset="100%" stop-color="#896c00" stop-opacity="0.25"></stop></linearGradient><linearGradient id="flow-grad-2" x1="100%" x2="0%" y1="0%" y2="100%"><stop offset="0%" stop-color="#fff3dc" stop-opacity="0.95"></stop><stop offset="60%" stop-color="#e9c349" stop-opacity="0.8"></stop><stop offset="100%" stop-color="#735c00" stop-opacity="0.2"></stop></linearGradient><linearGradient id="flow-grad-3" x1="50%" x2="50%" y1="100%" y2="0%"><stop offset="0%" stop-color="#ffe088" stop-opacity="0.9"></stop><stop offset="50%" stop-color="#facc15" stop-opacity="0.7"></stop><stop offset="100%" stop-color="#574500" stop-opacity="0.15"></stop></linearGradient><filter height="180%" id="flow-glow" width="180%" x="-40%" y="-40%"><feGaussianBlur result="glow" stdDeviation="4"></feGaussianBlur><feComposite in="SourceGraphic" in2="glow" operator="over"></feComposite></filter></defs><!-- Waveform Ring 1: Wide Orbital Harmonic Wave --><path class="opacity-85 animate-pulse" d="M160 34 C230 34 284 88 288 158 C292 228 236 284 165 288 C94 292 36 236 32 165 C28 94 90 34 160 34 Z" filter="url(#flow-glow)" stroke="url(#flow-grad-1)" stroke-linecap="round" stroke-width="3.5" style="animation-duration: 2.8s;"></path><!-- Waveform Ring 2: Fluid Sinusoidal Resonance Wave --><path class="opacity-90 animate-pulse" d="M160 48 C222 40 272 92 276 154 C280 216 228 268 164 272 C100 276 46 224 48 160 C50 96 100 54 160 48 Z" filter="url(#flow-glow)" stroke="url(#flow-grad-2)" stroke-linecap="round" stroke-width="4" style="animation-duration: 2.1s;"></path><!-- Waveform Ring 3: Concentric Dashed Acoustic Arc --><path class="opacity-80" d="M160 62 C210 56 256 102 258 154 C260 206 216 254 164 256 C110 258 64 212 66 158 C68 104 112 66 160 62 Z" filter="url(#flow-glow)" stroke="url(#flow-grad-3)" stroke-dasharray="7 5" stroke-width="2.5"></path><!-- Waveform Ring 4: Transverse Audio Wave Peak --><path class="opacity-85 animate-pulse" d="M28 160 C28 132 68 116 102 122 C138 128 190 98 226 104 C262 110 294 138 294 160 C294 182 260 210 224 216 C188 222 136 192 98 198 C66 204 28 188 28 160 Z" filter="url(#flow-glow)" stroke="url(#flow-grad-2)" stroke-linecap="round" stroke-width="3" style="animation-duration: 3.4s;"></path></svg><!-- Layer 2 SVG: Counter-Rotating Fine Acoustic Harmonic Waves & Frequency Dots --><svg class="absolute inset-0 w-full h-full overflow-visible pointer-events-none z-10 animate-wave-reverse" fill="none" viewBox="0 0 320 320"><defs><linearGradient id="flow-grad-4" x1="0%" x2="100%" y1="50%" y2="50%"><stop offset="0%" stop-color="#f59e0b" stop-opacity="0.9"></stop><stop offset="50%" stop-color="#ffd700" stop-opacity="0.8"></stop><stop offset="100%" stop-color="#d4af37" stop-opacity="0.3"></stop></linearGradient><linearGradient id="flow-grad-5" x1="100%" x2="0%" y1="100%" y2="0%"><stop offset="0%" stop-color="#fff3dc" stop-opacity="0.85"></stop><stop offset="50%" stop-color="#f2ca50" stop-opacity="0.6"></stop><stop offset="100%" stop-color="#896c00" stop-opacity="0.2"></stop></linearGradient></defs><!-- Waveform Ring 5: Counter-rotating Undulating Frequency Wave --><path class="opacity-80 animate-pulse" d="M160 56 C206 48 260 84 266 142 C272 200 226 250 168 258 C110 266 54 220 50 162 C46 104 114 64 160 56 Z" filter="url(#flow-glow)" stroke="url=" #flow-grad-4"="" stroke-linecap="round" stroke-width="2.5" style="animation-duration: 2.6s;"></path><!-- Waveform Ring 6: Intricate Fine Resonance Stipple Ring --><path class="opacity-75" d="M160 74 C200 70 242 108 244 154 C246 200 206 240 162 242 C118 244 76 204 78 158 C80 112 120 78 160 74 Z" stroke="url(#flow-grad-5)" stroke-dasharray="3 6" stroke-linecap="round" stroke-width="2.5"></path><!-- Waveform Ring 7: Golden Audio Energy Arc (Upper Right to Lower Left) --><path class="opacity-85 animate-pulse" d="M60 115 C95 70 175 62 225 80 C265 95 275 140 260 185 C245 230 190 265 135 258 C85 252 50 205 52 165 C54 140 55 125 60 115 Z" filter="url(#flow-glow)" stroke="url(#flow-grad-4)" stroke-linecap="round" stroke-width="2" style="animation-duration: 3.8s;"></path></svg><!-- Luminous Central Golden Orb Core --><div class="relative z-20 w-32 h-32 sm:w-36 sm:h-36 rounded-full bg-gradient-to-tr from-[#554300] via-[#d4af37] to-[#ffe088] shadow-2xl flex items-center justify-center transition-all duration-300 animate-orb-breathe" id="orb-core"><div class="absolute inset-0 rounded-full bg-gradient-to-tr from-[#554300] via-[#d4af37] to-[#ffe088] opacity-95"></div><div class="absolute inset-1 rounded-full bg-gradient-to-b from-[#fff3dc]/40 via-transparent to-black/60 pointer-events-none z-10"></div><div class="relative z-20 w-16 h-16 rounded-full bg-gradient-to-tr from-primary/40 to-[#fff3dc]/60 blur-md pointer-events-none"></div></div></div>
+  <!-- Live Status Pill -->
+  <div class="mt-4 flex items-center gap-2 px-3.5 py-1 rounded-full bg-surface-container shadow-sm animate-pulse">
+    <span class="inline-block w-1.5 h-1.5 rounded-full bg-primary animate-ping"></span>
+    <span class="font-label-md text-label-md text-primary font-semibold tracking-wide" id="voice-state-label">Speaking calmly</span>
+  </div>
+</section>
+
+<!-- Live Dialogue Stream & Intelligence Action Card -->
+<section class="relative z-20 flex flex-col gap-3 my-2 max-w-lg mx-auto w-full">
+  <!-- User Input Snippet (Ghosted Inset) -->
+  <div class="flex items-start gap-2.5 px-4 py-2.5 rounded-xl bg-surface-container-low/80 backdrop-blur-sm shadow-sm transition-all">
+    <span class="material-symbols-outlined text-on-surface-variant text-[18px] mt-0.5">person</span>
+    <p class="font-body-sm text-on-surface-variant line-clamp-2">
+      “Can you review my afternoon commitments and see if I have time to draft the hiring...”
+    </p>
+  </div>
+  <!-- YAAN Intelligence Spoken Thought & Live Execution -->
+  <div class="flex flex-col gap-2.5 p-4 rounded-xl bg-surface-container-low shadow-md transition-all border border-primary/10">
+    <div class="flex items-center gap-2">
+      <span class="material-symbols-outlined text-primary text-[18px]">auto_awesome</span>
+      <span class="font-label-lg text-label-lg text-on-surface font-semibold">YAAN Intelligence</span>
+      <span class="font-label-sm text-label-sm text-on-surface-variant ml-auto animate-pulse">140ms latency</span>
+    </div>
+    <p class="font-body-lg text-on-surface leading-relaxed" id="live-transcription">
+      “You have a 45-minute focus window between 2:45 PM and 3:30 PM after your client onboarding call. I can lock that for the hiring spec now.”
+    </p>
+    <!-- Context Tool Execution Chip -->
+    <div class="mt-1 flex items-center justify-between gap-2 px-3 py-2 rounded-lg bg-surface-container">
+      <div class="flex items-center gap-2 min-w-0">
+        <span class="material-symbols-outlined text-primary text-[18px] shrink-0">calendar_today</span>
+        <span class="font-label-md text-label-md text-on-surface truncate">
+          Schedule 45m Focus Block • Today at 2:45 PM
+        </span>
+      </div>
+      <button class="shrink-0 px-2.5 py-1 rounded bg-secondary-container hover:bg-primary-container text-on-secondary-container font-label-sm text-label-sm font-semibold active:scale-95 transition-transform shadow-sm" id="approve-action-btn" type="button">
+        Confirm
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- Executive Control Dock -->
+<footer class="relative z-30 pt-3 flex flex-col gap-3 max-w-md mx-auto w-full">
+  <!-- Secondary Modality Toggles -->
+  <div class="flex items-center justify-center gap-3">
+    <!-- Switch to Text Mode Pill -->
+    <button class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md shadow-sm transition-all active:scale-95" id="text-mode-btn" type="button">
+      <span class="material-symbols-outlined text-[16px]">keyboard</span>
+      <span class="">Text chat</span>
+    </button>
+    <!-- Vision / Look Mode Pill -->
+    <button class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md shadow-sm transition-all active:scale-95" id="vision-toggle-btn" type="button">
+      <span class="material-symbols-outlined text-[16px]">videocam</span>
+      <span class="">Share view</span>
+    </button>
+    <!-- Audio Speed Pill -->
+    <button class="flex items-center gap-1 px-3 py-1.5 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md shadow-sm transition-all active:scale-95" id="speed-toggle-btn" type="button">
+      <span class="material-symbols-outlined text-[15px]">speed</span>
+      <span id="speed-label" class="">1.0x</span>
+    </button>
+  </div>
+  <!-- Primary Physical-Grade Controls Bar -->
+  <div class="flex items-center justify-between px-6 py-3 rounded-full bg-surface-container-low shadow-lg border border-surface-container-highest/60">
+    <!-- Microphone Mute Toggle -->
+    <button aria-label="Toggle Microphone" class="flex flex-col items-center justify-center w-12 h-12 rounded-full bg-surface-container hover:bg-surface-container-high transition-all text-on-surface active:scale-90 shadow-sm" id="mic-toggle-btn" type="button">
+      <span class="material-symbols-outlined text-[24px]" id="mic-icon">mic</span>
+    </button>
+    <!-- Neural Hold to Talk Fluid Touchpoint -->
+    <button class="flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary hover:bg-primary-container text-on-primary font-label-lg text-label-lg font-semibold tracking-wide transition-all active:scale-95 shadow-sm animate-talk-glow" id="hold-listen-btn" type="button">
+      <span class="material-symbols-outlined text-[20px]">graphic_eq</span>
+      <span class="">Hold to talk</span>
+    </button>
+    <!-- Termination Control -->
+    <button aria-label="End Voice Conversation" class="flex flex-col items-center justify-center w-12 h-12 rounded-full bg-error-container hover:bg-error text-on-error-container hover:text-on-error transition-all active:scale-90 shadow-sm" id="end-call-btn" type="button">
+      <span class="material-symbols-outlined text-[24px]">call_end</span>
+    </button>
+  </div>
+</footer></div>
+<script>
+  (function () {
+    const talkBtn = document.getElementById('talkButton');
+    const orb = document.getElementById('centralOrb');
+
+    if (talkBtn && orb) {
+      const startTalking = () => {
+        orb.classList.add('scale-110');
+        orb.classList.remove('shadow-[0_0_50px_rgba(212,175,55,0.45)]');
+        orb.classList.add('shadow-[0_0_80px_rgba(242,202,80,0.85)]');
+      };
+
+      const stopTalking = () => {
+        orb.classList.remove('scale-110');
+        orb.classList.remove('shadow-[0_0_80px_rgba(242,202,80,0.85)]');
+        orb.classList.add('shadow-[0_0_50px_rgba(212,175,55,0.45)]');
+      };
+
+      talkBtn.addEventListener('mousedown', startTalking);
+      talkBtn.addEventListener('mouseup', stopTalking);
+      talkBtn.addEventListener('touchstart', startTalking, { passive: true });
+      talkBtn.addEventListener('touchend', stopTalking, { passive: true });
+    }
+  })();
+</script></main>
+
+</body></html>

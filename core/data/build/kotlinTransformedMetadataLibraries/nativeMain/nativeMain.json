@@ -1,0 +1,222 @@
+[
+  {
+    "moduleId": "module app.cash.sqldelight:runtime:2.0.2",
+    "file": "/Users/yash/Yash-Workspace/products/yaan/core/data/build/kotlinTransformedMetadataLibraries/nativeMain/app.cash.sqldelight-runtime-2.0.2-nativeMain-asQ-DQ.klib",
+    "sourceSetName": "nativeMain"
+  },
+  {
+    "moduleId": "module org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0",
+    "file": "/Users/yash/Yash-Workspace/products/yaan/core/data/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.kotlinx-kotlinx-coroutines-core-1.9.0-nativeDarwinMain-a-dA-A.klib",
+    "sourceSetName": "nativeDarwinMain"
+  },
+  {
+    "moduleId": "module org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0",
+    "file": "/Users/yash/Yash-Workspace/products/yaan/core/data/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.kotlinx-kotlinx-coroutines-core-1.9.0-nativeMain-ENDfhw.klib",
+    "sourceSetName": "nativeMain"
+  },
+  {
+    "moduleId": "module org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3",
+    "file": "/Users/yash/Yash-Workspace/products/yaan/core/data/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.kotlinx-kotlinx-serialization-json-1.7.3-nativeMain-O4ZS7Q.klib",
+    "sourceSetName": "nativeMain"
+  },
+  {
+    "moduleId": "module org.jetbrains.kotlinx:kotlinx-datetime:0.6.1",
+    "file": "/Users/yash/Yash-Workspace/products/yaan/core/data/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.kotlinx-kotlinx-datetime-0.6.1-darwinMain-O4UcJA.klib",
+    "sourceSetName": "darwinMain"
+  },
+  {
+    "moduleId": "module org.jetbrains.kotlinx:kotlinx-datetime:0.6.1",
+    "file": "/Users/yash/Yash-Workspace/products/yaan/core/data/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.kotlinx-kotlinx-datetime-0.6.1-tzdbOnFilesystemMain-ilTmRA.klib",
+    "sourceSetName": "tzdbOnFilesystemMain"
+  },
+  {
+    "moduleId": "module org.jetbrains.kotlinx:kotlinx-datetime:0.6.1",
+    "file": "/Users/yash/Yash-Workspace/products/yaan/core/data/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.kotlinx-kotlinx-datetime-0.6.1-tzfileMain-ilTmRA.klib",
+    "sourceSetName": "tzfileMain"
+  },
+  {
+    "moduleId": "module org.jetbrains.kotlinx:kotlinx-datetime:0.6.1",
+    "file": "/Users/yash/Yash-Workspace/products/yaan/core/data/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.kotlinx-kotlinx-datetime-0.6.1-nativeMain-ilTmRA.klib",
+    "sourceSetName": "nativeMain"
+  },
+  {
+    "moduleId": "module io.insert-koin:koin-core:4.0.0",
+    "file": "/Users/yash/Yash-Workspace/products/yaan/core/data/build/kotlinTransformedMetadataLibraries/nativeMain/io.insert-koin-koin-core-4.0.0-nativeMain-CvvNiA.klib",
+    "sourceSetName": "nativeMain"
+  },
+  {
+    "moduleId": "module io.github.aakira:napier:2.7.1",
+    "file": "/Users/yash/Yash-Workspace/products/yaan/core/data/build/kotlinTransformedMetadataLibraries/nativeMain/io.github.aakira-napier-2.7.1-darwinMain-EnitAw.klib",
+    "sourceSetName": "darwinMain"
+  },
+  {
+    "moduleId": "module io.ktor:ktor-client-core:3.0.1",
+    "file": "/Users/yash/Yash-Workspace/products/yaan/core/data/build/kotlinTransformedMetadataLibraries/nativeMain/io.ktor-ktor-client-core-3.0.1-posixMain-_X-3Yw.klib",
+    "sourceSetName": "posixMain"
+  },
+  {
+    "moduleId": "module io.ktor:ktor-client-content-negotiation:3.0.1",
+    "file": "/Users/yash/Yash-Workspace/products/yaan/core/data/build/kotlinTransformedMetadataLibraries/nativeMain/io.ktor-ktor-client-content-negotiation-3.0.1-posixMain-_r-fDQ.klib",
+    "sourceSetName": "posixMain"
+  },
+  {
+    "moduleId": "module io.ktor:ktor-serialization-kotlinx-json:3.0.1",
+    "file": "/Users/yash/Yash-Workspace/products/yaan/core/data/build/kotlinTransformedMetadataLibraries/nativeMain/io.ktor-ktor-serialization-kotlinx-json-3.0.1-posixMain-KZTXgg.klib",
+    "sourceSetName": "posixMain"
+  },
+  {
+    "moduleId": "module io.ktor:ktor-client-logging:3.0.1",
+    "file": "/Users/yash/Yash-Workspace/products/yaan/core/data/build/kotlinTransformedMetadataLibraries/nativeMain/io.ktor-ktor-client-logging-3.0.1-posixMain-vW75RQ.klib",
+    "sourceSetName": "posixMain"
+  },
+  {
+    "moduleId": "project ::core:common",
+    "file": "/Users/yash/Yash-Workspace/products/yaan/core/common/build/classes/kotlin/metadata/iosMain/klib/common_iosMain",
+    "sourceSetName": "iosMain"
+  },
+  {
+    "moduleId": "project ::core:common",
+    "file": "/Users/yash/Yash-Workspace/products/yaan/core/common/build/classes/kotlin/metadata/appleMain/klib/common_appleMain",
+    "sourceSetName": "appleMain"
+  },
+  {
+    "moduleId": "project ::core:common",
+    "file": "/Users/yash/Yash-Workspace/products/yaan/core/common/build/classes/kotlin/metadata/nativeMain/klib/common_nativeMain",
+    "sourceSetName": "nativeMain"
+  },
+  {
+    "moduleId": "project ::core:domain",
+    "file": "/Users/yash/Yash-Workspace/products/yaan/core/domain/build/classes/kotlin/metadata/iosMain/klib/domain_iosMain",
+    "sourceSetName": "iosMain"
+  },
+  {
+    "moduleId": "project ::core:domain",
+    "file": "/Users/yash/Yash-Workspace/products/yaan/core/domain/build/classes/kotlin/metadata/appleMain/klib/domain_appleMain",
+    "sourceSetName": "appleMain"
+  },
+  {
+    "moduleId": "project ::core:domain",
+    "file": "/Users/yash/Yash-Workspace/products/yaan/core/domain/build/classes/kotlin/metadata/nativeMain/klib/domain_nativeMain",
+    "sourceSetName": "nativeMain"
+  },
+  {
+    "moduleId": "module org.jetbrains.kotlinx:atomicfu:0.23.1",
+    "file": "/Users/yash/Yash-Workspace/products/yaan/core/data/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.kotlinx-atomicfu-0.23.1-nativeMain-wFq7cg.klib",
+    "sourceSetName": "nativeMain"
+  },
+  {
+    "moduleId": "module org.jetbrains.kotlinx:atomicfu:0.23.1",
+    "file": "/Users/yash/Yash-Workspace/products/yaan/core/data/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.kotlinx-atomicfu-0.23.1-commonMain-wFq7cg.klib",
+    "sourceSetName": "commonMain"
+  },
+  {
+    "moduleId": "module org.jetbrains.kotlinx:kotlinx-serialization-core:1.7.3",
+    "file": "/Users/yash/Yash-Workspace/products/yaan/core/data/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.kotlinx-kotlinx-serialization-core-1.7.3-nativeMain-s2qClw.klib",
+    "sourceSetName": "nativeMain"
+  },
+  {
+    "moduleId": "module co.touchlab:stately-concurrency:2.1.0",
+    "file": "/Users/yash/Yash-Workspace/products/yaan/core/data/build/kotlinTransformedMetadataLibraries/nativeMain/co.touchlab-stately-concurrency-2.1.0-appleMain-oa7GPg.klib",
+    "sourceSetName": "appleMain"
+  },
+  {
+    "moduleId": "module co.touchlab:stately-concurrency:2.1.0",
+    "file": "/Users/yash/Yash-Workspace/products/yaan/core/data/build/kotlinTransformedMetadataLibraries/nativeMain/co.touchlab-stately-concurrency-2.1.0-nativeMain-t1ZQYw.klib",
+    "sourceSetName": "nativeMain"
+  },
+  {
+    "moduleId": "module co.touchlab:stately-concurrency:2.1.0",
+    "file": "/Users/yash/Yash-Workspace/products/yaan/core/data/build/kotlinTransformedMetadataLibraries/nativeMain/co.touchlab-stately-concurrency-2.1.0-commonMain-t1ZQYw.klib",
+    "sourceSetName": "commonMain"
+  },
+  {
+    "moduleId": "module co.touchlab:stately-concurrent-collections:2.1.0",
+    "file": "/Users/yash/Yash-Workspace/products/yaan/core/data/build/kotlinTransformedMetadataLibraries/nativeMain/co.touchlab-stately-concurrent-collections-2.1.0-commonMain-jSCQOA.klib",
+    "sourceSetName": "commonMain"
+  },
+  {
+    "moduleId": "module app.cash.sqldelight:async-extensions:2.0.2",
+    "file": "/Users/yash/Yash-Workspace/products/yaan/core/data/build/kotlinTransformedMetadataLibraries/nativeMain/app.cash.sqldelight-async-extensions-2.0.2-concurrentMain-YHYrqA.klib",
+    "sourceSetName": "concurrentMain"
+  },
+  {
+    "moduleId": "module app.cash.sqldelight:async-extensions:2.0.2",
+    "file": "/Users/yash/Yash-Workspace/products/yaan/core/data/build/kotlinTransformedMetadataLibraries/nativeMain/app.cash.sqldelight-async-extensions-2.0.2-commonMain-YHYrqA.klib",
+    "sourceSetName": "commonMain"
+  },
+  {
+    "moduleId": "module io.ktor:ktor-http:3.0.1",
+    "file": "/Users/yash/Yash-Workspace/products/yaan/core/data/build/kotlinTransformedMetadataLibraries/nativeMain/io.ktor-ktor-http-3.0.1-posixMain-HJ2v3w.klib",
+    "sourceSetName": "posixMain"
+  },
+  {
+    "moduleId": "module io.ktor:ktor-serialization-kotlinx:3.0.1",
+    "file": "/Users/yash/Yash-Workspace/products/yaan/core/data/build/kotlinTransformedMetadataLibraries/nativeMain/io.ktor-ktor-serialization-kotlinx-3.0.1-posixMain-Ie0iMQ.klib",
+    "sourceSetName": "posixMain"
+  },
+  {
+    "moduleId": "module co.touchlab:stately-strict:2.1.0",
+    "file": "/Users/yash/Yash-Workspace/products/yaan/core/data/build/kotlinTransformedMetadataLibraries/nativeMain/co.touchlab-stately-strict-2.1.0-nativeMain-dKdBGA.klib",
+    "sourceSetName": "nativeMain"
+  },
+  {
+    "moduleId": "module co.touchlab:stately-strict:2.1.0",
+    "file": "/Users/yash/Yash-Workspace/products/yaan/core/data/build/kotlinTransformedMetadataLibraries/nativeMain/co.touchlab-stately-strict-2.1.0-commonMain-dKdBGA.klib",
+    "sourceSetName": "commonMain"
+  },
+  {
+    "moduleId": "module io.ktor:ktor-utils:3.0.1",
+    "file": "/Users/yash/Yash-Workspace/products/yaan/core/data/build/kotlinTransformedMetadataLibraries/nativeMain/io.ktor-ktor-utils-3.0.1-darwinMain-kGNXpQ.klib",
+    "sourceSetName": "darwinMain"
+  },
+  {
+    "moduleId": "module io.ktor:ktor-utils:3.0.1",
+    "file": "/Users/yash/Yash-Workspace/products/yaan/core/data/build/kotlinTransformedMetadataLibraries/nativeMain/io.ktor-ktor-utils-3.0.1-nixMain-mRaY8g.klib",
+    "sourceSetName": "nixMain"
+  },
+  {
+    "moduleId": "module io.ktor:ktor-utils:3.0.1",
+    "file": "/Users/yash/Yash-Workspace/products/yaan/core/data/build/kotlinTransformedMetadataLibraries/nativeMain/io.ktor-ktor-utils-3.0.1-posixMain-mRaY8g.klib",
+    "sourceSetName": "posixMain"
+  },
+  {
+    "moduleId": "module io.ktor:ktor-websockets:3.0.1",
+    "file": "/Users/yash/Yash-Workspace/products/yaan/core/data/build/kotlinTransformedMetadataLibraries/nativeMain/io.ktor-ktor-websockets-3.0.1-posixMain-6r0LVg.klib",
+    "sourceSetName": "posixMain"
+  },
+  {
+    "moduleId": "module org.jetbrains.kotlinx:kotlinx-io-core:0.5.4",
+    "file": "/Users/yash/Yash-Workspace/products/yaan/core/data/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.kotlinx-kotlinx-io-core-0.5.4-appleMain-BOEJjg.klib",
+    "sourceSetName": "appleMain"
+  },
+  {
+    "moduleId": "module org.jetbrains.kotlinx:kotlinx-io-core:0.5.4",
+    "file": "/Users/yash/Yash-Workspace/products/yaan/core/data/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.kotlinx-kotlinx-io-core-0.5.4-nativeNonAndroidMain-VZyyzw.klib",
+    "sourceSetName": "nativeNonAndroidMain"
+  },
+  {
+    "moduleId": "module org.jetbrains.kotlinx:kotlinx-io-core:0.5.4",
+    "file": "/Users/yash/Yash-Workspace/products/yaan/core/data/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.kotlinx-kotlinx-io-core-0.5.4-nativeMain-VZyyzw.klib",
+    "sourceSetName": "nativeMain"
+  },
+  {
+    "moduleId": "module io.ktor:ktor-io:3.0.1",
+    "file": "/Users/yash/Yash-Workspace/products/yaan/core/data/build/kotlinTransformedMetadataLibraries/nativeMain/io.ktor-ktor-io-3.0.1-darwinMain-G8iuZg.klib",
+    "sourceSetName": "darwinMain"
+  },
+  {
+    "moduleId": "module io.ktor:ktor-io:3.0.1",
+    "file": "/Users/yash/Yash-Workspace/products/yaan/core/data/build/kotlinTransformedMetadataLibraries/nativeMain/io.ktor-ktor-io-3.0.1-posixMain-BYlo6A.klib",
+    "sourceSetName": "posixMain"
+  },
+  {
+    "moduleId": "module org.jetbrains.kotlinx:kotlinx-io-bytestring:0.5.4",
+    "file": "/Users/yash/Yash-Workspace/products/yaan/core/data/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.kotlinx-kotlinx-io-bytestring-0.5.4-appleMain-Pv9upw.klib",
+    "sourceSetName": "appleMain"
+  },
+  {
+    "moduleId": "module org.jetbrains.kotlinx:kotlinx-io-bytestring:0.5.4",
+    "file": "/Users/yash/Yash-Workspace/products/yaan/core/data/build/kotlinTransformedMetadataLibraries/nativeMain/org.jetbrains.kotlinx-kotlinx-io-bytestring-0.5.4-nativeMain-ptgxIQ.klib",
+    "sourceSetName": "nativeMain"
+  }
+]
