@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.yaan.feature.capture.CaptureViewModelTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-10-14T20:44:06" hostname="YASHs-MacBook-Air.local" time="0.157">
-  <properties/>
-  <testcase name="testUpdateInputAndSubmit" classname="com.yaan.feature.capture.CaptureViewModelTest" time="0.157"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>
