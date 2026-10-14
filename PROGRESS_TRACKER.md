@@ -23,11 +23,11 @@
 │ 3. Core Architecture & Storage    │ 🟢 Active     │  55%       │ Entities, MVR & Repos │
 │ 4. Vertical Feature Modules       │ 🟢 Active     │  40%       │ 8 Modules Scaffolded  │
 │ 5. Native Platform Bridges        │ 🟡 Active     │  30%       │ Android & iOS Bridges │
-│ 6. Backend & Cloud Relay Mesh     │ 🟢 Active     │  65%       │ Ktor Server & 4 Serv. │
-│ 7. Quality, Tests & Security      │ 🟢 Active     │  75%       │ Monorepo + Backend OK │
+│ 6. Backend & Cloud Relay Mesh     │ 🟢 Active     │  85%       │ Ktor + Consented Llm  │
+│ 7. Quality, Tests & Security      │ 🟢 Active     │  92%       │ Eval Harness + Threat │
 │ 8. Launch Strategy & Economics    │ 🟢 Complete   │ 100%       │ Bootstrap Plan ADR-004│
 ├───────────────────────────────────┴───────────────┴────────────┴───────────────────────┤
-│ OVERALL SYSTEM MATURITY: 74% (Phase 0 Complete • Backend Services Implemented & Tested)│
+│ OVERALL SYSTEM MATURITY: 82% (Ask YAAN v1 Grounded Core Evaluated & Governed)           │
 └────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -393,5 +393,7 @@ Phase 5: Release Hardening & Founding 250 Commercial Launch
 | 2026-10-15 | Task `AY-05` (Phase 4 Actions & Safety) | Staff ML / Security | Built TwoPhaseActionCommitter with undo rollback; ActionSemanticValidator (past date, allowlist, entity validation); VaultUntrustedContentGuard with 35 red-team injection tests proving vault content cannot trigger unauthorized actions. | ✅ Completed |
 | 2026-10-15 | Task `AY-06` (Phase 5 On-Device Models & Licenses) | Staff ML / Systems | Implemented RAM tiering (<4GB, 4-6GB, >6GB); onTrimMemory critical cleanup; ModelDownloadManager (Wi-Fi only, storage pre-check, SHA-256); calibrated reliability curve (optimal threshold θ*=0.55 vs ungrounded 0.75); audited licenses in LICENSES.md. | ✅ Completed |
 | 2026-10-15 | Task `AY-07` (Phase 6 Voice Pipeline) | Staff ML / Systems | Implemented VoiceEvaluator with Levenshtein WER algorithm; benchmarked Platform STT (13.33% aggregate WER, 175ms latency, 0MB download); enforced Push-To-Talk default OFF invariant; platform TTS first. | ✅ Completed |
+| 2026-10-15 | Task `AY-08` (Phases 7–10 Governance & Readiness) | Staff ML / Security | Formulated SPECS_DEFERRED.md (training gate justification); THREAT_MODEL.md (STRIDE, data-flow, logging, legal review); COST_MODEL.md (live Groq pricing, unit economics, gross margin); RELEASE_READINESS.md (staged rollout, kill switch, device budgets, WCAG 2.1 AA audit, BM-01–09 metrics). | ✅ Completed |
+
 
 
