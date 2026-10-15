@@ -9,6 +9,11 @@ import com.yaan.core.domain.model.TaskStatus
 import com.yaan.core.domain.repository.MemoryRepository
 import com.yaan.core.domain.repository.NoteRepository
 import com.yaan.core.domain.repository.TaskRepository
+import com.yaan.core.domain.action.ActionState
+import com.yaan.core.domain.action.ActionStateMachine
+import com.yaan.core.domain.time.TimeResolutionEngine
+import com.yaan.core.domain.tool.ToolCallProposal
+import com.yaan.core.domain.tool.ToolRegistry
 import kotlinx.coroutines.flow.firstOrNull
 
 data class AssistantResponse(
@@ -30,8 +35,13 @@ private data class ReminderExtracted(
 class YaanAssistantEngine(
     private val noteRepository: NoteRepository? = null,
     private val taskRepository: TaskRepository? = null,
-    private val memoryRepository: MemoryRepository? = null
+    private val memoryRepository: MemoryRepository? = null,
+    private val timeResolutionEngine: TimeResolutionEngine = TimeResolutionEngine(),
+    private val actionStateMachine: ActionStateMachine = ActionStateMachine()
 ) {
+    val stateMachine: ActionStateMachine get() = actionStateMachine
+    val timeEngine: TimeResolutionEngine get() = timeResolutionEngine
+
     suspend fun processQuery(rawInput: String): AssistantResponse {
         val trimmed = rawInput.trim()
         if (trimmed.isEmpty()) {
@@ -140,13 +150,38 @@ class YaanAssistantEngine(
         val isReminderOrTask = isReminderIntent(lower)
         if (isReminderOrTask) {
             val extracted = parseReminderDetails(trimmed)
-            val propId = "action_${nowInstant().toEpochMilliseconds()}"
+            val nowMs = nowInstant().toEpochMilliseconds()
+            val timeRes = timeResolutionEngine.resolve(trimmed, nowMs)
+            val triggerEpochMs = timeRes.resolvedEpochMs ?: (nowMs + 3600000L)
+            val recurrenceToken = when {
+                timeRes.recurrenceRule?.contains("WEEKLY") == true -> "WEEKLY"
+                timeRes.recurrenceRule?.contains("DAILY") == true -> "DAILY"
+                timeRes.recurrenceRule?.contains("MONTHLY") == true -> "MONTHLY"
+                else -> null
+            }
+
+            val callProposal = ToolCallProposal(
+                toolName = ToolRegistry.CREATE_REMINDER.name,
+                arguments = buildMap {
+                    put("title", extracted.title)
+                    put("triggerTimeEpochMs", triggerEpochMs.toString())
+                    recurrenceToken?.let { put("recurrence", it) }
+                    timeRes.recurrenceRule?.let { put("rrule", it) }
+                },
+                rationale = "User requested a reminder",
+                confidence = 0.80f,
+                isExplicitUserRequest = false,
+                idempotencyKey = "act_$nowMs"
+            )
+            val actionInstance = actionStateMachine.propose(callProposal, nowMs)
+
             val proposal = ProposedActionUi(
-                id = propId,
+                id = actionInstance.idempotencyKey,
                 title = extracted.title,
                 subtitle = "${extracted.formattedSchedule} · Grounded on-device action",
                 actionType = "REMINDER",
-                isConfirmed = false
+                isConfirmed = false,
+                toolCall = callProposal
             )
 
             val reply = buildString {
@@ -326,12 +361,30 @@ class YaanAssistantEngine(
             }
         }
 
-        val days = listOf("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
-        for (day in days) {
-            if (lower.contains(day.lowercase())) {
-                dateStr = day
-                text = text.replace(Regex("(?i)\\b(on\\s+)?$day\\b"), "")
+        val recurringDays = listOf("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
+        var matchedRecurring = false
+        for (day in recurringDays) {
+            if (lower.contains("every ${day.lowercase()}")) {
+                dateStr = "Every $day"
+                text = text.replace(Regex("(?i)every\\s+$day"), "")
+                matchedRecurring = true
                 break
+            }
+        }
+        if (!matchedRecurring && (lower.contains("every day") || lower.contains("daily"))) {
+            dateStr = "Daily"
+            text = text.replace(Regex("(?i)(every day|daily)"), "")
+            matchedRecurring = true
+        }
+
+        if (!matchedRecurring) {
+            val days = listOf("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
+            for (day in days) {
+                if (lower.contains(day.lowercase())) {
+                    dateStr = day
+                    text = text.replace(Regex("(?i)\\b(on\\s+)?$day\\b"), "")
+                    break
+                }
             }
         }
 
@@ -367,6 +420,8 @@ class YaanAssistantEngine(
         )
 
         var cleanTitle = text.trim()
+            .replace(Regex("(?i)^(at|on|for|to)\\s+"), "")
+            .trim()
         for (prefix in prefixes) {
             cleanTitle = cleanTitle.replace(prefix, "").trim()
         }

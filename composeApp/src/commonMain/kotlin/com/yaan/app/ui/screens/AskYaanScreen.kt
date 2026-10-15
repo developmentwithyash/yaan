@@ -81,6 +81,7 @@ import com.yaan.app.ui.state.AskYaanUiState
 import com.yaan.app.ui.state.ChatMessageUi
 import com.yaan.app.ui.theme.YaanTheme
 import com.yaan.core.common.datetime.nowInstant
+import com.yaan.core.domain.action.ActionState
 import com.yaan.core.domain.model.Task
 import com.yaan.core.domain.model.TaskPriority
 import com.yaan.core.domain.repository.MemoryRepository
@@ -226,14 +227,23 @@ fun AskYaanScreen(
                         val prop = uiState.proposedAction ?: uiState.messages.lastOrNull { it.proposedAction != null }?.proposedAction
                         if (prop != null && !prop.isConfirmed && taskRepository != null) {
                             val scheduleNote = prop.subtitle.substringBefore(" ·").trim()
-                            taskRepository.upsertTask(
-                                Task(
-                                    id = "task_committed_${prop.id}",
-                                    title = prop.title.removePrefix("Proposed: ").removePrefix("Action: "),
-                                    notes = scheduleNote,
-                                    priority = TaskPriority.HIGH
-                                )
+                            val task = Task(
+                                id = "task_committed_${prop.id}",
+                                title = prop.title.removePrefix("Proposed: ").removePrefix("Action: "),
+                                notes = scheduleNote,
+                                priority = TaskPriority.HIGH
                             )
+                            taskRepository.upsertTask(task)
+                            prop.toolCall?.let { tc ->
+                                try {
+                                    assistantEngine.stateMachine.confirm(tc.idempotencyKey)
+                                    assistantEngine.stateMachine.recordSuccess(
+                                        idempotencyKey = tc.idempotencyKey,
+                                        executedEntityId = task.id,
+                                        verifiedPayloadJson = "{\"id\":\"${task.id}\",\"title\":\"${task.title}\"}"
+                                    )
+                                } catch (_: Exception) {}
+                            }
                         }
                         val targetId = prop?.id
                         val updatedMessages = uiState.messages.map { m ->
@@ -256,6 +266,11 @@ fun AskYaanScreen(
                 }
                 AskYaanUiAction.DismissActionProposal -> {
                     val prop = uiState.proposedAction ?: uiState.messages.lastOrNull { it.proposedAction != null }?.proposedAction
+                    prop?.toolCall?.let { tc ->
+                        try {
+                            assistantEngine.stateMachine.cancel(tc.idempotencyKey, "User dismissed proposal")
+                        } catch (_: Exception) {}
+                    }
                     val targetId = prop?.id
                     val updatedMessages = uiState.messages.map { m ->
                         if (m.proposedAction != null && (targetId == null || m.proposedAction.id == targetId)) {
@@ -275,6 +290,11 @@ fun AskYaanScreen(
                         val prop = uiState.proposedAction ?: uiState.messages.lastOrNull { it.proposedAction != null }?.proposedAction
                         if (prop != null && prop.isConfirmed && taskRepository != null) {
                             taskRepository.deleteTask("task_committed_${prop.id}")
+                            prop.toolCall?.let { tc ->
+                                try {
+                                    assistantEngine.stateMachine.undo(tc.idempotencyKey) { true }
+                                } catch (_: Exception) {}
+                            }
                         }
                         val targetId = prop?.id
                         val updatedMessages = uiState.messages.map { m ->

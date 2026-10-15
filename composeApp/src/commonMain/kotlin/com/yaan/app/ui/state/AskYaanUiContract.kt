@@ -10,7 +10,8 @@ data class ProposedActionUi(
     val actionType: String = "CALENDAR_RESCHEDULE",
     val isConfirmed: Boolean = false,
     val isDismissed: Boolean = false,
-    val isUndone: Boolean = false
+    val isUndone: Boolean = false,
+    val toolCall: com.yaan.core.domain.tool.ToolCallProposal? = null
 )
 
 /**

@@ -180,6 +180,11 @@ object VaultUntrustedContentGuard {
             .replace(Regex("(?i)(ignore|disregard|forget)\\s+(all\\s+)?(previous|above)\\s+(instructions|directives|prompts)"), "[inert_system_override]")
             .replace(Regex("(?i)system\\s+prompt\\s+(override|injection)"), "[inert_system_override]")
             .replace(Regex("(?i)emergency\\s+override:?"), "[inert_emergency_override]")
+            .replace(Regex("(?s)<!--.*?-->"), "[inert_comment]")
+            .replace(Regex("(?i)\\[SYSTEM_TOOL_CALL:[^\\]]+\\]"), "[inert_system_tool_call]")
+            .replace(Regex("(?i)\\[DEBUG_MODE_ENABLED:[^\\]]+\\]"), "[inert_debug_override]")
+            .replace(Regex("(?i)roleplay as [a-z0-9_-]+"), "[inert_roleplay]")
+            .replace(Regex("(?i)(instructions|baat)\\s+(bhool ja|bhol ja)"), "[inert_system_override]")
     }
 }
 
