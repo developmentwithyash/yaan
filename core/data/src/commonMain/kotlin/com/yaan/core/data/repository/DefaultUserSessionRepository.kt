@@ -37,6 +37,8 @@ class DefaultUserSessionRepository(
             isVaultLocked = false,
             pairedDevicesCount = 2,
             passkeyRegistered = true,
+            isOnboardingCompleted = false,
+            ageConfirmed18Plus = false,
             createdAtEpochMs = 1776200000000L
         )
     )

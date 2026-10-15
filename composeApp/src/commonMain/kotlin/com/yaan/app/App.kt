@@ -184,7 +184,7 @@ fun YaanApp(
             }
 
             // Onboarding & First-Launch Gate (Critical User Journey 1, F-006 & F-003)
-            val isOnboardingCompleted = userProfile?.isOnboardingCompleted ?: true
+            val isOnboardingCompleted = userProfile?.isOnboardingCompleted ?: false
             AnimatedVisibility(
                 visible = !isOnboardingCompleted,
                 enter = fadeIn(),
@@ -192,9 +192,28 @@ fun YaanApp(
             ) {
                 OnboardingScreen(
                     onComplete = { name, ageConfirmed ->
-                        coroutineScope.launch {
-                            resolvedSessionRepo?.completeOnboarding(name, ageConfirmed)
-                        }
+                        resolvedSessionRepo?.completeOnboarding(name, ageConfirmed)
+                            ?: com.yaan.core.common.result.YaanResult.Success(
+                                userProfile ?: com.yaan.core.domain.model.UserProfile(
+                                    userId = "usr_guest",
+                                    displayName = name,
+                                    authToken = "local:offline",
+                                    isOnboardingCompleted = true,
+                                    ageConfirmed18Plus = ageConfirmed
+                                )
+                            )
+                    },
+                    onSignIn = { email, password ->
+                        resolvedSessionRepo?.signInWithEmail(email, password)
+                            ?: com.yaan.core.common.result.YaanResult.Failure(
+                                com.yaan.core.common.result.YaanError.UnknownError("Session repository not ready.")
+                            )
+                    },
+                    onSignUp = { email, password, name, ageConfirmed ->
+                        resolvedSessionRepo?.signUpWithEmail(email, password, name, ageConfirmed)
+                            ?: com.yaan.core.common.result.YaanResult.Failure(
+                                com.yaan.core.common.result.YaanError.UnknownError("Session repository not ready.")
+                            )
                     },
                     initialDisplayName = userProfile?.displayName ?: "Elena Rostova"
                 )
