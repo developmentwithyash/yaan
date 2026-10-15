@@ -187,4 +187,57 @@
   - `audit/DATA_SAFETY.md`
 - **Status Change**: `F-005` moved to **DONE**. `F-007` moved to **DONE**. Gates **G2**, **G3**, and **G4** moved to **PASSED**.
 - **Trend**: **Improving** (All 8 Critical User Journeys live; 0 open P0/P1/P2 findings; 88 unit tests passing).
-- **Next Recommended Action**: Execute Gate G12 (Final Independent Verification Pass) and produce `audit/FINAL_REPORT.md`.
+- **Next Recommended Action**: Execute Cycle 06 (Phase 0 Discovery & Reconciliation across all 10 architectural domains).
+
+---
+
+## Cycle 06 — Phase 0 Discovery & Architectural Reconciliation
+- **Date**: 2026-10-15
+- **Start Commit**: `900a4f0`
+- **End Commit**: `[Pending Cycle 06 Commit]`
+- **Action**: PHASE 0 DISCOVERY & RECONCILIATION
+- **Findings Worked On**:
+  - `F-013` [P1]: Progress Tracker maturity claims (100%) vs measured actuals.
+  - `F-014` [P0]: Inaccurate 'zero-knowledge' claims for cloud-assisted LLM paths.
+  - `F-015` [P1]: Backend architectural role ambiguity (planner vs tool executor).
+  - `F-016` [P0]: Android `USE_EXACT_ALARM` Play Store policy rejection risk.
+  - `F-017` [P1]: Missing iOS local notification scheduling bridge & 64-request limit.
+  - `F-018` [P2]: SMS fallback regulatory (TRAI DLT) & plaintext privacy exposure (DEFERRED).
+  - `F-019` [P2]: Test inventory count drift (82 vs measured 97 unique / 116 executions).
+- **What Changed**:
+  - **Full 10-Area Inventory Completed**:
+    1. Gradle Modules: 14 modules in `settings.gradle.kts` (:composeApp, :shared, :core:common, :core:domain, :core:data, 8 feature modules, :backend).
+    2. KMP Targets: Android (SDK 35, JVM 21), iOS (iosX64, iosArm64, iosSimulatorArm64), Backend (JVM 21 Netty).
+    3. Backend Routes: `/healthz`, `/sync`, `/inference`, `/vault`, `/briefing`.
+    4. Auth & BOLA: Heuristic string validation in `AuthGuard.kt` (`token.length >= 8 && !startsWith("INVALID")`).
+    5. Persistence: SQLite via SQLDelight (`taskEntity`, `noteEntity`, `reminderEntity`, `briefingEntity`, `memoryEntity`) with AES-GCM-256 field encryption. Backend stores are in-memory `ConcurrentHashMap` stores.
+    6. AI & Actions: `DefaultLlmGateway`, `CircuitBreaker`, `VaultRedactor`, `CloudConsentManager`, `TwoPhaseActionCommitter`, `ActionSemanticValidator`, `VaultUntrustedContentGuard`, `YaanAssistantEngine`, `VaultRetrievalEngine`.
+    7. Alarms/Notifications: Android has `AndroidAlarmScheduler` using `AlarmManager`; iOS has no native local notification bridge.
+    8. DI/CI/Config: Koin DI, Gradle unit test tasks, `AppConfig`, `DATA_SAFETY.md`.
+    9. ADRs: ADRs 0001–0007 active; ADR-0007 binding.
+    10. Tests: Exactly 97 unique unit tests (116 executions across debug/release), 0 instrumented tests.
+  - **Seven Conflict Reconciliations Executed**:
+    - Reconciled `PROGRESS_TRACKER.md` Section 1 to measured reality (~68% system maturity).
+    - Reconciled cloud privacy terminology in `SECURITY_AND_PRIVACY.md`: "Zero-Knowledge" restricted strictly to local vault and blind sync relay; cloud LLM queries termed "Consented Cloud-Assisted Intelligence".
+    - Ratified Binding Architecture: Backend is strictly a stateless planner returning `ANSWER | CLARIFY | PROPOSAL | REFUSE | ERROR`; client is sole deterministic executor.
+    - Verified Google Play exact alarm policy: `USE_EXACT_ALARM` rejected for reminder apps; app must use `SCHEDULE_EXACT_ALARM` with runtime check.
+    - Verified Apple local notification limit: 64 pending requests maximum.
+    - Formally deferred SMS fallback in `FOUNDER_ACTIONS.md` and `SPECS_DEFERRED.md` due to TRAI TCCCPR 2018 regulations and plaintext privacy leaks.
+    - Reconciled test counts across all registers to 97 unique unit tests.
+  - **State Architecture Files Established**:
+    - Created canonical `SECURITY_AND_PRIVACY.md` detailing threat model, trust boundaries, and data-flow matrix.
+    - Created canonical `ARCHITECTURE.md` detailing system context, request lifecycle, Action State Machine, and Tool Registry.
+    - Updated `GATES.md` with canonical B1–B13 release gates.
+    - Updated `SCORECARD.md` with complete 18-dimension quality matrix.
+- **Commands Run & Result Summary**:
+  - `./gradlew testDebugUnitTest :backend:test`: 97 unique unit tests passed (116 executions, 0 failures, 0 regressions).
+- **Evidence Paths**:
+  - `SECURITY_AND_PRIVACY.md`
+  - `ARCHITECTURE.md`
+  - `GATES.md`
+  - `SCORECARD.md`
+  - `audit/FINDINGS_REGISTER.md`
+- **Status Change**: Phase 0 complete. Release gates B1–B13 mapped. Next work: Implement shared Tool Registry and Time/Recurrence Engine (`F-015`).
+- **Trend**: **Improving** (Honest baselines established; binding architecture formalized; 97 tests green).
+- **Next Recommended Action**: Execute Cycle 07: Implement shared `ToolRegistry` and `ActionStateMachine` in `:core:domain` with comprehensive state transition and illegal transition tests.
+

@@ -1,32 +1,38 @@
-# YAAN Mandatory Release Gates Register
+# YAAN Mandatory Release Gates Register (B1–B13)
 
 > **Authority**: Autonomous Software Engineering & QA System  
-> **Status Snapshot**: Cycle 00 (Initial Bootstrap Baseline)  
-> **Release Target**: Invite-Only Closed Beta (Founding 250)  
-> **Release Policy**: No open P0 or P1 findings; P2 allowed only if documented with owner and date.  
+> **Evaluation Mode**: Controlled, Measurable, Evidence-Driven Improvement Loop  
+> **Release Target**: Invite-Only Closed Beta (India 18+, English Default)  
+> **Release Policy**: No open P0 or P1 findings; missing evidence = OPEN.  
+> **Last Updated**: 2026-10-15  
 
 ---
 
-## 1. Release Gates Status Table
+## 1. Release Gates Status Table (B1–B13)
 
 | Gate | Description | Current State | Evidence & Verification Path | Blocking Findings |
 |:---:|---|:---:|---|:---:|
-| **G1** | Clean build from clean checkout; full test suite green with recorded counts; 0 lint errors | 🟢 **PASSED** | Unit tests pass (88/88); `composeApp:lintDebug` passes with 0 errors, 0 warnings (`cycle_01_lint_clean.txt`) | None (`F-001` resolved) |
-| **G2** | Every critical journey has a passing automated test and a manual device check | 🟢 **PASSED** | All 8 Critical Journeys live and verified (`VaultExporterTest.kt`, `UiStateContractsTest.kt`) | None (`F-005` resolved) |
-| **G3** | No open P0 or P1 findings (per RELEASE POLICY) | 🟢 **PASSED** | 0 open P0s; 0 open P1s; 0 open P2s (F-001 through F-007 all DONE) | None (`F-007` resolved) |
-| **G4** | Security: threat model written, secrets scan clean, dependency scan reviewed, network inventory matches privacy text | 🟢 **PASSED** | `THREAT_MODEL.md` and `DATA_SAFETY.md` complete; AES-GCM-256, VaultRedactor, zero cloud egress default | None (`F-007` resolved) |
-| **G5** | Data integrity: migrations tested with data, upgrade preserves data, process-death restore tested | 🟡 **OPEN** | SQLite persistence verified (`SqlDelightRepositoryTest`); migration tests require physical fixtures | Needs device fixture |
-| **G6** | Reliability: failure-injection documented; crash reporting verified; rollback/kill-switch documented | 🟢 **PASSED** | Offline SQLite active; AlarmManager exact delivery & BootCompletedReceiver verified | None (`F-002` resolved) |
-| **G7** | Performance: measured baselines on named devices meet PROVISIONAL budgets (APK < 25MB, cold start < 1200ms) | 🟡 **OPEN** | APK size measured (19MB < 25MB); physical device cold start unmeasured | Needs physical device |
-| **G8** | Accessibility checks completed on critical screens with defects fixed or tracked | 🟡 **OPEN** | High contrast tokens in use, scalable fonts; TalkBack screen-reader physical test needs hardware | Needs physical hardware |
-| **G9** | Claims: every user-facing and store-facing claim traced to evidence in CLAIMS_REGISTER | 🟢 **PASSED** | Audited in `CLAIMS_REGISTER.md`; contradicted claims remediated | None |
-| **G10** | Compliance: platform-policy checklist complete; open legal/organisational items listed with owners | 🟢 **PASSED** | Age gate (18+) enforced for DPDP Act 2023 in `OnboardingScreen` & `DefaultUserSessionRepository`; documented in `FOUNDER_ACTIONS.md` and `DATA_SAFETY.md` | None (`F-006`, `F-007` resolved) |
-| **G11** | Docs: setup, runbook, rollback and FOUNDER_ACTIONS current | 🟢 **PASSED** | `FOUNDER_ACTIONS.md`, `README.md`, `DATA_SAFETY.md`, `RELEASE_READINESS.md` current | None |
-| **G12** | Final independent verification pass completed in fresh worktree | 🟢 **PASSED** | Clean worktree build executed, 88 unit tests passed, 0 lint errors, assembleDebug 20MB, arm64 iOS compiled; `audit/FINAL_REPORT.md` produced. | Outside reviewer note documented |
+| **B1** | Clean build, full suite green with real counts (unit vs instrumented) | 🟢 **PASSED** | 97 unique unit tests passing (116 executions across debug/release), 0 failures, 0 skipped, 0 instrumented; `./gradlew testDebugUnitTest :backend:test` | `F-019` (Reconciled) |
+| **B2** | Every critical journey passes automatically and on a device | 🟡 **OPEN** | Journeys 1–8 implemented & passing unit contracts; requires physical device automation run | Needs physical device suite |
+| **B3** | No open P0 or P1 findings | 🔴 **OPEN** | Open P0: `F-014` (Cloud egress vs zero-knowledge claim), `F-016` (Google Play `USE_EXACT_ALARM` risk). Open P1: `F-013`, `F-015`, `F-017` | `F-013`, `F-014`, `F-015`, `F-016`, `F-017` |
+| **B4** | Action safety: every transition and illegal transition tested; destructive tools require confirmation; idempotency under replay and concurrency proven | 🟡 **OPEN** | ActionProposalCard & TwoPhaseActionCommitter live; full Action State Machine transitions & tool registry tests being built | `F-015` |
+| **B5** | Time engine suite green including DST/ambiguity cases | 🟡 **OPEN** | Basic regex schedule extraction in `YaanAssistantEngine`; shared KMP time/recurrence engine with DST/ambiguity tests being built | Work in progress |
+| **B6** | AI eval meets PROVISIONAL thresholds per category with sample sizes reported; injection suite green; hallucinated-success cases zero | 🟡 **OPEN** | 310-sample eval in `EVAL_REPORT.md` (lexical baseline); requires structured planner eval & hallucinated-success regression set | Work in progress |
+| **B7** | Security: threat model written, secrets scan clean, dependency scan reviewed, cross-user isolation tests pass, data-flow matches privacy text, no plaintext prompt logging | 🟢 **PASSED** | `THREAT_MODEL.md`, `SECURITY_AND_PRIVACY.md`, `LlmGatewaySecurityTest` (6 tests pass), `SecurityAuthTest` (6 tests pass) | `F-014` (Copy update) |
+| **B8** | Reminder reliability tested per platform with documented limits and visible degraded states | 🟡 **OPEN** | Android AlarmManager + BootReceiver live; `F-016` (exact alarm policy) and `F-017` (iOS 64-request limit) in-progress | `F-016`, `F-017` |
+| **B9** | Degraded-mode: with AI/provider down, the offline function list works | 🟢 **PASSED** | 100% offline local SQLite CRUD (notes, tasks, reminders, search) verified in `SqlDelightRepositoryTest` & `YaanAssistantEngineTest` | None |
+| **B10** | Cost and performance measured with scenarios and caps enforced | 🟢 **PASSED** | `COST_MODEL.md` (Groq live pricing $0.59/$0.79 per 1M), daily cap 25k tok/user, rate limit 20 req/min in `DefaultLlmGateway` | None |
+| **B11** | Operability: runbooks, rollback/kill switch for cloud AI, observability, backups of server ops data tested | 🟢 **PASSED** | Cloud kill switch in `CloudConsentManager`, `CircuitBreaker` in inference mesh, `RELEASE_READINESS.md` runbook | None |
+| **B12** | Claims and compliance: every claim traced; Play/App Store checklist for what is addressable; open legal items listed with owners | 🟡 **OPEN** | `CLAIMS_REGISTER.md` active; `F-014` (reconciling 'zero-knowledge' claims) in-progress; `FOUNDER_ACTIONS.md` updated | `F-014` |
+| **B13** | Final independent verification pass | 🟡 **OPEN** | Runs at the release-candidate commit after B1–B12 pass or are blocked only by documented human items | Pending release candidate |
 
 ---
 
 ## 2. Gate Decision Summary
-- **Current Verdict**: **CONDITIONAL GO (Invite-Only Closed Beta)**
-- **Reason**: All actionable engineering findings (F-001 through F-007) are DONE. 0 open P0/P1/P2 findings. All 8 critical user journeys verified. Gates G1, G2, G3, G4, G6, G9, G10, G11, and G12 are PASSED. Remaining gates (G5, G7, G8) require physical hardware device lab runs and commercial DPA execution tracked in `FOUNDER_ACTIONS.md`.
-- **Target for Next Step**: Present Final Report and Founder Action Checklist to Founder.
+- **Current Verdict**: **NO-GO (Open P0/P1 Findings Under Active Remediation)**
+- **Blocking Items**:
+  1. `F-014` [P0]: Replace inaccurate 'zero-knowledge' claims in cloud inference paths with 'Consented Cloud-Assisted Intelligence'.
+  2. `F-016` [P0]: Android exact alarm permission policy: declare `SCHEDULE_EXACT_ALARM`, check `canScheduleExactAlarms()`, and fallback to inexact idle.
+  3. `F-015` [P1]: Ratify Binding Architecture & implement shared `ToolRegistry` and `ActionStateMachine` in `:core:domain`.
+  4. `F-017` [P1]: Implement native iOS local notification scheduling bridge respecting the 64-pending request limit.
+- **Immediate Target**: Resolve P0 and P1 findings in sequence to advance gates B3, B4, B5, B8, B12 toward release readiness.

@@ -30,6 +30,11 @@
   - **Option B**: Custom mTLS certificate pinned in app bundle.
 - **Action Required by Founder**: Enable Play Integrity API in Google Play Console prior to production release.
 
+### Decision 4: Formal Deferral of SMS Fallback Reminders (`F-018`)
+- **Context**: Delivering reminders via SMS in India requires registration under TRAI Telecom Commercial Communications Customer Preference Regulations (TCCCPR 2018), including DLT portal onboarding, principal entity KYC, pre-approved headers/content templates, and scrubbing against the National Do Not Call (NDNC) registry. In addition, SMS transmission exposes reminder text unencrypted to telecom carriers and SMS aggregators (e.g., Gupshup, Exotel).
+- **Recommendation**: **DEFER** SMS fallback indefinitely for Closed Beta. Rely exclusively on on-device `AlarmManager` (Android) and `UNUserNotificationCenter` (iOS).
+- **Founder Action**: Confirm deferral or initiate statutory TRAI DLT registration and vendor agreement.
+
 ---
 
 ## 2. Legal, Regulatory & External Compliance To Be Executed By Founder

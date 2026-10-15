@@ -2,46 +2,38 @@
 
 > **Authority**: Autonomous Software Engineering & QA System  
 > **Evaluation Mode**: Controlled, Measurable, Evidence-Driven Improvement Loop  
-> **Status Snapshot**: Cycle 00 (Initial Bootstrap Baseline)  
-> **Date**: 2026-10-15  
+> **Target Release**: Invite-Only Closed Beta (India 18+, English Default)  
+> **Date**: 2026-10-15 (Cycle 06 Baseline)  
 
 ---
 
-## 1. Scorecard Dimension Matrix
+## 1. Scorecard Dimension Matrix (18 Categories)
 
-| Dimension / Category | Status | Initial Baseline (Cycle 00) | Latest Measurement | Target Threshold | Open Defects | Critical Test Coverage | Trend |
-|---|:---:|---|---|---|---|:---:|:---:|
-| **1. Functional Correctness** | 🟢 Good | Basic CRUD in SQLite; 82 unit tests pass | 88 unit tests pass; Two-phase action confirmation & Vault export active | 100% Critical journeys verified (EXTERNAL) | None open | 88% | Improving |
-| **2. Critical-Journey Coverage** | 🟢 Complete | 3/8 journeys fully working in UI | 8/8 journeys working (Journeys 1–8 live) | 8/8 journeys verified end-to-end (EXTERNAL) | None open | 100% | Improving |
-| **3. Business-Logic Correctness** | 🟢 Good | VectorClock, Redactor, AuthGuard unit-tested | 88 unit tests passing | 0 known logic contradictions (EXTERNAL) | None known | 94% | Improving |
-| **4. Code Quality & Architecture** | 🟢 Clean | Lint fails on `SCHEDULE_EXACT_ALARM` | 0 Lint Errors, 0 Warnings (`lintDebug`) | 0 Lint Errors, 0 Warnings (EXTERNAL) | None (`F-001` resolved) | 100% Compile | Improving |
-| **5. Security** | 🟢 Good | Hardware AES-GCM-256 at rest, AuthGuard, injection guard | 14 security & auth tests passing | OWASP Top 10 Mobile Clean (EXTERNAL) | None open | 92% | Baseline |
-| **6. Privacy** | 🟢 Good | ConsentManager active; LLM egress needs sync with disclosures | Groq egress disclosed in DATA_SAFETY.md, VaultRedactor active | Zero unauthorized egress (EXTERNAL) | None (`F-007` resolved) | 90% | Improving |
-| **7. Performance** | 🟡 Provisional | APK size 19 MB; build time 13s | 19 MB APK, 8s build | APK < 25 MB, Cold Start < 1200ms (PROVISIONAL) | Uncalibrated on device | Lab Build Only | Baseline |
-| **8. Reliability & Recovery** | 🟢 Good | Reminders not scheduled in AlarmManager; no reboot receiver | BootCompletedReceiver + AlarmManager active | Survives reboot & timezone change (EXTERNAL) | None (`F-002` resolved) | 80% | Improving |
-| **9. Accessibility & UX** | 🟢 Good | High-contrast kinetic tokens; missing permission error banners | ActionProposalCard & Onboarding rationale active | WCAG 2.1 AA & Scaled Fonts (PROVISIONAL) | None (`F-003`, `F-004` resolved) | 75% | Improving |
-| **10. Test Strength** | 🟡 Moderate | 82 Unit tests, 0 UI tests, 0 Migration tests | 88 Unit tests passing (0 failures, 0 regressions) | Automated Critical Workflow tests (EXTERNAL) | Need UI/Integration | 68% | Improving |
-| **11. Content Quality** | 🟢 Clean | No placeholder lorem ipsum; bespoke typography | Clean vector identity & legal copy | Zero placeholder copy (EXTERNAL) | None | 95% | Baseline |
-| **12. Legal & Platform Compliance** | 🟢 Clean | No age gate for DPDP 2023; permissions need review | Age gate (18+) enforced; Google Play Data Safety declared | Google Play & India DPDP Compliant (EXTERNAL) | None (`F-006`, `F-007` resolved) | 85% | Improving |
-| **13. Operational Readiness** | 🟡 Fair | Local build works; no CI workflow or crash logging SDK | Debug build working | Verified Crash Reporting & Rollout plan (PROVISIONAL) | Unconfigured Crashlytics | 40% | Baseline |
-| **14. Claims Honesty** | 🟢 Clean | 12 architectural claims audited in CLAIMS_REGISTER.md | Contradictions recorded & resolved in UI copy & docs | Zero unsupported product claims (EXTERNAL) | None (`F-007` resolved) | 95% | Improving |
-| **15. Measurement Readiness** | 🟡 Provisional | Local benchmarks recorded in EVAL_REPORT.md | Lab baselines recorded | Calibrated on real target devices (PROVISIONAL) | No device lab runs | 50% | Baseline |
+| # | Dimension / Category | Baseline (Cycle 00) | Latest Measurement (Cycle 06) | Target Threshold | Open Defects | Evidence Path | Residual Risk | Next Action | Trend |
+|---|---|---|---|---|---|---|---|---|:---:|
+| **1** | **Functional Correctness** | Basic SQLite CRUD; 82 unit tests pass | 97 unique unit tests pass (116 executions); CRUD & search verified | 100% Critical workflows verified (EXTERNAL) | None open | `testDebugUnitTest` | Low | Maintain regression harness | 🟢 Improving |
+| **2** | **Critical-Journey Coverage** | 3/8 journeys functional in UI | 8/8 journeys functional in UI & unit contracts | 8/8 journeys verified end-to-end on device (EXTERNAL) | Device run open | `UiStateContractsTest.kt`, `YouScreen.kt` | Med (needs physical device run) | Automate on hardware | 🟢 Improving |
+| **3** | **Time/Recurrence Correctness** | Regex schedule extraction ('tomorrow', '2pm') | Basic parsing in `YaanAssistantEngine`; shared KMP engine in-progress | Exhaustive relative, DST & ambiguity test suite (EXTERNAL) | `F-015` | `YaanAssistantEngineTest.kt` | Med (DST/gap unvalidated) | Implement shared time engine | 🟡 In-Progress |
+| **4** | **Action Safety** | Proposals staged without interactive confirmation card | `ActionProposalCard` with Confirm & Undo live; State Machine in-progress | Every transition/illegal transition tested; idempotency proven (EXTERNAL) | `F-015` | `ActionProposalCard.kt`, `ActionSafetyEngine.kt` | Low | Implement full Action State Machine | 🟢 Improving |
+| **5** | **AI Quality** | Heuristic prompt routing | 310-sample lexical eval in `EVAL_REPORT.md`; 100% citation rate | >= 90% Intent Accuracy, 0% hallucinated actions (PROVISIONAL) | Cloud planner eval | `EVAL_REPORT.md` | Med | Implement structured planner eval | 🟡 In-Progress |
+| **6** | **Prompt-Injection Resistance** | Basic regex disarm | `VaultUntrustedContentGuard` (35 test cases, Markdown exfil, XSS, override disarmed) | 100% resistance across >= 50 test cases (EXTERNAL) | Add 15 test cases | `ActionSafetyTest.kt` | Low | Expand red-team suite to 50+ | 🟢 Improving |
+| **7** | **Security** | AuthGuard string check, AES-GCM-256 cipher | AES-GCM-256 at rest, AuthGuard BOLA check, 12 security tests green | OWASP Mobile Top 10 clean, strict cross-user isolation (EXTERNAL) | Server auth heuristic | `SecurityAuthTest.kt`, `LlmGatewaySecurityTest.kt` | Low | Cryptographic auth token check | 🟢 Improving |
+| **8** | **Privacy** | ConsentManager active; LLM egress undocumented | `DATA_SAFETY.md` published; `VaultRedactor` PII substitution; cloud egress disclosed | Zero unauthorized egress; accurate disclosures (EXTERNAL) | `F-014` (Copy) | `DATA_SAFETY.md`, `VaultRedactor.kt` | Low | Reconcile copy across UI & /healthz | 🟢 Improving |
+| **9** | **Data Integrity** | In-memory DB in tests, local SQLite in app | SQLDelight SQLite with AES-GCM-256 encrypted fields; Vault export live | Zero data loss on kill/upgrade; verified export/import (EXTERNAL) | Migration tests | `SqlDelightRepositoryTest.kt`, `VaultExporterTest.kt` | Low | Add schema migration test | 🟢 Improving |
+| **10** | **Reminder Reliability (Platform)** | Alarms not scheduled in AlarmManager | Android `AlarmManager.setExactAndAllowWhileIdle` & `BootCompletedReceiver` live; iOS open | Reliable delivery on Android & iOS with degraded state visibility (EXTERNAL) | `F-016`, `F-017` | `AndroidAlarmScheduler.kt`, `AlarmBroadcastReceiver.kt` | Med | Switch to `SCHEDULE_EXACT_ALARM`; build iOS bridge | 🟡 In-Progress |
+| **11** | **Reliability & Recovery** | Crash on unbundled iOS resources | iOS resource bundle fix; crash rate 0% in tests; circuit breaker in mesh | 0 crashes; graceful degradation on provider outage (EXTERNAL) | iOS notification open | `CircuitBreaker.kt`, `Info.plist` | Low | iOS notification recovery | 🟢 Improving |
+| **12** | **Performance** | Android APK 19 MB; build time 13s | Android APK 19.7 MB; build time 5–8s; latency ceiling sub-150ms | APK < 25 MB, TTFT < 150ms, Cold start < 1200ms (PROVISIONAL) | Physical cold start | `audit/EVIDENCE/cycle_02_build_evidence.txt` | Low | Measure on physical device | 🟢 Improving |
+| **13** | **Cost** | Theoretical estimates | Groq live pricing $0.59/$0.79 per 1M; daily cap 25k tok/user; rate limit 20 req/min | $0.00 provider spend on free tier; < $0.15/user/mo at scale (EXTERNAL) | None open | `COST_MODEL.md`, `DefaultLlmGateway.kt` | Low | Monitor token usage | 🟢 Improving |
+| **14** | **Accessibility & UX** | High contrast kinetic tokens; missing warning banner | Degraded permission banner in `PlanScreen`; high contrast tokens (`#785600` on `#FDF9F3` > 4.5:1) | WCAG 2.1 AA compliant; scaled font support (EXTERNAL) | Screen reader test | `PlanScreen.kt`, `YaanThemeTest.kt` | Low | Physical TalkBack/VoiceOver check | 🟢 Improving |
+| **15** | **Test Strength** | 82 unit tests, 0 UI tests, 0 migration tests | 97 unique unit tests (116 executions), 0 failures, 0 regressions | Critical workflow coverage + fault-injection checks (EXTERNAL) | 0 instrumented tests | `build/test-results/**/*.xml` | Med | Add UI/integration tests | 🟢 Improving |
+| **16** | **Compliance** | Missing age gate for DPDP Act 2023 | 18+ age declaration enforced in onboarding & repository; Data Safety matrix declared | India DPDP Act 2023 & Google Play/App Store policies (EXTERNAL) | `F-016`, `F-018` | `OnboardingScreen.kt`, `DATA_SAFETY.md` | Low | Defer SMS fallback; fix alarm perm | 🟢 Improving |
+| **17** | **Operational Readiness** | Local build only; no runbooks | Runbooks in `RELEASE_READINESS.md`; AI kill switch in `CloudConsentManager` | Verified runbooks, rollback switches, server ops persistence (PROVISIONAL) | In-memory server store | `RELEASE_READINESS.md`, `CloudConsentManager.kt` | Med | Add durable server ops store | 🟡 In-Progress |
+| **18** | **Claims Honesty** | 12 architectural claims audited; contradictions found | Contradictions recorded in `CLAIMS_REGISTER.md`; 'zero-knowledge' cloud egress in review | Zero unsupported claims in code, docs, or UI copy (EXTERNAL) | `F-014` | `CLAIMS_REGISTER.md`, `ARCHITECTURE.md` | Low | Reconcile copy across repository | 🟢 Improving |
 
 ---
 
 ## 2. Release Blockers Tracker
-- **Critical Security/Privacy Failure**: None open.
-- **Data-Integrity / Data-Loss Risk**: None (`F-002`, `F-005` resolved).
-- **Broken Critical Journey**: None open (All 8 journeys verified).
-- **Unresolved Legal/Platform Blocker**: None open (`F-001`, `F-006`, `F-007` resolved).
-- **Unsupported Product Claim**: Reconciled in `CLAIMS_REGISTER.md` and `audit/DATA_SAFETY.md`.
-
----
-
-## 3. Scorecard Evolution Log
-- **Cycle 00 (Baseline)**: Established 15 dimensional baselines. Overall system health: Unit tests passing (82/82), but Android platform bridge (alarms, notifications, boot receiver, lint) requires active remediation.
-- **Cycle 01**: Resolved `F-001` (AGP Lint failures on exact alarm permission and backup rules). Gate G1 PASSED. 0 lint errors.
-- **Cycle 02**: Resolved `F-002` (Android AlarmManager bridge, Notification channels, and BootCompletedReceiver). Gate G6 PASSED. 85 tests green.
-- **Cycle 03**: Resolved `F-006` (Age eligibility gate under DPDP Act 2023) and `F-003` (Notification & microphone permission rationale and degraded state warning). Gate G10 PASSED. 87 tests green. Critical User Journeys 1 & 5 working. Zero open P0 findings.
-- **Cycle 04**: Resolved `F-004` (Action proposals affirmative confirmation card and reversible undo rollback in `ActionProposalCard`, `AskYaanScreen`, and `HomeScreen`). Critical User Journey 7 satisfied. 87 tests green. 0 lint errors. All critical journeys 1–7 live.
-- **Cycle 05**: Resolved `F-005` (Vault export JSON archive serialization via `VaultExporter` & UI feedback banner) and `F-007` (Google Play Data Safety & Privacy Disclosures matrix in `audit/DATA_SAFETY.md`). All 8 Critical User Journeys live! 88 unit tests passing across all modules. 0 open P0/P1/P2 findings. Zero open release blockers. Gate G2 PASSED, Gate G3 PASSED, Gate G4 PASSED. Trend: Improving.
+- **B3 Release Blocker 1 (`F-014` [P0])**: Inaccurate 'zero-knowledge' claims in cloud inference paths -> Update copy to 'Consented Cloud-Assisted Intelligence'.
+- **B3 Release Blocker 2 (`F-016` [P0])**: Android exact alarm permission Play Store rejection risk -> Declare `SCHEDULE_EXACT_ALARM`, check `canScheduleExactAlarms()`, and fallback.
+- **B3 Release Blocker 3 (`F-015` [P1])**: Ratify Binding Architecture & build shared `ToolRegistry` and `ActionStateMachine`.
+- **B3 Release Blocker 4 (`F-017` [P1])**: Implement iOS local notification scheduling bridge respecting the 64-request limit.
