@@ -90,5 +90,41 @@ class UserSessionRepositoryTest {
         assertEquals("Anonymous User", session.displayName)
         assertEquals("anonymous:revoked", session.authToken)
         assertTrue(session.isVaultLocked)
+        assertFalse(session.isOnboardingCompleted)
+        assertFalse(session.ageConfirmed18Plus)
+    }
+
+    @Test
+    fun `test complete onboarding rejects underage user`() = runTest {
+        val keyManager = InMemoryVaultKeyManager()
+        val repo = DefaultUserSessionRepository(keyManager, testDispatchers)
+
+        // Reset to fresh/unonboarded state
+        repo.logoutAndCryptoShred()
+        assertFalse(repo.getCurrentProfile().isOnboardingCompleted)
+
+        // Attempt onboarding with age confirmation false
+        val rejectRes = repo.completeOnboarding("Test User", ageConfirmed18Plus = false)
+        assertTrue(rejectRes is YaanResult.Failure)
+        assertFalse(repo.getCurrentProfile().isOnboardingCompleted)
+        assertFalse(repo.getCurrentProfile().ageConfirmed18Plus)
+    }
+
+    @Test
+    fun `test complete onboarding succeeds for 18+ user`() = runTest {
+        val keyManager = InMemoryVaultKeyManager()
+        val repo = DefaultUserSessionRepository(keyManager, testDispatchers)
+
+        // Reset to fresh/unonboarded state
+        repo.logoutAndCryptoShred()
+
+        // Attempt onboarding with age confirmation true
+        val successRes = repo.completeOnboarding("Elena Rostova", ageConfirmed18Plus = true)
+        assertTrue(successRes is YaanResult.Success)
+        val profile = (successRes as YaanResult.Success).data
+        assertEquals("Elena Rostova", profile.displayName)
+        assertTrue(profile.isOnboardingCompleted)
+        assertTrue(profile.ageConfirmed18Plus)
+        assertTrue(repo.getCurrentProfile().isOnboardingCompleted)
     }
 }

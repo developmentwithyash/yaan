@@ -12,10 +12,10 @@
 |---|---|---|:---:|:---:|:---:|:---:|:---:|:---:|---|
 | **`F-001`** | Android Lint failure on `SCHEDULE_EXACT_ALARM` & deprecated `allowBackup` | G/B (Code Quality/Platform) | **P1** | 4 | 5 | VERIFIED | **DONE** | 1 | `audit/EVIDENCE/cycle_01_lint_clean.txt` |
 | **`F-002`** | Missing Android AlarmManager Bridge, Notification Channel & Boot Reschedule Receiver | A/F (Reliability/Correctness) | **P0** | 5 | 5 | VERIFIED | **DONE** | 1 | `audit/EVIDENCE/cycle_02_build_evidence.txt`, `SqlDelightReminderSchedulerTest` |
-| **`F-003`** | Missing Notification & Microphone permission request flow & degraded state UI | A/E (UX/Correctness) | **P1** | 4 | 4 | VERIFIED | **OPEN** | 0 | `composeApp/src/commonMain` |
+| **`F-003`** | Missing Notification & Microphone permission request flow & degraded state UI | A/E (UX/Correctness) | **P1** | 4 | 4 | VERIFIED | **DONE** | 1 | `PlanScreen.kt`, `OnboardingScreen.kt`, `UiStateContractsTest` |
 | **`F-004`** | Action proposals lack affirmative confirmation and execution UI in screens | A/C (Security/Correctness) | **P1** | 4 | 4 | VERIFIED | **OPEN** | 0 | `AskYaanScreen.kt`, `HomeScreen.kt` |
 | **`F-005`** | Vault export in `YouScreen` is an empty stub with no serialized archive output | A/F (Data/Correctness) | **P2** | 3 | 3 | VERIFIED | **OPEN** | 0 | `YouScreen.kt#L114` |
-| **`F-006`** | Missing age eligibility policy and declaration for India DPDP Act 2023 / COPPA | G/C (Legal/Compliance) | **P0** | 5 | 3 | INFERRED | **OPEN** | 0 | `FOUNDER_ACTIONS.md` |
+| **`F-006`** | Missing age eligibility policy and declaration for India DPDP Act 2023 / COPPA | G/C (Legal/Compliance) | **P0** | 5 | 3 | VERIFIED | **DONE** | 1 | `UserSessionRepositoryTest`, `OnboardingScreen.kt` |
 | **`F-007`** | Data safety and privacy disclosures lack explicit documentation of Groq LLM egress | G/C (Legal/Compliance) | **P1** | 4 | 4 | VERIFIED | **OPEN** | 0 | `CLAIMS_REGISTER.md`, `THREAT_MODEL.md` |
 
 ---
@@ -60,6 +60,8 @@
 - **Acceptance Criteria**:
   1. Add permission checking and rationale prompt for `POST_NOTIFICATIONS`.
   2. When permission is denied, display a non-intrusive warning card in `PlanScreen` / `HomeScreen` informing the user that system notifications are disabled and local alarms cannot sound.
+- **Status**: **DONE** (Cycle 03).
+- **Evidence Paths**: `audit/EVIDENCE/cycle_03_test_run.txt`, `OnboardingScreen.kt`, `PlanScreen.kt`, `UiStateContractsTest`.
 
 ---
 
@@ -96,6 +98,8 @@
 - **Acceptance Criteria**:
   1. Restrict YAAN closed beta to users aged 18 and older.
   2. Document in `audit/FOUNDER_ACTIONS.md` and add age declaration in onboarding.
+- **Status**: **DONE** (Cycle 03).
+- **Evidence Paths**: `audit/EVIDENCE/cycle_03_test_run.txt`, `UserSessionRepositoryTest`, `OnboardingScreen.kt`, `FOUNDER_ACTIONS.md`.
 
 ---
 

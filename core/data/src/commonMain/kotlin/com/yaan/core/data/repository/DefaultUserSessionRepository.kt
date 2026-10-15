@@ -91,12 +91,34 @@ class DefaultUserSessionRepository(
             YaanResult.Success(newCount)
         }
 
+    override suspend fun completeOnboarding(displayName: String, ageConfirmed18Plus: Boolean): YaanResult<UserProfile> =
+        withContext(dispatchers.io) {
+            if (!ageConfirmed18Plus) {
+                return@withContext YaanResult.Failure(
+                    YaanError.ValidationError(
+                        field = "age",
+                        message = "YAAN Beta requires users to be 18 years or older in compliance with the Digital Personal Data Protection Act 2023."
+                    )
+                )
+            }
+            val current = profileState.value
+            val cleanName = displayName.trim().ifEmpty { "Elena Rostova" }
+            val updated = current.copy(
+                displayName = cleanName,
+                isOnboardingCompleted = true,
+                ageConfirmed18Plus = true,
+                isVaultLocked = false
+            )
+            profileState.value = updated
+            YaanResult.Success(updated)
+        }
+
     override suspend fun logoutAndCryptoShred(): YaanResult<Unit> =
         withContext(dispatchers.io) {
             // 1. Shred master encryption keys
             keyManager.shredKey()
 
-            // 2. Reset session to locked anonymous state
+            // 2. Reset session to locked anonymous un-onboarded state
             profileState.value = UserProfile(
                 userId = "anonymous_user",
                 displayName = "Anonymous User",
@@ -107,6 +129,8 @@ class DefaultUserSessionRepository(
                 isVaultLocked = true,
                 pairedDevicesCount = 1,
                 passkeyRegistered = false,
+                isOnboardingCompleted = false,
+                ageConfirmed18Plus = false,
                 createdAtEpochMs = com.yaan.core.common.datetime.nowInstant().toEpochMilliseconds()
             )
             YaanResult.Success(Unit)

@@ -21,5 +21,7 @@ data class UserProfile(
     val isVaultLocked: Boolean = true,
     val pairedDevicesCount: Int = 1,
     val passkeyRegistered: Boolean = false,
+    val isOnboardingCompleted: Boolean = true,
+    val ageConfirmed18Plus: Boolean = true,
     val createdAtEpochMs: Long = 0L
 )

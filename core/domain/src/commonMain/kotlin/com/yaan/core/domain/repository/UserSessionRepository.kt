@@ -19,5 +19,6 @@ interface UserSessionRepository {
 
     suspend fun registerPasskey(): YaanResult<Unit>
     suspend fun pairDeviceWithQr(qrCodePayload: String): YaanResult<Int>
+    suspend fun completeOnboarding(displayName: String, ageConfirmed18Plus: Boolean): YaanResult<UserProfile>
     suspend fun logoutAndCryptoShred(): YaanResult<Unit>
 }

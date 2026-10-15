@@ -42,9 +42,11 @@ import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Snooze
 import androidx.compose.material.icons.filled.Videocam
+import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -130,6 +132,9 @@ fun PlanScreen(
                 PlanUiAction.StartRoutine -> {
                     uiState = uiState.copy(isRoutineRunning = !uiState.isRoutineRunning)
                 }
+                PlanUiAction.DismissPermissionWarning -> {
+                    uiState = uiState.copy(isPermissionWarningDismissed = true)
+                }
             }
         },
         modifier = modifier
@@ -208,6 +213,52 @@ fun PlanScreenContent(
                             )
                         )
                     }
+                }
+            }
+        }
+
+        // ── Degraded Notification Permission Banner (F-003, CUJ 5) ────────────
+        if (!state.isPermissionWarningDismissed) {
+            Surface(
+                shape = RoundedCornerShape(12.dp),
+                color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.85f),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Notifications,
+                        contentDescription = "Notification Notice",
+                        tint = MaterialTheme.colorScheme.onErrorContainer,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "Notification Delivery Notice",
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onErrorContainer
+                        )
+                        Text(
+                            text = "Ensure notification permissions are granted so scheduled alarms and heads-up reminders can sound at exact times.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onErrorContainer,
+                            lineHeight = 16.sp
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = "Dismiss",
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onErrorContainer,
+                        modifier = Modifier
+                            .clickable { onAction(PlanUiAction.DismissPermissionWarning) }
+                            .padding(4.dp)
+                    )
                 }
             }
         }

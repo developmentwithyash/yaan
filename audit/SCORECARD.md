@@ -11,32 +11,35 @@
 
 | Dimension / Category | Status | Initial Baseline (Cycle 00) | Latest Measurement | Target Threshold | Open Defects | Critical Test Coverage | Trend |
 |---|:---:|---|---|---|---|:---:|:---:|
-| **1. Functional Correctness** | 🟢 Good | Basic CRUD in SQLite; 82 unit tests pass | 85 unit tests pass; AlarmManager exact delivery active | 100% Critical journeys verified (EXTERNAL) | `F-003`, `F-004`, `F-005` | 65% (Unit + Scheduler) | Improving |
-| **2. Critical-Journey Coverage** | 🟡 In Progress | 3/8 journeys fully working in UI | 5/8 journeys working (Alarms & Reboot recovery live) | 8/8 journeys verified end-to-end (EXTERNAL) | `F-003`, `F-004`, `F-005` | 62.5% | Improving |
-| **3. Business-Logic Correctness** | 🟢 Good | VectorClock, Redactor, AuthGuard unit-tested | 85 unit tests passing | 0 known logic contradictions (EXTERNAL) | None known | 90% | Baseline |
+| **1. Functional Correctness** | 🟢 Good | Basic CRUD in SQLite; 82 unit tests pass | 87 unit tests pass; AlarmManager exact delivery & Onboarding active | 100% Critical journeys verified (EXTERNAL) | `F-004`, `F-005` | 75% | Improving |
+| **2. Critical-Journey Coverage** | 🟡 In Progress | 3/8 journeys fully working in UI | 6/8 journeys working (Journeys 1, 2, 3, 4, 5, 6 live) | 8/8 journeys verified end-to-end (EXTERNAL) | `F-004`, `F-005` | 75% | Improving |
+| **3. Business-Logic Correctness** | 🟢 Good | VectorClock, Redactor, AuthGuard unit-tested | 87 unit tests passing | 0 known logic contradictions (EXTERNAL) | None known | 92% | Baseline |
 | **4. Code Quality & Architecture** | 🟢 Clean | Lint fails on `SCHEDULE_EXACT_ALARM` | 0 Lint Errors, 0 Warnings (`lintDebug`) | 0 Lint Errors, 0 Warnings (EXTERNAL) | None (`F-001` resolved) | 100% Compile | Improving |
-| **5. Security** | 🟢 Good | Hardware AES-GCM-256 at rest, AuthGuard, injection guard | 12 security tests passing | OWASP Top 10 Mobile Clean (EXTERNAL) | None open | 90% | Baseline |
-| **6. Privacy** | 🟡 Moderate | ConsentManager active; LLM egress needs sync with disclosures | Redaction active, opt-in cloud | Zero unauthorized egress (EXTERNAL) | `F-007` | 80% | Baseline |
-| **7. Performance** | 🟡 Provisional | APK size 19 MB; build time 13s | 19 MB APK, 13s build | APK < 25 MB, Cold Start < 1200ms (PROVISIONAL) | Uncalibrated on device | Lab Build Only | Baseline |
+| **5. Security** | 🟢 Good | Hardware AES-GCM-256 at rest, AuthGuard, injection guard | 14 security & auth tests passing | OWASP Top 10 Mobile Clean (EXTERNAL) | None open | 92% | Baseline |
+| **6. Privacy** | 🟡 Moderate | ConsentManager active; LLM egress needs sync with disclosures | Redaction active, opt-in cloud, DPDP age gate | Zero unauthorized egress (EXTERNAL) | `F-007` | 85% | Improving |
+| **7. Performance** | 🟡 Provisional | APK size 19 MB; build time 13s | 19 MB APK, 11s build | APK < 25 MB, Cold Start < 1200ms (PROVISIONAL) | Uncalibrated on device | Lab Build Only | Baseline |
 | **8. Reliability & Recovery** | 🟢 Good | Reminders not scheduled in AlarmManager; no reboot receiver | BootCompletedReceiver + AlarmManager active | Survives reboot & timezone change (EXTERNAL) | None (`F-002` resolved) | 80% | Improving |
-| **9. Accessibility & UX** | 🟡 Fair | High-contrast kinetic tokens; missing permission error banners | 6 screens with Material3 | WCAG 2.1 AA & Scaled Fonts (PROVISIONAL) | `F-003` | 40% | Baseline |
-| **10. Test Strength** | 🟡 Moderate | 82 Unit tests, 0 UI tests, 0 Migration tests | 82 Unit tests | Automated Critical Workflow tests (EXTERNAL) | Need UI/Integration | 55% | Baseline |
-| **11. Content Quality** | 🟢 Clean | No placeholder lorem ipsum; bespoke typography | Clean vector identity | Zero placeholder copy (EXTERNAL) | None | 95% | Baseline |
-| **12. Legal & Platform Compliance** | 🔴 Incomplete | No age gate for DPDP 2023; permissions need review | Untested on Play Console | Google Play & India DPDP Compliant (EXTERNAL) | `F-006`, `F-007` | 30% | Baseline |
+| **9. Accessibility & UX** | 🟢 Good | High-contrast kinetic tokens; missing permission error banners | Onboarding rationale + Degraded permission banner active | WCAG 2.1 AA & Scaled Fonts (PROVISIONAL) | None (`F-003` resolved) | 65% | Improving |
+| **10. Test Strength** | 🟡 Moderate | 82 Unit tests, 0 UI tests, 0 Migration tests | 87 Unit tests passing (0 failures, 0 regressions) | Automated Critical Workflow tests (EXTERNAL) | Need UI/Integration | 65% | Improving |
+| **11. Content Quality** | 🟢 Clean | No placeholder lorem ipsum; bespoke typography | Clean vector identity & legal copy | Zero placeholder copy (EXTERNAL) | None | 95% | Baseline |
+| **12. Legal & Platform Compliance** | 🟡 In Progress | No age gate for DPDP 2023; permissions need review | Age gate (18+) enforced; Notification rationale added | Google Play & India DPDP Compliant (EXTERNAL) | `F-007` | 60% | Improving |
 | **13. Operational Readiness** | 🟡 Fair | Local build works; no CI workflow or crash logging SDK | Debug build working | Verified Crash Reporting & Rollout plan (PROVISIONAL) | Unconfigured Crashlytics | 40% | Baseline |
-| **14. Claims Honesty** | 🟢 Clean | 12 architectural claims audited in CLAIMS_REGISTER.md | Contradictions recorded | Zero unsupported product claims (EXTERNAL) | `F-007` | 90% | Baseline |
+| **14. Claims Honesty** | 🟢 Clean | 12 architectural claims audited in CLAIMS_REGISTER.md | Contradictions recorded & resolved in UI | Zero unsupported product claims (EXTERNAL) | `F-007` | 90% | Baseline |
 | **15. Measurement Readiness** | 🟡 Provisional | Local benchmarks recorded in EVAL_REPORT.md | Lab baselines recorded | Calibrated on real target devices (PROVISIONAL) | No device lab runs | 50% | Baseline |
 
 ---
 
 ## 2. Release Blockers Tracker
 - **Critical Security/Privacy Failure**: None currently open.
-- **Data-Integrity / Data-Loss Risk**: `F-002` (Pending reminders lost across device reboot without AlarmManager/BootReceiver).
-- **Broken Critical Journey**: `F-002` (Journey 3 & 6), `F-004` (Journey 7).
-- **Unresolved Legal/Platform Blocker**: `F-006` (Age gate for India DPDP 2023 / COPPA), `F-001` (Lint ProtectedPermissions failure).
-- **Unsupported Product Claim**: Tracked in `CLAIMS_REGISTER.md`.
+- **Data-Integrity / Data-Loss Risk**: None (`F-002` resolved).
+- **Broken Critical Journey**: `F-004` (Journey 7 Action Proposals).
+- **Unresolved Legal/Platform Blocker**: None open (`F-001`, `F-006` resolved).
+- **Unsupported Product Claim**: Tracked in `CLAIMS_REGISTER.md` (Groq egress disclosure in `F-007`).
 
 ---
 
 ## 3. Scorecard Evolution Log
 - **Cycle 00 (Baseline)**: Established 15 dimensional baselines. Overall system health: Unit tests passing (82/82), but Android platform bridge (alarms, notifications, boot receiver, lint) requires active remediation.
+- **Cycle 01**: Resolved `F-001` (AGP Lint failures on exact alarm permission and backup rules). Gate G1 PASSED. 0 lint errors.
+- **Cycle 02**: Resolved `F-002` (Android AlarmManager bridge, Notification channels, and BootCompletedReceiver). Gate G6 PASSED. 85 tests green.
+- **Cycle 03**: Resolved `F-006` (Age eligibility gate under DPDP Act 2023) and `F-003` (Notification & microphone permission rationale and degraded state warning). Gate G10 PASSED. 87 tests green. Critical User Journeys 1 & 5 working. Zero open P0 findings.

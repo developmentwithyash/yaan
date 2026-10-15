@@ -29,6 +29,7 @@ import com.yaan.app.ui.screens.BrandSplashScreen
 import com.yaan.app.ui.screens.HomeScreen
 import com.yaan.app.ui.screens.LiveVoiceModal
 import com.yaan.app.ui.screens.NotesScreen
+import com.yaan.app.ui.screens.OnboardingScreen
 import com.yaan.app.ui.screens.PlanScreen
 import com.yaan.app.ui.screens.VaultLockScreen
 import com.yaan.app.ui.screens.YouScreen
@@ -163,6 +164,23 @@ fun YaanApp(
                     isDarkTheme = isDarkTheme,
                     onToggleTheme = { isDarkTheme = !isDarkTheme },
                     onEnterApp = { isBrandScreenVisible = false }
+                )
+            }
+
+            // Onboarding & First-Launch Gate (Critical User Journey 1, F-006 & F-003)
+            val isOnboardingCompleted = userProfile?.isOnboardingCompleted ?: true
+            AnimatedVisibility(
+                visible = !isOnboardingCompleted,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                OnboardingScreen(
+                    onComplete = { name, ageConfirmed ->
+                        coroutineScope.launch {
+                            resolvedSessionRepo?.completeOnboarding(name, ageConfirmed)
+                        }
+                    },
+                    initialDisplayName = userProfile?.displayName ?: "Elena Rostova"
                 )
             }
 

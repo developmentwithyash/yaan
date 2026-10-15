@@ -91,4 +91,39 @@
 - **Trend**: **Improving** (Critical Journeys 3 & 6 platform bridge and persistence implemented and tested; 85/85 tests green).
 - **Next Recommended Action**: Execute Cycle 03: Work on P0 finding `F-006` (Age eligibility gate and onboarding declaration for India DPDP Act 2023 / COPPA) and P1 finding `F-003` (Notification & microphone permission rationale and degraded state handling).
 
+---
+
+## Cycle 03 — Fix Findings `F-006` & `F-003` (Age Eligibility Gate & Notification Permission Rationale/Degraded State)
+- **Date**: 2026-10-15
+- **Start Commit**: `6c2390f`
+- **End Commit**: `[Pending Cycle 03 Commit]`
+- **Findings Worked On**:
+  - `F-006` [P0]: Missing age eligibility policy and declaration for India DPDP Act 2023 / COPPA.
+  - `F-003` [P1]: Missing Notification & Microphone permission request flow & degraded state UI (Critical User Journeys 1 & 5).
+- **What Changed**:
+  - In `core:domain`:
+    - Updated `UserProfile`: added `isOnboardingCompleted: Boolean = true` and `ageConfirmed18Plus: Boolean = true`.
+    - Updated `UserSessionRepository`: added `suspend fun completeOnboarding(displayName: String, ageConfirmed18Plus: Boolean): YaanResult<UserProfile>`.
+  - In `core:data`:
+    - Updated `DefaultUserSessionRepository`: implemented `completeOnboarding` validating that `ageConfirmed18Plus` must be true (rejects with `YaanError.ValidationError` under DPDP Act 2023). Updated `logoutAndCryptoShred()` to reset onboarding and age confirmation state to `false`.
+    - Added unit tests in `UserSessionRepositoryTest`: verified underage rejection, verified successful onboarding completion for 18+, verified crypto-shred reset. Total repository tests: 6 (all passed).
+  - In `composeApp`:
+    - Created `OnboardingScreen.kt`: displays zero-knowledge architectural invariants, system permissions rationale (Notifications & Microphone), mandatory 18+ age eligibility checkbox under DPDP Act 2023, display name input, and "Initialize Vault & Enter" action.
+    - Updated `App.kt`: wired `OnboardingScreen` overlay when `userProfile?.isOnboardingCompleted == false`, dispatching `completeOnboarding` on confirmation.
+    - Updated `PlanUiContract.kt`: added `isPermissionWarningDismissed: Boolean = false` to `PlanUiState` and `DismissPermissionWarning` action to `PlanUiAction`.
+    - Updated `PlanScreen.kt`: added non-intrusive Degraded Notification Permission Banner warning the user if notification delivery requires permissions in OS settings, with dismiss action.
+    - Added unit tests in `UiStateContractsTest`: verified permission warning dismissal contract.
+- **Commands Run & Result Summary**:
+  - `./gradlew testDebugUnitTest`: Full monorepo unit test suite passed (87 tests, 0 failures, 0 regressions).
+  - `./gradlew :composeApp:lintDebug`: Passed clean with 0 errors, 0 warnings (`No issues found`).
+  - `./gradlew :composeApp:compileKotlinIosSimulatorArm64`: Passed (`BUILD SUCCESSFUL in 11s`).
+- **Evidence Paths**:
+  - `audit/EVIDENCE/cycle_03_test_run.txt`
+  - `core/data/build/test-results/testDebugUnitTest/TEST-com.yaan.core.data.repository.UserSessionRepositoryTest.xml`
+  - `composeApp/build/test-results/testDebugUnitTest/TEST-com.yaan.app.ui.state.UiStateContractsTest.xml`
+- **Status Change**: `F-006` moved to **DONE**. `F-003` moved to **DONE**.
+- **Trend**: **Improving** (Critical User Journeys 1 & 5 satisfied; age gate enforced; 87 tests passing; 0 lint errors).
+- **Next Recommended Action**: Execute Cycle 04: Work on Finding `F-004` [P1] (Action proposals lack affirmative confirmation and execution UI in screens; Critical User Journey 7).
+
+
 

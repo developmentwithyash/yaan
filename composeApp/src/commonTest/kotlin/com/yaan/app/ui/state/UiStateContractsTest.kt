@@ -98,6 +98,11 @@ class UiStateContractsTest {
         // Routine execution
         val routineRunningState = initialState.copy(isRoutineRunning = true)
         assertTrue(routineRunningState.isRoutineRunning)
+
+        // Notification permission warning dismissal (F-003)
+        assertFalse(initialState.isPermissionWarningDismissed)
+        val dismissedWarningState = initialState.copy(isPermissionWarningDismissed = true)
+        assertTrue(dismissedWarningState.isPermissionWarningDismissed)
     }
 
     @Test

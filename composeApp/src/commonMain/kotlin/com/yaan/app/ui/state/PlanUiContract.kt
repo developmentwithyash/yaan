@@ -15,7 +15,8 @@ data class PlanUiState(
     val stream1Done: Boolean = true,
     val stream2Done: Boolean = false,
     val stream3Done: Boolean = false,
-    val isRoutineRunning: Boolean = false
+    val isRoutineRunning: Boolean = false,
+    val isPermissionWarningDismissed: Boolean = false
 )
 
 /**
@@ -27,4 +28,5 @@ sealed interface PlanUiAction {
     data class UpdateFastAction(val text: String) : PlanUiAction
     data class ToggleTask(val taskKey: String) : PlanUiAction
     data object StartRoutine : PlanUiAction
+    data object DismissPermissionWarning : PlanUiAction
 }
