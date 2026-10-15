@@ -81,11 +81,16 @@ data class ErrorResponse(
     // 3. Status Pages / Error Handling
     install(StatusPages) {
         exception<Throwable> { call, cause ->
+            val safeMessage = if (config.environment == "production") {
+                "An unexpected internal error occurred."
+            } else {
+                cause.message ?: "Internal Server Error"
+            }
             call.respond(
                 HttpStatusCode.InternalServerError,
                 ErrorResponse(
                     status = "ERROR",
-                    message = cause.message ?: "Internal Server Error"
+                    message = safeMessage
                 )
             )
         }

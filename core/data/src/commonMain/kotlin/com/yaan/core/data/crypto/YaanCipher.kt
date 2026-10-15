@@ -8,6 +8,9 @@ import com.yaan.core.common.result.YaanResult
 interface YaanCipher {
     suspend fun encrypt(plainText: String, key: ByteArray): YaanResult<ByteArray>
     suspend fun decrypt(cipherText: ByteArray, key: ByteArray): YaanResult<String>
+
+    fun encryptSync(plainText: String, key: ByteArray): YaanResult<ByteArray>
+    fun decryptSync(cipherText: ByteArray, key: ByteArray): YaanResult<String>
 }
 
 /**
@@ -16,4 +19,7 @@ interface YaanCipher {
 expect class AesGcmYaanCipher() : YaanCipher {
     override suspend fun encrypt(plainText: String, key: ByteArray): YaanResult<ByteArray>
     override suspend fun decrypt(cipherText: ByteArray, key: ByteArray): YaanResult<String>
+
+    override fun encryptSync(plainText: String, key: ByteArray): YaanResult<ByteArray>
+    override fun decryptSync(cipherText: ByteArray, key: ByteArray): YaanResult<String>
 }

@@ -171,6 +171,15 @@ object VaultUntrustedContentGuard {
             .replace(Regex("(?i)delete all:?"), "[inert_text: delete all]")
             .replace(Regex("(?i)wire money:?"), "[inert_text: wire money]")
             .replace(Regex("(?i)transfer \\$\\d+:?"), "[inert_text: transfer]")
+            // Neutralize markdown exfiltration images
+            .replace(Regex("!\\[.*?\\]\\(https?://[^\\)]+\\)"), "[inert_image_link]")
+            // Neutralize embedded script/iframe tags
+            .replace(Regex("(?i)<\\s*(script|iframe|object|embed)[^>]*>.*?</\\s*\\1\\s*>", RegexOption.DOT_MATCHES_ALL), "[inert_code_block]")
+            .replace(Regex("(?i)<\\s*(script|iframe|object|embed)[^>]*>"), "[inert_tag]")
+            // Neutralize system prompt override phrases
+            .replace(Regex("(?i)(ignore|disregard|forget)\\s+(all\\s+)?(previous|above)\\s+(instructions|directives|prompts)"), "[inert_system_override]")
+            .replace(Regex("(?i)system\\s+prompt\\s+(override|injection)"), "[inert_system_override]")
+            .replace(Regex("(?i)emergency\\s+override:?"), "[inert_emergency_override]")
     }
 }
 

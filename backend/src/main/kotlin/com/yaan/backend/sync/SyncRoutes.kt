@@ -1,5 +1,6 @@
 package com.yaan.backend.sync
 
+import com.yaan.backend.auth.AuthGuard
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
@@ -20,6 +21,11 @@ fun Route.syncRoutes(relayService: CrdtRelayService) {
         post("/push") {
             try {
                 val request = call.receive<SyncPushRequest>()
+                if (!AuthGuard.validateUserAuth(call, request.userId)) {
+                    call.respond(HttpStatusCode.Unauthorized, mapOf("error" to "Unauthorized: Invalid client token"))
+                    return@post
+                }
+
                 val response = relayService.push(request)
                 call.respond(HttpStatusCode.OK, response)
             } catch (e: Exception) {
@@ -31,6 +37,11 @@ fun Route.syncRoutes(relayService: CrdtRelayService) {
             val userId = call.request.queryParameters["userId"]
             if (userId.isNullOrBlank()) {
                 call.respond(HttpStatusCode.BadRequest, mapOf("error" to "Missing userId parameter"))
+                return@get
+            }
+
+            if (!AuthGuard.validateUserAuth(call, userId)) {
+                call.respond(HttpStatusCode.Unauthorized, mapOf("error" to "Unauthorized: Access denied"))
                 return@get
             }
 

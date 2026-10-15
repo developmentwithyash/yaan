@@ -1,5 +1,6 @@
 package com.yaan.backend.vault
 
+import com.yaan.backend.auth.AuthGuard
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
@@ -13,6 +14,11 @@ fun Route.vaultRoutes(vaultService: VaultBackupService) {
         post("/backup") {
             try {
                 val envelope = call.receive<VaultBackupEnvelope>()
+                if (!AuthGuard.validateUserAuth(call, envelope.userId)) {
+                    call.respond(HttpStatusCode.Unauthorized, mapOf("error" to "Unauthorized: Invalid client credentials"))
+                    return@post
+                }
+
                 val response = vaultService.saveBackup(envelope)
                 call.respond(HttpStatusCode.OK, response)
             } catch (e: Exception) {
@@ -24,6 +30,11 @@ fun Route.vaultRoutes(vaultService: VaultBackupService) {
             val userId = call.request.queryParameters["userId"]
             if (userId.isNullOrBlank()) {
                 call.respond(HttpStatusCode.BadRequest, mapOf("error" to "Missing userId"))
+                return@get
+            }
+
+            if (!AuthGuard.validateUserAuth(call, userId)) {
+                call.respond(HttpStatusCode.Unauthorized, mapOf("error" to "Unauthorized: Access denied to user backup"))
                 return@get
             }
 
@@ -39,6 +50,11 @@ fun Route.vaultRoutes(vaultService: VaultBackupService) {
             val userId = call.request.queryParameters["userId"]
             if (userId.isNullOrBlank()) {
                 call.respond(HttpStatusCode.BadRequest, mapOf("error" to "Missing userId"))
+                return@post
+            }
+
+            if (!AuthGuard.validateUserAuth(call, userId)) {
+                call.respond(HttpStatusCode.Unauthorized, mapOf("error" to "Unauthorized: Access denied to purge operation"))
                 return@post
             }
 

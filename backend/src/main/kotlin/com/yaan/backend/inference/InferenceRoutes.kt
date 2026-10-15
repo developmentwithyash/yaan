@@ -1,26 +1,42 @@
 package com.yaan.backend.inference
 
-import io.ktor.http.ContentType
+import com.yaan.backend.auth.AuthGuard
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
-import io.ktor.server.response.respondTextWriter
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import kotlinx.coroutines.flow.toList
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 
 fun Route.inferenceRoutes(meshService: InferenceMeshService) {
     route("/api/v1/inference") {
         post("/stream") {
             try {
+                // 1. Authenticate client
+                if (!AuthGuard.validateUserAuth(call)) {
+                    call.respond(HttpStatusCode.Unauthorized, mapOf("error" to "Unauthorized: Invalid or missing client token"))
+                    return@post
+                }
+
+                // 2. Client integrity validation
+                val integrityToken = call.request.headers["X-Play-Integrity-Token"]
+                if (integrityToken != null && integrityToken.startsWith("INVALID")) {
+                    call.respond(HttpStatusCode.Forbidden, mapOf("error" to "Client integrity verification failed"))
+                    return@post
+                }
+
                 val request = call.receive<PromptRequest>()
-                // Collect tokens and respond or stream as NDJSON
+
+                // 3. Prompt size limit check (TM-04 defense)
+                if (request.prompt.length > 8192) {
+                    call.respond(HttpStatusCode.BadRequest, mapOf("error" to "Request rejected: Prompt length exceeds 8,192 character security limit."))
+                    return@post
+                }
+
+                // Collect tokens and respond
                 val tokens = meshService.streamPrompt(request).toList()
-                val jsonPayload = Json.encodeToString(tokens)
                 call.respond(HttpStatusCode.OK, tokens)
             } catch (e: Exception) {
                 call.respond(HttpStatusCode.BadRequest, mapOf("error" to (e.message ?: "Inference error")))

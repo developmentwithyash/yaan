@@ -33,7 +33,14 @@ val dataModule = module {
     }
 
     single<TaskRepository> { SqlDelightTaskRepository(database = get(), dispatchers = get()) }
-    single<NoteRepository> { SqlDelightNoteRepository(database = get(), dispatchers = get()) }
+    single<NoteRepository> {
+        SqlDelightNoteRepository(
+            database = get(),
+            dispatchers = get(),
+            cipher = get(),
+            keyManager = get()
+        )
+    }
     single<ReminderRepository> { SqlDelightReminderRepository(database = get(), dispatchers = get()) }
     single<BriefingRepository> { SqlDelightBriefingRepository(database = get(), dispatchers = get()) }
     single<MemoryRepository> { SqlDelightMemoryRepository(database = get(), dispatchers = get()) }

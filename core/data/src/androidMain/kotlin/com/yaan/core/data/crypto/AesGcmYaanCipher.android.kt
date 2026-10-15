@@ -10,7 +10,7 @@ import javax.crypto.spec.SecretKeySpec
 actual class AesGcmYaanCipher actual constructor() : YaanCipher {
     private val secureRandom = SecureRandom()
 
-    actual override suspend fun encrypt(plainText: String, key: ByteArray): YaanResult<ByteArray> {
+    actual override fun encryptSync(plainText: String, key: ByteArray): YaanResult<ByteArray> {
         return try {
             val iv = ByteArray(12)
             secureRandom.nextBytes(iv)
@@ -29,7 +29,7 @@ actual class AesGcmYaanCipher actual constructor() : YaanCipher {
         }
     }
 
-    actual override suspend fun decrypt(cipherText: ByteArray, key: ByteArray): YaanResult<String> {
+    actual override fun decryptSync(cipherText: ByteArray, key: ByteArray): YaanResult<String> {
         return try {
             if (cipherText.size < 12 + 16) {
                 return YaanResult.Failure(YaanError.CryptoError("Invalid ciphertext: payload too short"))
@@ -48,5 +48,13 @@ actual class AesGcmYaanCipher actual constructor() : YaanCipher {
         } catch (e: Exception) {
             YaanResult.Failure(YaanError.CryptoError("AES-GCM decryption failed: ${e.message}"))
         }
+    }
+
+    actual override suspend fun encrypt(plainText: String, key: ByteArray): YaanResult<ByteArray> {
+        return encryptSync(plainText, key)
+    }
+
+    actual override suspend fun decrypt(cipherText: ByteArray, key: ByteArray): YaanResult<String> {
+        return decryptSync(cipherText, key)
     }
 }
