@@ -405,6 +405,7 @@ Phase 5: Release Hardening & Founding 250 Commercial Launch
 | 2026-10-15 | Task `QA-03` (Autonomous Loop Cycle 03 - F-006 & F-003) | Autonomous QA System | Implemented OnboardingScreen with mandatory 18+ age declaration under DPDP Act 2023, system permissions rationale (Notifications & Microphone), wired into App.kt; implemented degraded state notification warning banner in PlanScreen; 87/87 tests green; Gate G10 PASSED. | ✅ Completed |
 | 2026-10-15 | Task `QA-04` (Autonomous Loop Cycle 04 - F-004) | Autonomous QA System | Implemented ActionProposalCard for Two-Phase Action Commitment; wired affirmative user confirmation to SQLite task creation and reversible Undo rollback; added Undo to HomeScreen conflict adjustment; 87/87 tests green; 0 lint errors; Critical User Journey 7 satisfied. | ✅ Completed |
 | 2026-10-15 | Task `QA-05` (Autonomous Loop Cycle 05 - F-005 & F-007) | Autonomous QA System | Implemented VaultExporter JSON archive serialization and YouScreen feedback banner (Critical User Journey 8); created Google Play Data Safety & Privacy Disclosures matrix in DATA_SAFETY.md; 88/88 tests green; 0 lint errors; Gates G2, G3, G4 PASSED. | ✅ Completed |
+| 2026-10-15 | Task `QA-06` (Physical iOS Device Run & Linker Fix) | Autonomous QA System | Added `-lsqlite3` linker flag to `iosApp.xcodeproj` resolving SQLiter undefined symbols; compiled native `composeApp.framework` for `arm64`; successfully built, signed, installed, and launched YAAN directly on physical **Yash’s iPhone** (`00008120-0016356C3CF8A01E`, iPhone 15). | ✅ Completed |
 
 
 
