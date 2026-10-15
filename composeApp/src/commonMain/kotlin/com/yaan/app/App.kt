@@ -14,9 +14,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.yaan.app.navigation.YaanDestination
@@ -28,6 +30,7 @@ import com.yaan.app.ui.screens.HomeScreen
 import com.yaan.app.ui.screens.LiveVoiceModal
 import com.yaan.app.ui.screens.NotesScreen
 import com.yaan.app.ui.screens.PlanScreen
+import com.yaan.app.ui.screens.VaultLockScreen
 import com.yaan.app.ui.screens.YouScreen
 import com.yaan.app.ui.theme.YaanTheme
 import com.yaan.core.domain.repository.BriefingRepository
@@ -35,7 +38,10 @@ import com.yaan.core.domain.repository.MemoryRepository
 import com.yaan.core.domain.repository.NoteRepository
 import com.yaan.core.domain.repository.ReminderRepository
 import com.yaan.core.domain.repository.TaskRepository
+import com.yaan.core.domain.repository.UserSessionRepository
 import com.yaan.core.domain.usecase.CaptureIntentUseCase
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import org.koin.compose.currentKoinScope
 
 @Composable
@@ -46,6 +52,7 @@ fun YaanApp(
     briefingRepository: BriefingRepository? = null,
     memoryRepository: MemoryRepository? = null,
     captureUseCase: CaptureIntentUseCase? = null,
+    sessionRepository: UserSessionRepository? = null,
 ) {
     val koin = currentKoinScope()
     val resolvedTaskRepo = taskRepository ?: koin.getOrNull<TaskRepository>()
@@ -54,6 +61,10 @@ fun YaanApp(
     val resolvedBriefingRepo = briefingRepository ?: koin.getOrNull<BriefingRepository>()
     val resolvedMemoryRepo = memoryRepository ?: koin.getOrNull<MemoryRepository>()
     val resolvedCaptureUseCase = captureUseCase ?: koin.getOrNull<CaptureIntentUseCase>()
+    val resolvedSessionRepo = sessionRepository ?: koin.getOrNull<UserSessionRepository>()
+
+    val coroutineScope = rememberCoroutineScope()
+    val userProfile by (resolvedSessionRepo?.observeProfile() ?: MutableStateFlow(null)).collectAsState(null)
 
     var isDarkTheme by remember { mutableStateOf(false) }
     var currentDestination by remember { mutableStateOf(YaanDestination.Home) }
@@ -123,7 +134,8 @@ fun YaanApp(
                                 onToggleDarkTheme = { isDarkTheme = !isDarkTheme },
                                 isDarkTheme = isDarkTheme,
                                 noteRepository = resolvedNoteRepo,
-                                taskRepository = resolvedTaskRepo
+                                taskRepository = resolvedTaskRepo,
+                                sessionRepository = resolvedSessionRepo
                             )
                         }
                     }
@@ -151,6 +163,23 @@ fun YaanApp(
                     isDarkTheme = isDarkTheme,
                     onToggleTheme = { isDarkTheme = !isDarkTheme },
                     onEnterApp = { isBrandScreenVisible = false }
+                )
+            }
+
+            // Biometric Vault Lock Gate (Zero-Knowledge Invariant)
+            val isVaultLocked = userProfile?.let { it.biometricLockEnabled && it.isVaultLocked } ?: false
+            AnimatedVisibility(
+                visible = isVaultLocked,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                VaultLockScreen(
+                    userDisplayName = userProfile?.displayName ?: "User",
+                    onUnlock = {
+                        coroutineScope.launch {
+                            resolvedSessionRepo?.unlockVault()
+                        }
+                    }
                 )
             }
         }

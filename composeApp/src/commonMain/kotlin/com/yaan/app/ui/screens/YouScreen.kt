@@ -66,13 +66,19 @@ import com.yaan.app.ui.components.YaanBrandLockup
 import com.yaan.app.ui.components.YaanCard
 import com.yaan.app.ui.theme.YaanTheme
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import com.yaan.app.ui.state.YouUiAction
 import com.yaan.app.ui.state.YouUiState
+import com.yaan.core.domain.model.AccountTier
+import com.yaan.core.domain.model.UserProfile
 import com.yaan.core.domain.privacy.CloudConsentManager
 import com.yaan.core.domain.repository.NoteRepository
 import com.yaan.core.domain.repository.TaskRepository
+import com.yaan.core.domain.repository.UserSessionRepository
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import org.koin.compose.currentKoinScope
 
 /**
  * Stateful Container Composable for YouScreen.
@@ -84,17 +90,54 @@ fun YouScreen(
     isDarkTheme: Boolean = false,
     noteRepository: NoteRepository? = null,
     taskRepository: TaskRepository? = null,
+    sessionRepository: UserSessionRepository? = null,
     consentManager: CloudConsentManager = CloudConsentManager(),
     modifier: Modifier = Modifier
 ) {
-    var uiState by remember(isDarkTheme) { mutableStateOf(YouUiState(isDarkTheme = isDarkTheme)) }
+    val koin = currentKoinScope()
+    val resolvedSessionRepo = sessionRepository ?: koin.getOrNull<UserSessionRepository>()
+    val fallbackProfile = remember {
+        UserProfile(
+            userId = "user_default",
+            displayName = "Elena Rostova",
+            email = "elena.rostova@executive.yaan.ai",
+            tier = AccountTier.PRO,
+            authToken = "token_default",
+            biometricLockEnabled = true,
+            isVaultLocked = false,
+            pairedDevicesCount = 2,
+            passkeyRegistered = true
+        )
+    }
+    val profileState by (resolvedSessionRepo?.observeProfile() ?: MutableStateFlow(fallbackProfile)).collectAsState(
+        initial = resolvedSessionRepo?.getCurrentProfile() ?: fallbackProfile
+    )
+    var isAccountModalOpen by remember { mutableStateOf(false) }
+
+    var uiState by remember(isDarkTheme) {
+        mutableStateOf(
+            YouUiState(
+                isDarkTheme = isDarkTheme,
+                userDisplayName = profileState.displayName,
+                userEmail = profileState.email ?: "On-Device Local Vault",
+                accountTier = profileState.tier.name,
+                pairedDevicesCount = profileState.pairedDevicesCount,
+                biometricLockEnabled = profileState.biometricLockEnabled
+            )
+        )
+    }
     val coroutineScope = rememberCoroutineScope()
 
-    LaunchedEffect(noteRepository, taskRepository) {
+    LaunchedEffect(profileState, noteRepository, taskRepository) {
         val notesCount = noteRepository?.getNotes()?.getOrDefault(emptyList())?.size ?: 3
         val tasksCount = taskRepository?.getTasks()?.getOrDefault(emptyList())?.size ?: 3
         val total = notesCount + tasksCount
         uiState = uiState.copy(
+            userDisplayName = profileState.displayName,
+            userEmail = profileState.email ?: "On-Device Local Vault",
+            accountTier = profileState.tier.name,
+            pairedDevicesCount = profileState.pairedDevicesCount,
+            biometricLockEnabled = profileState.biometricLockEnabled,
             vaultItemsCount = total,
             vaultSizeBytes = "${(total * 42.5).toInt()} KB (Encrypted)"
         )
@@ -131,10 +174,41 @@ fun YouScreen(
                         )
                     }
                 }
+                YouUiAction.OpenAccountModal -> {
+                    isAccountModalOpen = true
+                }
             }
         },
         modifier = modifier
     )
+
+    if (isAccountModalOpen) {
+        UserAccountModal(
+            profile = profileState,
+            onDismiss = { isAccountModalOpen = false },
+            onToggleBiometric = { enabled ->
+                coroutineScope.launch {
+                    resolvedSessionRepo?.setBiometricLock(enabled)
+                }
+            },
+            onPairDevice = {
+                coroutineScope.launch {
+                    resolvedSessionRepo?.pairDeviceWithQr("DEVICE-LINK-${(1000..9999).random()}")
+                }
+            },
+            onRegisterPasskey = {
+                coroutineScope.launch {
+                    resolvedSessionRepo?.registerPasskey()
+                }
+            },
+            onLogout = {
+                coroutineScope.launch {
+                    resolvedSessionRepo?.logoutAndCryptoShred()
+                    isAccountModalOpen = false
+                }
+            }
+        )
+    }
 }
 
 /**
@@ -193,8 +267,14 @@ fun YouScreenContent(
                                     .border(1.dp, YaanTheme.extendedColors.delicateBorder, CircleShape),
                                 contentAlignment = Alignment.Center
                             ) {
+                                val initials = state.userDisplayName
+                                    .split(" ")
+                                    .mapNotNull { it.firstOrNull()?.uppercaseChar()?.toString() }
+                                    .joinToString("")
+                                    .take(2)
+                                    .ifEmpty { "YA" }
                                 Text(
-                                    text = "ER",
+                                    text = initials,
                                     style = MaterialTheme.typography.titleMedium.copy(
                                         fontWeight = FontWeight.Bold,
                                         color = MaterialTheme.colorScheme.primary,
@@ -215,10 +295,12 @@ fun YouScreenContent(
 
                         Spacer(modifier = Modifier.width(12.dp))
 
-                        Column {
+                        Column(
+                            modifier = Modifier.clickable { onAction(YouUiAction.OpenAccountModal) }
+                        ) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
-                                    text = "Elena Rostova",
+                                    text = state.userDisplayName,
                                     style = MaterialTheme.typography.titleMedium.copy(
                                         fontWeight = FontWeight.Bold,
                                         color = MaterialTheme.colorScheme.onSurface,
@@ -235,7 +317,7 @@ fun YouScreenContent(
                             }
                             Spacer(modifier = Modifier.height(2.dp))
                             Text(
-                                text = "Senior Product Architect",
+                                text = "${state.userEmail} • ${state.accountTier}",
                                 style = MaterialTheme.typography.bodySmall.copy(
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     fontSize = 13.sp
@@ -269,7 +351,7 @@ fun YouScreenContent(
                             .clip(RoundedCornerShape(8.dp))
                             .background(YaanTheme.extendedColors.surfaceContainerLow)
                             .border(1.dp, YaanTheme.extendedColors.delicateBorder, RoundedCornerShape(8.dp))
-                            .clickable { },
+                            .clickable { onAction(YouUiAction.OpenAccountModal) },
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(

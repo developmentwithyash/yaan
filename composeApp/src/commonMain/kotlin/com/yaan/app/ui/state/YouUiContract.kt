@@ -5,6 +5,11 @@ package com.yaan.app.ui.state
  */
 data class YouUiState(
     val isDarkTheme: Boolean = false,
+    val userDisplayName: String = "Elena Rostova",
+    val userEmail: String = "elena.rostova@executive.yaan.ai",
+    val accountTier: String = "PRO",
+    val pairedDevicesCount: Int = 2,
+    val biometricLockEnabled: Boolean = true,
     val notificationHealth: String = "100% SLA Active",
     val batteryHealthScore: String = "Optimal (0 wakelock leaks)",
     val vaultItemsCount: Int = 42,
@@ -21,4 +26,5 @@ sealed interface YouUiAction {
     data object ToggleSnapshotArmed : YouUiAction
     data object ExportVault : YouUiAction
     data object PurgeVault : YouUiAction
+    data object OpenAccountModal : YouUiAction
 }

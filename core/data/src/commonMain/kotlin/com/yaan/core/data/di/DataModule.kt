@@ -5,6 +5,7 @@ import com.yaan.core.data.crypto.YaanCipher
 import com.yaan.core.data.db.DatabaseDriverFactory
 import com.yaan.core.data.db.VaultDatabaseInitializer
 import com.yaan.core.data.db.YaanDatabase
+import com.yaan.core.data.repository.DefaultUserSessionRepository
 import com.yaan.core.data.repository.InMemorySyncRepository
 import com.yaan.core.data.repository.SqlDelightBriefingRepository
 import com.yaan.core.data.repository.SqlDelightMemoryRepository
@@ -17,6 +18,7 @@ import com.yaan.core.domain.repository.NoteRepository
 import com.yaan.core.domain.repository.ReminderRepository
 import com.yaan.core.domain.repository.SyncRepository
 import com.yaan.core.domain.repository.TaskRepository
+import com.yaan.core.domain.repository.UserSessionRepository
 import org.koin.dsl.module
 
 val dataModule = module {
@@ -45,4 +47,5 @@ val dataModule = module {
     single<BriefingRepository> { SqlDelightBriefingRepository(database = get(), dispatchers = get()) }
     single<MemoryRepository> { SqlDelightMemoryRepository(database = get(), dispatchers = get()) }
     single<SyncRepository> { InMemorySyncRepository() }
+    single<UserSessionRepository> { DefaultUserSessionRepository(keyManager = get(), dispatchers = get()) }
 }
