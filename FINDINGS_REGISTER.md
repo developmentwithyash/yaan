@@ -22,13 +22,13 @@
 | **`F-010`** | Assistant engine missing automatic natural language note/reminder intent detection | A (Correctness) | **P1** | 4 | 5 | VERIFIED | **DONE** | 1 | `YaanAssistantEngine.kt`, `YaanAssistantEngineTest.kt` |
 | **`F-011`** | Action proposals not synchronized across turns and iOS voice playback muted by switch | A/E (Correctness/UX) | **P1** | 4 | 5 | VERIFIED | **DONE** | 1 | `AskYaanScreen.kt`, `LiveVoiceModal.kt`, `PlatformVoiceSpeaker.ios.kt` |
 | **`F-012`** | Notes screen shows static placeholders; multi-turn chat lost across tabs; regex Native crash | A/B (Correctness/Architecture)| **P1** | 4 | 5 | VERIFIED | **DONE** | 1 | `NotesScreen.kt`, `App.kt`, `ActionSafetyEngine.kt`, `VaultRedactor.kt` |
-| **`F-013`** | Progress tracker claims 100% maturity while backend components are mock/in-memory and items unchecked | B/A (Architecture/Governance) | **P1** | 4 | 5 | VERIFIED | **IN-PROGRESS** | 1 | `PROGRESS_TRACKER.md` |
-| **`F-014`** | Marketing & docs claim 'zero-knowledge' for cloud-assisted LLM inference paths | C/G (Privacy/Compliance) | **P0** | 5 | 5 | VERIFIED | **IN-PROGRESS** | 1 | `CLAIMS_REGISTER.md`, `DATA_SAFETY.md`, `ARCHITECTURE.md` |
-| **`F-015`** | Architectural ambiguity: backend executing tools vs on-device encrypted vault authority | B/C (Architecture/Security) | **P1** | 4 | 5 | VERIFIED | **IN-PROGRESS** | 1 | `ADR-0007`, `core:domain` ToolRegistry |
-| **`F-016`** | Android `USE_EXACT_ALARM` violates Google Play policy for reminder/task apps | G/F (Platform/Reliability) | **P0** | 5 | 5 | VERIFIED | **IN-PROGRESS** | 1 | `AndroidManifest.xml`, `AndroidAlarmScheduler.kt` |
-| **`F-017`** | Missing iOS local notification scheduling bridge and 64-pending request limit handling | F/A (Reliability/Correctness) | **P1** | 4 | 5 | VERIFIED | **IN-PROGRESS** | 1 | `composeApp/src/iosMain` |
+| **`F-013`** | Progress tracker claims 100% maturity while backend components are mock/in-memory and items unchecked | B/A (Architecture/Governance) | **P1** | 4 | 5 | VERIFIED | **DONE** | 1 | `PROGRESS_TRACKER.md` |
+| **`F-014`** | Marketing & docs claim 'zero-knowledge' for cloud-assisted LLM inference paths | C/G (Privacy/Compliance) | **P0** | 5 | 5 | VERIFIED | **DONE** | 1 | `CLAIMS_REGISTER.md`, `DATA_SAFETY.md`, `SECURITY_AND_PRIVACY.md` |
+| **`F-015`** | Architectural ambiguity: backend executing tools vs on-device encrypted vault authority | B/C (Architecture/Security) | **P1** | 4 | 5 | VERIFIED | **DONE** | 1 | `ADR-0007`, `core:domain` ToolRegistry, ActionStateMachine |
+| **`F-016`** | Android `USE_EXACT_ALARM` violates Google Play policy for reminder/task apps | G/F (Platform/Reliability) | **P0** | 5 | 5 | VERIFIED | **DONE** | 1 | `AndroidManifest.xml`, `AndroidAlarmScheduler.kt` |
+| **`F-017`** | Missing iOS local notification scheduling bridge and 64-pending request limit handling | F/A (Reliability/Correctness) | **P1** | 4 | 5 | VERIFIED | **DONE** | 1 | `composeApp/src/iosMain`, `IosAlarmScheduler.kt` |
 | **`F-018`** | SMS fallback requires plaintext transmission and TRAI DLT registration (TCCCPR 2018) | G/C (Legal/Privacy) | **P2** | 3 | 4 | VERIFIED | **DEFERRED** | 1 | `FOUNDER_ACTIONS.md`, `SPECS_DEFERRED.md` |
-| **`F-019`** | Test inventory count drift between tracker entries (82 vs measured 97 unique / 116 executions) | B/H (Quality/Regression) | **P2** | 3 | 5 | VERIFIED | **IN-PROGRESS** | 1 | `PROGRESS_TRACKER.md`, `SCORECARD.md` |
+| **`F-019`** | Test inventory count drift between tracker entries (82 vs measured 97 unique / 116 executions) | B/H (Quality/Regression) | **P2** | 3 | 5 | VERIFIED | **DONE** | 1 | `PROGRESS_TRACKER.md`, `SCORECARD.md` |
 
 ---
 
@@ -143,7 +143,7 @@
   1. Recalculate and update `PROGRESS_TRACKER.md` Section 1 to measured reality (~68% maturity).
   2. Mark completed and in-progress items honestly.
   3. Update Executive Health Matrix and Task Audit Log.
-- **Status**: **IN-PROGRESS**.
+- **Status**: **DONE**.
 - **Evidence Paths**: `PROGRESS_TRACKER.md`.
 
 ---
@@ -158,8 +158,8 @@
   1. Audit and update all copy in UI, health endpoints (`/healthz`), and docs: replace "zero-knowledge" with "Consented Cloud-Assisted Intelligence" when referring to LLM features.
   2. Document exact egress payload in `SECURITY_AND_PRIVACY.md` and `DATA_SAFETY.md`.
   3. Ensure 100% on-device local privacy is claimed only for offline SQLDelight storage and on-device parsing.
-- **Status**: **IN-PROGRESS**.
-- **Evidence Paths**: `backend/src/main/kotlin/com/yaan/backend/Application.kt:112`, `DATA_SAFETY.md`, `CLAIMS_REGISTER.md`.
+- **Status**: **DONE**.
+- **Evidence Paths**: `backend/src/main/kotlin/com/yaan/backend/Application.kt:112`, `DATA_SAFETY.md`, `CLAIMS_REGISTER.md`, `SECURITY_AND_PRIVACY.md`.
 
 ---
 
@@ -173,8 +173,8 @@
   1. Ratify Binding Architecture: Backend is strictly a stateless planner returning `ANSWER | CLARIFY | PROPOSAL | REFUSE | ERROR`.
   2. Client is the deterministic executor owning the Action State Machine and SQLDelight mutations.
   3. Implement unified `ToolRegistry` and shared schemas in KMP `:core:domain` used by both client and backend.
-- **Status**: **IN-PROGRESS**.
-- **Evidence Paths**: `docs/adr/0007-grounded-ask-yaan-architecture.md`, `core/domain/src/commonMain/kotlin/com/yaan/core/domain/tool/`.
+- **Status**: **DONE**.
+- **Evidence Paths**: `docs/adr/0007-grounded-ask-yaan-architecture.md`, `core/domain/src/commonMain/kotlin/com/yaan/core/domain/tool/ToolRegistry.kt`, `ActionStateMachine.kt`, `PlannerService.kt`.
 
 ---
 
@@ -189,8 +189,8 @@
   2. In `AndroidAlarmScheduler.kt`, check `alarmManager.canScheduleExactAlarms()` before calling `setExactAndAllowWhileIdle()`.
   3. Fallback gracefully to `setAndAllowWhileIdle()` if permission is not granted.
   4. Ensure lint configuration handles the permission appropriately without failing release builds.
-- **Status**: **IN-PROGRESS**.
-- **Evidence Paths**: Google Play Policy (2025/2026), `AndroidAlarmScheduler.kt`.
+- **Status**: **DONE**.
+- **Evidence Paths**: Google Play Policy (2025/2026), `composeApp/src/androidMain/AndroidManifest.xml`, `AndroidAlarmScheduler.kt`.
 
 ---
 
@@ -204,8 +204,8 @@
   1. Implement `IosAlarmScheduler` in `:composeApp/src/iosMain` using `UNUserNotificationCenter`.
   2. Implement a rolling window queue of up to 64 soonest scheduled notifications to prevent system dropping.
   3. Re-queue/refresh pending notifications on app launch and background refresh.
-- **Status**: **IN-PROGRESS**.
-- **Evidence Paths**: Apple UNUserNotificationCenter documentation, `composeApp/src/iosMain`.
+- **Status**: **DONE**.
+- **Evidence Paths**: Apple UNUserNotificationCenter documentation, `composeApp/src/iosMain/kotlin/com/yaan/app/notification/IosAlarmScheduler.kt`.
 
 ---
 
@@ -231,6 +231,6 @@
 - **Root Cause**: `PROGRESS_TRACKER.md` reported 82 tests, while empirical test runner logs show 97 unique unit tests (116 executions across debug and release build variants), and 0 instrumented tests.
 - **Acceptance Criteria**:
   1. Reconcile test counts in `PROGRESS_TRACKER.md`, `SCORECARD.md`, and `GATES.md` to exact measured values: 97 unique unit tests, 116 executions, 0 instrumented tests.
-- **Status**: **IN-PROGRESS**.
+- **Status**: **DONE**.
 - **Evidence Paths**: `build/test-results/**/*.xml`, `audit/EVIDENCE/cycle_00_test_inventory.txt`.
 

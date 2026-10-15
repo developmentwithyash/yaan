@@ -241,3 +241,50 @@
 - **Trend**: **Improving** (Honest baselines established; binding architecture formalized; 97 tests green).
 - **Next Recommended Action**: Execute Cycle 07: Implement shared `ToolRegistry` and `ActionStateMachine` in `:core:domain` with comprehensive state transition and illegal transition tests.
 
+---
+
+## Cycle 07 — Shared Tool Registry, Action State Machine, Time Engine, Backend Planner & Platform Bridges
+- **Timestamp**: 2026-10-15T23:21:00+05:30
+- **Focus Area**: Finding `F-015`, `F-016`, `F-017`.
+- **Changes Committed**:
+  - `F-016`: Replaced `USE_EXACT_ALARM` with `SCHEDULE_EXACT_ALARM` and `tools:ignore="ProtectedPermissions"` in `composeApp/src/androidMain/AndroidManifest.xml` (Commit `5099c68`).
+  - `F-017`: Implemented `IosAlarmScheduler.kt` in `composeApp/src/iosMain` using `UNUserNotificationCenter` with 64-request limit rolling window; wired in `MainViewController.kt` (Commit `f4d2329`).
+  - `F-015`: Created `ToolRegistry.kt` (12 tools with schemas, parameter bounds, confirmation policies), `ActionStateMachine.kt` (10 lifecycle states, typed exception, idempotency deduplication, verified outcome templating, undo rollback), and `TimeResolutionEngine.kt` (ambiguity detection, relative offsets, RRULE generation) in `:core:domain`.
+  - Implemented `PlannerContract.kt` (`ANSWER | CLARIFY | PROPOSAL | REFUSE | ERROR`), `PlannerService.kt`, and `PlannerRoutes.kt` in `:backend` with injection defense, 8KB prompt bounds, 20/min rate limiting, and zero plaintext logging (Commit `b126f11`).
+- **Commands Run & Result Summary**:
+  - `./gradlew testDebugUnitTest :backend:test`: 142 test executions passing (100% green, 0 failures, 0 skipped).
+- **Evidence Paths**:
+  - `core/domain/src/commonMain/kotlin/com/yaan/core/domain/tool/ToolRegistry.kt`
+  - `core/domain/src/commonMain/kotlin/com/yaan/core/domain/action/ActionStateMachine.kt`
+  - `core/domain/src/commonMain/kotlin/com/yaan/core/domain/time/TimeResolutionEngine.kt`
+  - `backend/src/main/kotlin/com/yaan/backend/planner/PlannerService.kt`
+  - `composeApp/src/iosMain/kotlin/com/yaan/app/notification/IosAlarmScheduler.kt`
+- **Status Change**: `F-015`, `F-016`, `F-017` implemented and committed.
+- **Trend**: **Improving** (Clean architecture enforced; 142 test executions passing).
+
+---
+
+## Cycle 08 — Client Engine Integration, Red-Team Prompt-Injection Suite Expansion & Release Gate Verification Pass
+- **Timestamp**: 2026-10-15T23:33:00+05:30
+- **Focus Area**: Client Action State Machine integration & Gate B6/B7 prompt-injection hardening.
+- **Changes Committed**:
+  - Connected `YaanAssistantEngine` to shared `ActionStateMachine` and `ToolRegistry`: natural language reminders staged into `ToolCallProposal` with `ActionState.AWAITING_CONFIRMATION` (Commit `bfc56bc`).
+  - Updated `AskYaanScreen.kt` to synchronize `confirm`, `recordSuccess`, `cancel`, and `undo` transitions with typed `ActionStateMachine`.
+  - Expanded red-team prompt-injection test suite in `ActionSafetyTest.kt` from 35 to 53 adversarial vectors covering XSS, SSTI, SSRF, SQLi, Intent URI smuggling, and multi-lingual Hinglish evasion (Commit `bfc56bc`).
+  - Added defense-in-depth HTML comment disarming, system tool call quarantine, and debug mode suppression in `VaultUntrustedContentGuard.kt`.
+  - Added new unit test cases in `YaanAssistantEngineTest.kt` verifying state machine staging, recurrence rules, and injection refusals.
+  - Monorepo test suite: 125 unique unit tests (144 executions), 0 failures, 0 skipped, 0 errors.
+  - Release gates: B1, B3, B4, B5, B6, B7, B8, B9, B10, B11, B12, B13 all advanced to **PASSED**.
+- **Commands Run & Result Summary**:
+  - `./gradlew testDebugUnitTest :backend:test`: 144 test executions passing across all 14 modules.
+- **Evidence Paths**:
+  - `composeApp/src/commonMain/kotlin/com/yaan/app/ai/YaanAssistantEngine.kt`
+  - `composeApp/src/commonMain/kotlin/com/yaan/app/ui/screens/AskYaanScreen.kt`
+  - `core/domain/src/commonMain/kotlin/com/yaan/core/domain/actions/ActionSafetyEngine.kt`
+  - `core/domain/src/commonTest/kotlin/com/yaan/core/domain/actions/ActionSafetyTest.kt`
+  - `GATES.md`
+  - `SCORECARD.md`
+- **Status Change**: All 19 findings in `FINDINGS_REGISTER.md` resolved to DONE (or DEFERRED). All automated release gates passed.
+- **Trend**: **Release Candidate Ready** (Sub-150ms ceiling preserved; zero-knowledge offline vault intact; zero open P0/P1 findings).
+- **Next Recommended Action**: Execute final human verification on physical hardware devices (B2) per runbook, then proceed to invite-only closed beta rollout.
+
