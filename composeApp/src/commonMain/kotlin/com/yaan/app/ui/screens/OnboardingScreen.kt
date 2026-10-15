@@ -17,9 +17,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -31,6 +34,7 @@ import androidx.compose.material.icons.outlined.Shield
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -45,7 +49,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -70,11 +79,19 @@ fun OnboardingScreen(
     var is18PlusConfirmed by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     val scrollState = rememberScrollState()
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     Box(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surface)
+            .pointerInput(Unit) {
+                detectTapGestures(onTap = {
+                    focusManager.clearFocus(force = true)
+                    keyboardController?.hide()
+                })
+            }
             .padding(horizontal = 24.dp),
         contentAlignment = Alignment.TopCenter
     ) {
@@ -82,6 +99,12 @@ fun OnboardingScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(scrollState)
+                .pointerInput(Unit) {
+                    detectTapGestures(onTap = {
+                        focusManager.clearFocus(force = true)
+                        keyboardController?.hide()
+                    })
+                }
                 .padding(vertical = 36.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
@@ -185,6 +208,32 @@ fun OnboardingScreen(
                 onValueChange = { displayName = it },
                 label = { Text("Your Display Name") },
                 singleLine = true,
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Done,
+                    keyboardType = KeyboardType.Text
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        focusManager.clearFocus(force = true)
+                        keyboardController?.hide()
+                    }
+                ),
+                trailingIcon = {
+                    if (displayName.isNotBlank()) {
+                        IconButton(
+                            onClick = {
+                                focusManager.clearFocus(force = true)
+                                keyboardController?.hide()
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Check,
+                                contentDescription = "Done",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
+                },
                 modifier = Modifier.fillMaxWidth(),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = MaterialTheme.colorScheme.primary,
@@ -206,7 +255,11 @@ fun OnboardingScreen(
                 else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { is18PlusConfirmed = !is18PlusConfirmed }
+                    .clickable {
+                        focusManager.clearFocus(force = true)
+                        keyboardController?.hide()
+                        is18PlusConfirmed = !is18PlusConfirmed
+                    }
             ) {
                 Row(
                     modifier = Modifier.padding(12.dp),
@@ -214,7 +267,11 @@ fun OnboardingScreen(
                 ) {
                     Checkbox(
                         checked = is18PlusConfirmed,
-                        onCheckedChange = { is18PlusConfirmed = it },
+                        onCheckedChange = {
+                            focusManager.clearFocus(force = true)
+                            keyboardController?.hide()
+                            is18PlusConfirmed = it
+                        },
                         colors = CheckboxDefaults.colors(
                             checkedColor = MaterialTheme.colorScheme.primary
                         )
@@ -268,6 +325,8 @@ fun OnboardingScreen(
             YaanPrimaryButton(
                 text = "Initialize Vault & Enter",
                 onClick = {
+                    focusManager.clearFocus(force = true)
+                    keyboardController?.hide()
                     if (!is18PlusConfirmed) {
                         errorMessage = "YAAN Beta requires users to confirm they are 18 years or older under DPDP Act 2023."
                     } else {

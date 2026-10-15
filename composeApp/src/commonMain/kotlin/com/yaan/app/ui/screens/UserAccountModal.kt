@@ -42,6 +42,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
@@ -54,7 +57,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
@@ -91,6 +99,8 @@ fun UserAccountModal(
     var ageConfirmed by remember { mutableStateOf(false) }
     var authError by remember { mutableStateOf<String?>(null) }
     val scrollState = rememberScrollState()
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     Dialog(onDismissRequest = onDismiss) {
         Surface(
@@ -103,6 +113,12 @@ fun UserAccountModal(
                 modifier = Modifier
                     .fillMaxWidth()
                     .verticalScroll(scrollState)
+                    .pointerInput(Unit) {
+                        detectTapGestures(onTap = {
+                            focusManager.clearFocus(force = true)
+                            keyboardController?.hide()
+                        })
+                    }
                     .padding(20.dp)
             ) {
                 // Header
@@ -428,6 +444,10 @@ fun UserAccountModal(
                             label = { Text("Display Name") },
                             leadingIcon = { Icon(Icons.Outlined.Person, contentDescription = null) },
                             singleLine = true,
+                            keyboardOptions = KeyboardOptions(
+                                imeAction = ImeAction.Next,
+                                keyboardType = KeyboardType.Text
+                            ),
                             modifier = Modifier.fillMaxWidth(),
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = MaterialTheme.colorScheme.primary,
@@ -446,6 +466,10 @@ fun UserAccountModal(
                         label = { Text("Email Address") },
                         leadingIcon = { Icon(Icons.Outlined.Mail, contentDescription = null) },
                         singleLine = true,
+                        keyboardOptions = KeyboardOptions(
+                            imeAction = ImeAction.Next,
+                            keyboardType = KeyboardType.Email
+                        ),
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = MaterialTheme.colorScheme.primary,
@@ -473,6 +497,16 @@ fun UserAccountModal(
                         },
                         visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                         singleLine = true,
+                        keyboardOptions = KeyboardOptions(
+                            imeAction = ImeAction.Done,
+                            keyboardType = KeyboardType.Password
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                focusManager.clearFocus(force = true)
+                                keyboardController?.hide()
+                            }
+                        ),
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = MaterialTheme.colorScheme.primary,
@@ -488,7 +522,11 @@ fun UserAccountModal(
                         ) {
                             Checkbox(
                                 checked = ageConfirmed,
-                                onCheckedChange = { ageConfirmed = it },
+                                onCheckedChange = {
+                                    focusManager.clearFocus(force = true)
+                                    keyboardController?.hide()
+                                    ageConfirmed = it
+                                },
                                 colors = CheckboxDefaults.colors(checkedColor = MaterialTheme.colorScheme.primary)
                             )
                             Spacer(modifier = Modifier.width(6.dp))
@@ -514,6 +552,8 @@ fun UserAccountModal(
                     YaanPrimaryButton(
                         text = if (isSignUpMode) "Sign Up with Supabase" else "Sign In with Supabase",
                         onClick = {
+                            focusManager.clearFocus(force = true)
+                            keyboardController?.hide()
                             if (!emailInput.contains("@") || emailInput.trim().isEmpty()) {
                                 authError = "Please enter a valid email."
                                 return@YaanPrimaryButton
