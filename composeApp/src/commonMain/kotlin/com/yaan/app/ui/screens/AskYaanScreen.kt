@@ -65,6 +65,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.yaan.app.ui.components.ActionProposalCard
 import com.yaan.app.ui.components.YaanCard
 import com.yaan.app.ui.components.YaanChip
 import com.yaan.app.ui.components.YaanPrimaryButton
@@ -126,8 +127,33 @@ fun AskYaanScreen(
                             )
                         }
                         uiState = uiState.copy(
-                            proposedAction = uiState.proposedAction?.copy(isConfirmed = true),
+                            proposedAction = uiState.proposedAction?.copy(
+                                isConfirmed = true,
+                                isDismissed = false,
+                                isUndone = false
+                            ),
                             responseMarkdown = "Action confirmed and committed to local vault. State updated."
+                        )
+                    }
+                }
+                AskYaanUiAction.DismissActionProposal -> {
+                    uiState = uiState.copy(
+                        proposedAction = uiState.proposedAction?.copy(isDismissed = true),
+                        responseMarkdown = "Action proposal dismissed. No vault state was modified."
+                    )
+                }
+                AskYaanUiAction.UndoActionProposal -> {
+                    coroutineScope.launch {
+                        val prop = uiState.proposedAction
+                        if (prop != null && prop.isConfirmed && taskRepository != null) {
+                            taskRepository.deleteTask("task_committed_${prop.id}")
+                        }
+                        uiState = uiState.copy(
+                            proposedAction = uiState.proposedAction?.copy(
+                                isUndone = true,
+                                isConfirmed = false
+                            ),
+                            responseMarkdown = "Action reverted. Vault task removed and restored to prior state."
                         )
                     }
                 }
@@ -204,8 +230,6 @@ fun AskYaanScreenContent(
     onAction: (AskYaanUiAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val actionScheduled = state.proposedAction?.isConfirmed == true
-
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -587,117 +611,14 @@ fun AskYaanScreenContent(
                         }
                     }
 
-                    // Proposed Executive Action Card
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(YaanTheme.extendedColors.sandSurface)
-                            .border(1.dp, YaanTheme.extendedColors.delicateBorder, RoundedCornerShape(12.dp))
-                            .padding(12.dp),
-                        verticalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(6.dp)
-                                        .clip(CircleShape)
-                                        .background(YaanTheme.extendedColors.bronzeAccent)
-                                )
-                                Spacer(modifier = Modifier.width(6.dp))
-                                Text(
-                                    text = "Proposed Executive Action",
-                                    style = MaterialTheme.typography.labelMedium.copy(
-                                        fontWeight = FontWeight.SemiBold,
-                                        color = MaterialTheme.colorScheme.onSurface
-                                    )
-                                )
-                            }
-                            Text(
-                                text = if (actionScheduled) "Scheduled" else "Ready for Confirmation",
-                                style = MaterialTheme.typography.labelSmall.copy(
-                                    fontWeight = FontWeight.Medium,
-                                    color = if (actionScheduled) YaanTheme.extendedColors.statusSuccess else YaanTheme.extendedColors.bronzeAccent
-                                )
-                            )
-                        }
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .clip(RoundedCornerShape(8.dp))
-                                    .background(MaterialTheme.colorScheme.surface)
-                                    .padding(8.dp)
-                            ) {
-                                Column {
-                                    Text(
-                                        text = "Target Recipient",
-                                        style = MaterialTheme.typography.labelSmall.copy(
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                            fontSize = 10.sp
-                                        )
-                                    )
-                                    Text(
-                                        text = "David Vance (VP Ops)",
-                                        style = MaterialTheme.typography.labelMedium.copy(
-                                            fontWeight = FontWeight.SemiBold,
-                                            color = MaterialTheme.colorScheme.onSurface
-                                        )
-                                    )
-                                }
-                            }
-
-                            Box(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .clip(RoundedCornerShape(8.dp))
-                                    .background(MaterialTheme.colorScheme.surface)
-                                    .padding(8.dp)
-                            ) {
-                                Column {
-                                    Text(
-                                        text = "Scheduled Trigger",
-                                        style = MaterialTheme.typography.labelSmall.copy(
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                            fontSize = 10.sp
-                                        )
-                                    )
-                                    Text(
-                                        text = "Today at 4:30 PM",
-                                        style = MaterialTheme.typography.labelMedium.copy(
-                                            fontWeight = FontWeight.SemiBold,
-                                            color = MaterialTheme.colorScheme.onSurface
-                                        )
-                                    )
-                                }
-                            }
-                        }
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            YaanPrimaryButton(
-                                text = if (actionScheduled) "Scheduled (4:30 PM)" else "Schedule & Send",
-                                leadingIcon = if (actionScheduled) Icons.Default.CheckCircle else Icons.Default.AlarmAdd,
-                                onClick = { onAction(AskYaanUiAction.ConfirmActionProposal) },
-                                modifier = Modifier.weight(1f)
-                            )
-                            YaanSecondaryButton(
-                                text = "Modify",
-                                leadingIcon = Icons.Default.Tune,
-                                onClick = {}
-                            )
-                        }
+                    // Interactive Action Proposal Card (F-004, CUJ 7)
+                    state.proposedAction?.let { proposal ->
+                        ActionProposalCard(
+                            proposal = proposal,
+                            onConfirm = { onAction(AskYaanUiAction.ConfirmActionProposal) },
+                            onDismiss = { onAction(AskYaanUiAction.DismissActionProposal) },
+                            onUndo = { onAction(AskYaanUiAction.UndoActionProposal) }
+                        )
                     }
 
                     // Feedback Footer

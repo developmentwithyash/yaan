@@ -8,7 +8,9 @@ data class ProposedActionUi(
     val title: String,
     val subtitle: String,
     val actionType: String = "CALENDAR_RESCHEDULE",
-    val isConfirmed: Boolean = false
+    val isConfirmed: Boolean = false,
+    val isDismissed: Boolean = false,
+    val isUndone: Boolean = false
 )
 
 /**
@@ -37,6 +39,8 @@ sealed interface AskYaanUiAction {
     data class SwitchMode(val mode: String) : AskYaanUiAction
     data object ToggleThoughtProcess : AskYaanUiAction
     data object ConfirmActionProposal : AskYaanUiAction
+    data object DismissActionProposal : AskYaanUiAction
+    data object UndoActionProposal : AskYaanUiAction
     data object SubmitQuery : AskYaanUiAction
     data object LaunchVoice : AskYaanUiAction
 }

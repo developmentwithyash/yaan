@@ -12,8 +12,8 @@
 | Gate | Description | Current State | Evidence & Verification Path | Blocking Findings |
 |:---:|---|:---:|---|:---:|
 | **G1** | Clean build from clean checkout; full test suite green with recorded counts; 0 lint errors | 🟢 **PASSED** | Unit tests pass (87/87); `composeApp:lintDebug` passes with 0 errors, 0 warnings (`cycle_01_lint_clean.txt`) | None (`F-001` resolved) |
-| **G2** | Every critical journey has a passing automated test and a manual device check | 🟡 **OPEN** | Journeys 1, 2, 3, 4, 5, 6 working; Journeys 7, 8 in progress | `F-004`, `F-005` |
-| **G3** | No open P0 or P1 findings (per RELEASE POLICY) | 🟡 **OPEN** | 0 open P0s; 2 open P1s (`F-004`, `F-007`); 1 open P2 (`F-005`) | `F-004`, `F-007` |
+| **G2** | Every critical journey has a passing automated test and a manual device check | 🟡 **OPEN** | Journeys 1, 2, 3, 4, 5, 6, 7 working; Journey 8 in progress | `F-005` |
+| **G3** | No open P0 or P1 findings (per RELEASE POLICY) | 🟡 **OPEN** | 0 open P0s; 1 open P1 (`F-007`); 1 open P2 (`F-005`) | `F-007` |
 | **G4** | Security: threat model written, secrets scan clean, dependency scan reviewed, network inventory matches privacy text | 🟡 **OPEN** | `THREAT_MODEL.md` exists; AES-GCM-256 verified; need network egress audit | `F-007` |
 | **G5** | Data integrity: migrations tested with data, upgrade preserves data, process-death restore tested | 🟡 **OPEN** | SQLite persistence verified (`SqlDelightRepositoryTest`); need migration tests | Needs test |
 | **G6** | Reliability: failure-injection documented; crash reporting verified; rollback/kill-switch documented | 🟢 **PASSED** | Offline SQLite active; AlarmManager exact delivery & BootCompletedReceiver verified | None (`F-002` resolved) |

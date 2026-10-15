@@ -68,6 +68,7 @@ sealed interface HomeUiAction {
     data object DismissBriefing : HomeUiAction
     data object DismissConflict : HomeUiAction
     data object AdjustConflict : HomeUiAction
+    data object UndoConflictAdjustment : HomeUiAction
     data class SubmitQuickCapture(val input: String) : HomeUiAction
     data object ClearFeedback : HomeUiAction
     data object NavigateToAskYaan : HomeUiAction

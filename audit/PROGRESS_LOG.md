@@ -125,5 +125,38 @@
 - **Trend**: **Improving** (Critical User Journeys 1 & 5 satisfied; age gate enforced; 87 tests passing; 0 lint errors).
 - **Next Recommended Action**: Execute Cycle 04: Work on Finding `F-004` [P1] (Action proposals lack affirmative confirmation and execution UI in screens; Critical User Journey 7).
 
+---
+
+## Cycle 04 — Fix Finding `F-004` (Action Proposals Affirmative Confirmation & Undo Rollback UI)
+- **Date**: 2026-10-15
+- **Start Commit**: `6c1b500`
+- **End Commit**: `[Pending Cycle 04 Commit]`
+- **Finding Worked On**: `F-004` [P1] (Action proposals lack affirmative confirmation and execution UI in screens; Critical User Journey 7).
+- **What Changed**:
+  - In `composeApp:ui:components`:
+    - Created `ActionProposalCard.kt`: implements Two-Phase Action Commitment UI.
+      - Stage 1 (Pending): Displays consequential action notice, dynamic action title, subtitle, and affirmative buttons: "Confirm & Execute" and "Dismiss".
+      - Stage 2 (Committed): Displays "ACTION COMMITTED", "Deterministic State Persisted", and reversible "Undo Action" button.
+      - Supports Dismissed state and Undone state (leaving zero un-consented vault state modifications).
+  - In `composeApp:ui:state`:
+    - Updated `AskYaanUiContract`: added `isDismissed` and `isUndone` flags to `ProposedActionUi`; added `DismissActionProposal` and `UndoActionProposal` intents to `AskYaanUiAction`.
+    - Updated `HomeUiContract`: added `UndoConflictAdjustment` intent to `HomeUiAction`.
+  - In `composeApp:ui:screens`:
+    - Updated `AskYaanScreen.kt`: integrated `ActionProposalCard`; wired affirmative confirmation to commit task in SQLite, dismissal to leave state intact, and undo to delete committed task from SQLite.
+    - Updated `HomeScreen.kt`: integrated reversible "Undo" button on calendar conflict adjustments.
+  - In `composeApp:commonTest`:
+    - Updated `UiStateContractsTest`: verified state transitions for action proposal confirmation, dismissal, and reversible undo.
+- **Commands Run & Result Summary**:
+  - `./gradlew :composeApp:testDebugUnitTest`: All 15 tests in `:composeApp` passed (monorepo total 87 tests passing, 0 regressions).
+  - `./gradlew :composeApp:lintDebug`: Passed clean with 0 errors, 0 warnings (`No issues found`).
+  - `./gradlew :composeApp:compileKotlinIosSimulatorArm64`: Passed (`BUILD SUCCESSFUL in 8s`).
+- **Evidence Paths**:
+  - `audit/EVIDENCE/cycle_04_test_run.txt`
+  - `composeApp/build/test-results/testDebugUnitTest/TEST-com.yaan.app.ui.state.UiStateContractsTest.xml`
+- **Status Change**: `F-004` moved to **DONE**.
+- **Trend**: **Improving** (Critical User Journey 7 affirmative confirmation and undo active; 87 tests green; 0 lint errors).
+- **Next Recommended Action**: Execute Cycle 05: Work on Finding `F-007` [P1] (Data safety and privacy disclosures lack explicit documentation of Groq LLM egress) and `F-005` [P2] (Vault export JSON archive generation).
+
+
 
 

@@ -21,6 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.Undo
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DirectionsCar
@@ -154,6 +155,10 @@ fun HomeScreen(
 
                 HomeUiAction.AdjustConflict -> {
                     uiState = uiState.copy(conflictAdjusted = true)
+                }
+
+                HomeUiAction.UndoConflictAdjustment -> {
+                    uiState = uiState.copy(conflictAdjusted = false)
                 }
 
                 is HomeUiAction.SubmitQuickCapture -> {
@@ -438,13 +443,24 @@ fun HomeScreenContent(
                                 onClick = { onAction(HomeUiAction.DismissConflict) }
                             )
                         } else {
-                            Text(
-                                text = "Prep alert shifted to 1:15 PM · Calendar synced",
-                                style = MaterialTheme.typography.labelSmall.copy(
-                                    color = YaanTheme.extendedColors.bronzeAccent,
-                                    fontWeight = FontWeight.Medium
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "Prep alert shifted to 1:15 PM · Calendar synced",
+                                    style = MaterialTheme.typography.labelSmall.copy(
+                                        color = YaanTheme.extendedColors.statusSuccess,
+                                        fontWeight = FontWeight.Medium
+                                    )
                                 )
-                            )
+                                YaanGhostButton(
+                                    text = "Undo",
+                                    trailingIcon = Icons.AutoMirrored.Filled.Undo,
+                                    onClick = { onAction(HomeUiAction.UndoConflictAdjustment) }
+                                )
+                            }
                         }
                     }
                 }

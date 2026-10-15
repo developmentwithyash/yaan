@@ -22,10 +22,12 @@ class UiStateContractsTest {
         val toggledState = initialState.copy(tasks = updatedTasks)
         assertTrue(toggledState.tasks.first { it.id == "2" }.completed)
 
-        // Conflict adjustment state
+        // Conflict adjustment state and reversible undo
         assertFalse(initialState.conflictAdjusted)
         val adjustedState = initialState.copy(conflictAdjusted = true)
         assertTrue(adjustedState.conflictAdjusted)
+        val undoneAdjustedState = adjustedState.copy(conflictAdjusted = false)
+        assertFalse(undoneAdjustedState.conflictAdjusted)
 
         // Briefing dismissal
         val dismissedBriefingState = initialState.copy(showBriefing = false)
@@ -73,6 +75,21 @@ class UiStateContractsTest {
             proposedAction = initialState.proposedAction!!.copy(isConfirmed = true)
         )
         assertTrue(confirmedState.proposedAction!!.isConfirmed)
+
+        // Dismiss action proposal (F-004)
+        assertFalse(initialState.proposedAction!!.isDismissed)
+        val dismissedState = initialState.copy(
+            proposedAction = initialState.proposedAction!!.copy(isDismissed = true)
+        )
+        assertTrue(dismissedState.proposedAction!!.isDismissed)
+
+        // Undo action proposal (F-004)
+        assertFalse(initialState.proposedAction!!.isUndone)
+        val undoneState = initialState.copy(
+            proposedAction = initialState.proposedAction!!.copy(isUndone = true, isConfirmed = false)
+        )
+        assertTrue(undoneState.proposedAction!!.isUndone)
+        assertFalse(undoneState.proposedAction!!.isConfirmed)
     }
 
     @Test
