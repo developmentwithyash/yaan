@@ -22,11 +22,11 @@
 | **G9** | Claims: every user-facing and store-facing claim traced to evidence in CLAIMS_REGISTER | 🟢 **PASSED** | Audited in `CLAIMS_REGISTER.md`; contradicted claims remediated | None |
 | **G10** | Compliance: platform-policy checklist complete; open legal/organisational items listed with owners | 🟢 **PASSED** | Age gate (18+) enforced for DPDP Act 2023 in `OnboardingScreen` & `DefaultUserSessionRepository`; documented in `FOUNDER_ACTIONS.md` and `DATA_SAFETY.md` | None (`F-006`, `F-007` resolved) |
 | **G11** | Docs: setup, runbook, rollback and FOUNDER_ACTIONS current | 🟢 **PASSED** | `FOUNDER_ACTIONS.md`, `README.md`, `DATA_SAFETY.md`, `RELEASE_READINESS.md` current | None |
-| **G12** | Final independent verification pass completed in fresh worktree | 🔴 **OPEN** | In progress (Final Verification Pass) | Pending G12 execution |
+| **G12** | Final independent verification pass completed in fresh worktree | 🟢 **PASSED** | Clean worktree build executed, 88 unit tests passed, 0 lint errors, assembleDebug 20MB, arm64 iOS compiled; `audit/FINAL_REPORT.md` produced. | Outside reviewer note documented |
 
 ---
 
 ## 2. Gate Decision Summary
-- **Current Verdict**: **CONDITIONAL GO (Ready for Final Independent Verification Pass)**
-- **Reason**: All actionable engineering findings (F-001 through F-007) are DONE. 0 open P0/P1/P2 findings. All 8 critical user journeys verified. Gates G1, G2, G3, G4, G6, G9, G10, and G11 are PASSED. Remaining open gates (G5, G7, G8) require physical hardware device lab runs tracked in `FOUNDER_ACTIONS.md`.
-- **Target for Next Step**: Execute Gate G12 (Final Independent Verification Pass) and produce `FINAL_REPORT.md`.
+- **Current Verdict**: **CONDITIONAL GO (Invite-Only Closed Beta)**
+- **Reason**: All actionable engineering findings (F-001 through F-007) are DONE. 0 open P0/P1/P2 findings. All 8 critical user journeys verified. Gates G1, G2, G3, G4, G6, G9, G10, G11, and G12 are PASSED. Remaining gates (G5, G7, G8) require physical hardware device lab runs and commercial DPA execution tracked in `FOUNDER_ACTIONS.md`.
+- **Target for Next Step**: Present Final Report and Founder Action Checklist to Founder.
