@@ -136,7 +136,7 @@ object VaultRedactor {
         return snippet
             .replace(Regex("(?i)ignore (all )?previous instructions"), "[REDACTED_INSTRUCTION]")
             .replace(Regex("(?i)system prompt override"), "[REDACTED_INSTRUCTION]")
-            .replace(Regex("<script.*?>.*?</script>", RegexOption.DOT_MATCHES_ALL), "")
-            .replace(Regex("<!--.*?-->", RegexOption.DOT_MATCHES_ALL), "")
+            .replace(Regex("(?s)<script.*?>.*?</script>"), "")
+            .replace(Regex("(?s)<!--.*?-->"), "")
     }
 }

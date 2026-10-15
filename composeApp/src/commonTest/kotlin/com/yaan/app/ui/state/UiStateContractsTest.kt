@@ -146,4 +146,52 @@ class UiStateContractsTest {
         val exportedState = initialState.copy(exportMessage = "Vault exported (3 notes, 3 tasks).")
         assertEquals("Vault exported (3 notes, 3 tasks).", exportedState.exportMessage)
     }
+
+    @Test
+    fun testNotesUiStateDynamicListAndFiltering() {
+        val initialNotes = listOf(
+            NoteItemUi(id = "1", title = "Note 1", preview = "Preview 1", tag = "Decisions", timestamp = "1h ago", isPinned = true),
+            NoteItemUi(id = "2", title = "Audio Memo", preview = "Preview 2", tag = "Voice Memos", timestamp = "2h ago", audioDuration = "01:30")
+        )
+        val state = NotesUiState(notes = initialNotes)
+        assertEquals(2, state.notes.size)
+
+        // Adding dynamic note
+        val newNote = NoteItemUi(id = "3", title = "Secret WiFi", preview = "Password is 123", tag = "Personal", timestamp = "Just now")
+        val updatedState = state.copy(notes = state.notes + newNote)
+        assertEquals(3, updatedState.notes.size)
+
+        // Search filtering test
+        val matching = updatedState.notes.filter { it.title.contains("WiFi", ignoreCase = true) }
+        assertEquals(1, matching.size)
+        assertEquals("Secret WiFi", matching.first().title)
+
+        // Category filtering test
+        val voiceNotes = updatedState.notes.filter { it.audioDuration != null || it.tag == "Voice Memos" }
+        assertEquals(1, voiceNotes.size)
+        assertEquals("Audio Memo", voiceNotes.first().title)
+    }
+
+    @Test
+    fun testAskYaanUiStatePersistentChatThread() {
+        val initialState = AskYaanUiState()
+        assertEquals(1, initialState.messages.size)
+
+        // Append user turn
+        val userTurn = ChatMessageUi(id = "msg_1", sender = "USER", text = "Where is the gate code?")
+        val stateWithUser = initialState.copy(messages = initialState.messages + userTurn)
+        assertEquals(2, stateWithUser.messages.size)
+
+        // Append assistant turn
+        val assistantTurn = ChatMessageUi(
+            id = "msg_2",
+            sender = "YAAN",
+            text = "Gate code is 4821",
+            citations = listOf("Vault Note: Gate Code")
+        )
+        val persistedThread = stateWithUser.copy(messages = stateWithUser.messages + assistantTurn)
+        assertEquals(3, persistedThread.messages.size)
+        assertEquals("Gate code is 4821", persistedThread.messages.last().text)
+        assertEquals(1, persistedThread.messages.last().citations.size)
+    }
 }

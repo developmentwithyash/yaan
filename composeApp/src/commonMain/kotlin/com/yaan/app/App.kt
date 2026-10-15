@@ -27,6 +27,7 @@ import com.yaan.app.navigation.YaanDestination
 import com.yaan.app.ui.components.YaanBottomNavigation
 import com.yaan.app.ui.components.YaanTopBar
 import com.yaan.app.ui.screens.AskYaanScreen
+import com.yaan.app.ui.state.AskYaanUiState
 import com.yaan.app.ui.screens.BrandSplashScreen
 import com.yaan.app.ui.screens.HomeScreen
 import com.yaan.app.ui.screens.LiveVoiceModal
@@ -74,6 +75,7 @@ fun YaanApp(
     var isLiveVoiceOpen by remember { mutableStateOf(false) }
     var isBrandScreenVisible by remember { mutableStateOf(false) }
     var isAppInitializing by remember { mutableStateOf(true) }
+    var askYaanUiState by remember { mutableStateOf(AskYaanUiState()) }
 
     LaunchedEffect(Unit) {
         delay(1600)
@@ -134,7 +136,9 @@ fun YaanApp(
                                 onLaunchVoice = { isLiveVoiceOpen = true },
                                 noteRepository = resolvedNoteRepo,
                                 taskRepository = resolvedTaskRepo,
-                                memoryRepository = resolvedMemoryRepo
+                                memoryRepository = resolvedMemoryRepo,
+                                persistedState = askYaanUiState,
+                                onStateChange = { askYaanUiState = it }
                             )
                             YaanDestination.Notes -> NotesScreen(
                                 onNavigateToAskYaan = { currentDestination = YaanDestination.AskYaan },

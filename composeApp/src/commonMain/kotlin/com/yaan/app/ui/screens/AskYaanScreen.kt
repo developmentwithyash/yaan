@@ -50,6 +50,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -90,6 +91,7 @@ import kotlinx.coroutines.launch
 /**
  * Stateful Container Composable for AskYaanScreen.
  * Coordinates input text, chat/voice modes, thought process disclosures, and action proposals.
+ * Preserves chat turns across navigation tabs and persists them to encrypted SQLite memory.
  */
 @Composable
 fun AskYaanScreen(
@@ -97,14 +99,45 @@ fun AskYaanScreen(
     noteRepository: NoteRepository? = null,
     taskRepository: TaskRepository? = null,
     memoryRepository: MemoryRepository? = null,
+    persistedState: AskYaanUiState? = null,
+    onStateChange: ((AskYaanUiState) -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
-    var uiState by remember { mutableStateOf(AskYaanUiState()) }
+    var localState by remember { mutableStateOf(AskYaanUiState()) }
+    val uiState = persistedState ?: localState
+    val updateState: (AskYaanUiState) -> Unit = { newState ->
+        if (onStateChange != null) {
+            onStateChange(newState)
+        } else {
+            localState = newState
+        }
+    }
+
     val coroutineScope = rememberCoroutineScope()
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
     val assistantEngine = remember {
         YaanAssistantEngine(noteRepository, taskRepository, memoryRepository)
+    }
+
+    // Restore persistent chat history from SQLite memory if present
+    LaunchedEffect(memoryRepository) {
+        if (memoryRepository != null && uiState.messages.size <= 1) {
+            val res = memoryRepository.getMemories()
+            val memories = res.getOrDefault(emptyList())
+            val chatMemories = memories.filter { it.subject == "USER" || it.subject == "YAAN" }
+            if (chatMemories.isNotEmpty()) {
+                val restored = chatMemories.sortedBy { it.createdAt.toEpochMilliseconds() }.map { m ->
+                    ChatMessageUi(
+                        id = m.id.removePrefix("chat_"),
+                        sender = m.subject,
+                        text = m.predicate,
+                        timestamp = "Restored"
+                    )
+                }
+                updateState(uiState.copy(messages = restored))
+            }
+        }
     }
 
     fun submitPrompt(promptText: String) {
@@ -113,32 +146,60 @@ fun AskYaanScreen(
 
         val q = promptText.trim()
         if (q.isNotEmpty()) {
+            val userMsgId = "msg_${nowInstant().toEpochMilliseconds()}"
             val userMsg = ChatMessageUi(
-                id = "msg_${nowInstant().toEpochMilliseconds()}",
+                id = userMsgId,
                 sender = "USER",
                 text = q
             )
-            uiState = uiState.copy(
-                inputText = "",
-                messages = uiState.messages + userMsg,
-                isStreaming = true
+            updateState(
+                uiState.copy(
+                    inputText = "",
+                    messages = uiState.messages + userMsg,
+                    isStreaming = true
+                )
             )
 
             coroutineScope.launch {
+                // Save user query to persistent SQLite memory
+                memoryRepository?.saveMemory(
+                    com.yaan.core.domain.model.MemoryItem(
+                        id = "chat_$userMsgId",
+                        subject = "USER",
+                        predicate = q,
+                        confidenceScore = 1.0,
+                        createdAt = nowInstant()
+                    )
+                )
+
                 val result = assistantEngine.processQuery(q)
+                val yaanMsgId = "msg_${nowInstant().toEpochMilliseconds()}_reply"
                 val yaanMsg = ChatMessageUi(
-                    id = "msg_${nowInstant().toEpochMilliseconds()}_reply",
+                    id = yaanMsgId,
                     sender = "YAAN",
                     text = result.replyText,
                     citations = result.citations,
                     proposedAction = result.proposedAction
                 )
 
-                uiState = uiState.copy(
-                    isStreaming = false,
-                    messages = uiState.messages + yaanMsg,
-                    responseMarkdown = result.replyText,
-                    proposedAction = result.proposedAction
+                // Save assistant reply to persistent SQLite memory
+                memoryRepository?.saveMemory(
+                    com.yaan.core.domain.model.MemoryItem(
+                        id = "chat_$yaanMsgId",
+                        subject = "YAAN",
+                        predicate = result.replyText,
+                        confidenceScore = 1.0,
+                        createdAt = nowInstant()
+                    )
+                )
+
+                updateState(
+                    uiState.copy(
+                        isStreaming = false,
+                        messages = uiState.messages + yaanMsg,
+                        responseMarkdown = result.replyText,
+                        proposedAction = result.proposedAction
+                    )
                 )
             }
         }
@@ -149,16 +210,16 @@ fun AskYaanScreen(
         onAction = { action ->
             when (action) {
                 is AskYaanUiAction.UpdateInput -> {
-                    uiState = uiState.copy(inputText = action.text)
+                    updateState(uiState.copy(inputText = action.text))
                 }
                 is AskYaanUiAction.SwitchMode -> {
-                    uiState = uiState.copy(activeMode = action.mode)
+                    updateState(uiState.copy(activeMode = action.mode))
                     if (action.mode == "Voice") {
                         onLaunchVoice()
                     }
                 }
                 AskYaanUiAction.ToggleThoughtProcess -> {
-                    uiState = uiState.copy(thoughtExpanded = !uiState.thoughtExpanded)
+                    updateState(uiState.copy(thoughtExpanded = !uiState.thoughtExpanded))
                 }
                 AskYaanUiAction.ConfirmActionProposal -> {
                     coroutineScope.launch {
@@ -180,14 +241,16 @@ fun AskYaanScreen(
                                 m.copy(proposedAction = m.proposedAction.copy(isConfirmed = true, isDismissed = false, isUndone = false))
                             } else m
                         }
-                        uiState = uiState.copy(
-                            proposedAction = uiState.proposedAction?.copy(
-                                isConfirmed = true,
-                                isDismissed = false,
-                                isUndone = false
-                            ),
-                            messages = updatedMessages,
-                            responseMarkdown = "Action confirmed and committed to local vault. State updated."
+                        updateState(
+                            uiState.copy(
+                                proposedAction = uiState.proposedAction?.copy(
+                                    isConfirmed = true,
+                                    isDismissed = false,
+                                    isUndone = false
+                                ),
+                                messages = updatedMessages,
+                                responseMarkdown = "Action confirmed and committed to local vault. State updated."
+                            )
                         )
                     }
                 }
@@ -199,10 +262,12 @@ fun AskYaanScreen(
                             m.copy(proposedAction = m.proposedAction.copy(isDismissed = true))
                         } else m
                     }
-                    uiState = uiState.copy(
-                        proposedAction = uiState.proposedAction?.copy(isDismissed = true),
-                        messages = updatedMessages,
-                        responseMarkdown = "Action proposal dismissed. No vault state was modified."
+                    updateState(
+                        uiState.copy(
+                            proposedAction = uiState.proposedAction?.copy(isDismissed = true),
+                            messages = updatedMessages,
+                            responseMarkdown = "Action proposal dismissed. No vault state was modified."
+                        )
                     )
                 }
                 AskYaanUiAction.UndoActionProposal -> {
@@ -217,13 +282,15 @@ fun AskYaanScreen(
                                 m.copy(proposedAction = m.proposedAction.copy(isUndone = true, isConfirmed = false))
                             } else m
                         }
-                        uiState = uiState.copy(
-                            proposedAction = uiState.proposedAction?.copy(
-                                isUndone = true,
-                                isConfirmed = false
-                            ),
-                            messages = updatedMessages,
-                            responseMarkdown = "Action reverted. Vault task removed and restored to prior state."
+                        updateState(
+                            uiState.copy(
+                                proposedAction = uiState.proposedAction?.copy(
+                                    isUndone = true,
+                                    isConfirmed = false
+                                ),
+                                messages = updatedMessages,
+                                responseMarkdown = "Action reverted. Vault task removed and restored to prior state."
+                            )
                         )
                     }
                 }

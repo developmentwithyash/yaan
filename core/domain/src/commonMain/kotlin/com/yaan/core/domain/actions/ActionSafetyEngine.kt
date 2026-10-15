@@ -174,7 +174,7 @@ object VaultUntrustedContentGuard {
             // Neutralize markdown exfiltration images
             .replace(Regex("!\\[.*?\\]\\(https?://[^\\)]+\\)"), "[inert_image_link]")
             // Neutralize embedded script/iframe tags
-            .replace(Regex("(?i)<\\s*(script|iframe|object|embed)[^>]*>.*?</\\s*\\1\\s*>", RegexOption.DOT_MATCHES_ALL), "[inert_code_block]")
+            .replace(Regex("(?is)<\\s*(script|iframe|object|embed)[^>]*>.*?</\\s*\\1\\s*>"), "[inert_code_block]")
             .replace(Regex("(?i)<\\s*(script|iframe|object|embed)[^>]*>"), "[inert_tag]")
             // Neutralize system prompt override phrases
             .replace(Regex("(?i)(ignore|disregard|forget)\\s+(all\\s+)?(previous|above)\\s+(instructions|directives|prompts)"), "[inert_system_override]")
