@@ -14,9 +14,9 @@
 | **`F-002`** | Missing Android AlarmManager Bridge, Notification Channel & Boot Reschedule Receiver | A/F (Reliability/Correctness) | **P0** | 5 | 5 | VERIFIED | **DONE** | 1 | `audit/EVIDENCE/cycle_02_build_evidence.txt`, `SqlDelightReminderSchedulerTest` |
 | **`F-003`** | Missing Notification & Microphone permission request flow & degraded state UI | A/E (UX/Correctness) | **P1** | 4 | 4 | VERIFIED | **DONE** | 1 | `PlanScreen.kt`, `OnboardingScreen.kt`, `UiStateContractsTest` |
 | **`F-004`** | Action proposals lack affirmative confirmation and execution UI in screens | A/C (Security/Correctness) | **P1** | 4 | 4 | VERIFIED | **DONE** | 1 | `ActionProposalCard.kt`, `AskYaanScreen.kt`, `HomeScreen.kt`, `UiStateContractsTest` |
-| **`F-005`** | Vault export in `YouScreen` is an empty stub with no serialized archive output | A/F (Data/Correctness) | **P2** | 3 | 3 | VERIFIED | **OPEN** | 0 | `YouScreen.kt#L114` |
+| **`F-005`** | Vault export in `YouScreen` is an empty stub with no serialized archive output | A/F (Data/Correctness) | **P2** | 3 | 3 | VERIFIED | **DONE** | 1 | `VaultExporterTest.kt`, `YouScreen.kt`, `cycle_05_test_run.txt` |
 | **`F-006`** | Missing age eligibility policy and declaration for India DPDP Act 2023 / COPPA | G/C (Legal/Compliance) | **P0** | 5 | 3 | VERIFIED | **DONE** | 1 | `UserSessionRepositoryTest`, `OnboardingScreen.kt` |
-| **`F-007`** | Data safety and privacy disclosures lack explicit documentation of Groq LLM egress | G/C (Legal/Compliance) | **P1** | 4 | 4 | VERIFIED | **OPEN** | 0 | `CLAIMS_REGISTER.md`, `THREAT_MODEL.md` |
+| **`F-007`** | Data safety and privacy disclosures lack explicit documentation of Groq LLM egress | G/C (Legal/Compliance) | **P1** | 4 | 4 | VERIFIED | **DONE** | 1 | `audit/DATA_SAFETY.md`, `CLAIMS_REGISTER.md`, `cycle_05_test_run.txt` |
 
 ---
 
@@ -84,10 +84,12 @@
 - **Category**: Loop A / Loop F (Functional Correctness & Data Integrity).
 - **Priority**: P2 (Blocks Critical User Journey 8).
 - **Severity**: 3 | **Likelihood**: 3 | **Evidence Class**: VERIFIED.
-- **Root Cause**: `YouUiAction.ExportVault` has a comment `// Export routine` in `YouScreen.kt` without generating a file.
+- **Root Cause**: `YouUiAction.ExportVault` had a comment `// Export routine` in `YouScreen.kt` without generating an archive.
 - **Acceptance Criteria**:
   1. Implement a VaultExporter that serializes notes and tasks into an encrypted or redacted JSON backup.
   2. Provide a download/share intent trigger.
+- **Status**: **DONE** (Cycle 05).
+- **Evidence Paths**: `audit/EVIDENCE/cycle_05_test_run.txt`, `VaultExporter.kt`, `VaultExporterTest.kt`, `YouScreen.kt`.
 
 ---
 
@@ -114,3 +116,5 @@
 - **Acceptance Criteria**:
   1. Generate accurate Google Play Data Safety declaration matrix in `audit/DATA_SAFETY.md`.
   2. Verify that network egress only occurs after affirmative user consent via `CloudConsentManager`.
+- **Status**: **DONE** (Cycle 05).
+- **Evidence Paths**: `audit/EVIDENCE/cycle_05_test_run.txt`, `audit/DATA_SAFETY.md`, `CLAIMS_REGISTER.md`.

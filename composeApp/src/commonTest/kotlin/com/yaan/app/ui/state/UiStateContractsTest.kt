@@ -140,5 +140,10 @@ class UiStateContractsTest {
         // Confirm purge
         val purgeState = initialState.copy(isPurgeConfirmed = true)
         assertTrue(purgeState.isPurgeConfirmed)
+
+        // Export feedback message (F-005)
+        assertEquals(null, initialState.exportMessage)
+        val exportedState = initialState.copy(exportMessage = "Vault exported (3 notes, 3 tasks).")
+        assertEquals("Vault exported (3 notes, 3 tasks).", exportedState.exportMessage)
     }
 }

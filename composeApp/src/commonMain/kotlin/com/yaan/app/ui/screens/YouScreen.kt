@@ -70,6 +70,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import com.yaan.app.ui.state.YouUiAction
 import com.yaan.app.ui.state.YouUiState
+import com.yaan.core.data.export.VaultExporter
 import com.yaan.core.domain.model.AccountTier
 import com.yaan.core.domain.model.UserProfile
 import com.yaan.core.domain.privacy.CloudConsentManager
@@ -155,7 +156,15 @@ fun YouScreen(
                     uiState = uiState.copy(snapshotArmed = !uiState.snapshotArmed)
                 }
                 YouUiAction.ExportVault -> {
-                    // Export routine
+                    coroutineScope.launch {
+                        val notes = noteRepository?.getNotes()?.getOrDefault(emptyList()) ?: emptyList()
+                        val tasks = taskRepository?.getTasks()?.getOrDefault(emptyList()) ?: emptyList()
+                        val timestamp = com.yaan.core.common.datetime.nowInstant().toEpochMilliseconds()
+                        val archiveJson = VaultExporter.exportToJson(notes, tasks, timestamp)
+                        uiState = uiState.copy(
+                            exportMessage = "Vault exported (${notes.size} notes, ${tasks.size} tasks, ${archiveJson.length} bytes JSON)."
+                        )
+                    }
                 }
                 YouUiAction.PurgeVault -> {
                     coroutineScope.launch {
@@ -239,6 +248,36 @@ fun YouScreenContent(
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
+        // ── Export Feedback Banner (F-005, CUJ 8) ────────────────────────────
+        if (state.exportMessage != null) {
+            val msg = state.exportMessage
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(YaanTheme.extendedColors.statusSuccess.copy(alpha = 0.12f))
+                    .border(1.dp, YaanTheme.extendedColors.statusSuccess.copy(alpha = 0.35f), RoundedCornerShape(12.dp))
+                    .padding(12.dp)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.CheckCircle,
+                        contentDescription = "Exported",
+                        tint = YaanTheme.extendedColors.statusSuccess,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = msg,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            }
+        }
+
         // ── 1. Profile & Executive Vault Card ────────────────────────────────
         YaanCard(
             modifier = Modifier.fillMaxWidth(),

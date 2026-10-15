@@ -157,6 +157,34 @@
 - **Trend**: **Improving** (Critical User Journey 7 affirmative confirmation and undo active; 87 tests green; 0 lint errors).
 - **Next Recommended Action**: Execute Cycle 05: Work on Finding `F-007` [P1] (Data safety and privacy disclosures lack explicit documentation of Groq LLM egress) and `F-005` [P2] (Vault export JSON archive generation).
 
+---
 
-
-
+## Cycle 05 — Fix Findings `F-005` & `F-007` (Vault Export JSON Archive & Google Play Data Safety Matrix)
+- **Date**: 2026-10-15
+- **Start Commit**: `df82a20`
+- **End Commit**: `[Pending Cycle 05 Commit]`
+- **Findings Worked On**:
+  - `F-005` [P2]: Vault export in `YouScreen` is an empty stub with no serialized archive output (Critical User Journey 8).
+  - `F-007` [P1]: Data safety and privacy disclosures lack explicit documentation of Groq LLM egress.
+- **What Changed**:
+  - In `core:data:export`:
+    - Created `VaultExporter.kt`: defines `VaultExportArchive` (version, epoch timestamp, notes count, tasks count, notes, tasks) and `VaultExporter` with pretty-printed JSON serialization/deserialization. Enabled `encodeDefaults = true`.
+  - In `core:data:commonTest`:
+    - Created `VaultExporterTest.kt`: verified round-trip export and deserialization of notes and tasks into valid JSON.
+  - In `composeApp:ui`:
+    - Updated `YouUiContract.kt`: added `exportMessage: String? = null` to `YouUiState`.
+    - Updated `YouScreen.kt`: wired `YouUiAction.ExportVault` to generate a portable JSON export via `VaultExporter` and display an export confirmation feedback banner; fixed compose layout styling.
+    - Updated `UiStateContractsTest.kt`: added assertions for `exportMessage` state.
+  - In `audit/`:
+    - Created `DATA_SAFETY.md`: complete Google Play Data Safety form answers, Groq LLM ephemeral processor disclosure, `VaultRedactor` pre-egress sanitization, and DPDP Act 2023 §9 statutory declarations.
+- **Commands Run & Result Summary**:
+  - `./gradlew :core:data:testDebugUnitTest :composeApp:testDebugUnitTest :composeApp:lintDebug`: Passed clean (0 lint errors, 0 warnings).
+  - `./gradlew testDebugUnitTest :backend:test`: Full monorepo unit test suite passed (88 tests passed, 0 failures, 0 regressions).
+  - `./gradlew :composeApp:compileKotlinIosSimulatorArm64`: Passed (`BUILD SUCCESSFUL in 11s`).
+- **Evidence Paths**:
+  - `audit/EVIDENCE/cycle_05_test_run.txt`
+  - `core/data/build/test-results/testDebugUnitTest/TEST-com.yaan.core.data.export.VaultExporterTest.xml`
+  - `audit/DATA_SAFETY.md`
+- **Status Change**: `F-005` moved to **DONE**. `F-007` moved to **DONE**. Gates **G2**, **G3**, and **G4** moved to **PASSED**.
+- **Trend**: **Improving** (All 8 Critical User Journeys live; 0 open P0/P1/P2 findings; 88 unit tests passing).
+- **Next Recommended Action**: Execute Gate G12 (Final Independent Verification Pass) and produce `audit/FINAL_REPORT.md`.

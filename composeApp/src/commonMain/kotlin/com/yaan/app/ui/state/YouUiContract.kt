@@ -15,7 +15,8 @@ data class YouUiState(
     val vaultItemsCount: Int = 42,
     val vaultSizeBytes: String = "1.4 MB (Encrypted)",
     val snapshotArmed: Boolean = false,
-    val isPurgeConfirmed: Boolean = false
+    val isPurgeConfirmed: Boolean = false,
+    val exportMessage: String? = null
 )
 
 /**

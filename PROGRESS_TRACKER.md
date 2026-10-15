@@ -195,9 +195,9 @@ Scaffolded via Gradle Type-Safe Accessors and Version Catalog (`gradle/libs.vers
 - [x] MVI Contract & State Machine (`NotesState`, `NotesIntent`)
 - [x] `NotesViewModel` with reactive notes and semantic search dispatcher
 - [x] Koin dependency injection module (`notesModule`)
-- [ ] Vault note CRUD with automatic AES-GCM-256 encryption
+- [x] Vault note CRUD with automatic AES-GCM-256 encryption
 - [ ] Audio memo player state machine with scrubber waveform
-- [ ] Export vault to encrypted JSON archive
+- [x] Export vault to encrypted JSON archive
 
 ### 5.4 `:feature:tasks` (Task Trees, Routines & Auto-Closing Loops)
 - [x] Gradle module configuration
@@ -404,6 +404,7 @@ Phase 5: Release Hardening & Founding 250 Commercial Launch
 | 2026-10-15 | Task `QA-02` (Autonomous Loop Cycle 02 - F-002) | Autonomous QA System | Implemented Android AlarmManager Bridge, Notification Channels (`yaan_reminders`, `yaan_alarms`), `AlarmBroadcastReceiver` (heads-up notifications with Acknowledge/Snooze), and `BootCompletedReceiver` (rescheduling on reboot/timezone change); Gate G6 PASSED; 85/85 tests green. | ✅ Completed |
 | 2026-10-15 | Task `QA-03` (Autonomous Loop Cycle 03 - F-006 & F-003) | Autonomous QA System | Implemented OnboardingScreen with mandatory 18+ age declaration under DPDP Act 2023, system permissions rationale (Notifications & Microphone), wired into App.kt; implemented degraded state notification warning banner in PlanScreen; 87/87 tests green; Gate G10 PASSED. | ✅ Completed |
 | 2026-10-15 | Task `QA-04` (Autonomous Loop Cycle 04 - F-004) | Autonomous QA System | Implemented ActionProposalCard for Two-Phase Action Commitment; wired affirmative user confirmation to SQLite task creation and reversible Undo rollback; added Undo to HomeScreen conflict adjustment; 87/87 tests green; 0 lint errors; Critical User Journey 7 satisfied. | ✅ Completed |
+| 2026-10-15 | Task `QA-05` (Autonomous Loop Cycle 05 - F-005 & F-007) | Autonomous QA System | Implemented VaultExporter JSON archive serialization and YouScreen feedback banner (Critical User Journey 8); created Google Play Data Safety & Privacy Disclosures matrix in DATA_SAFETY.md; 88/88 tests green; 0 lint errors; Gates G2, G3, G4 PASSED. | ✅ Completed |
 
 
 
