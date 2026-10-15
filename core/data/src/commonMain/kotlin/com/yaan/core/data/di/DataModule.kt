@@ -5,6 +5,8 @@ import com.yaan.core.data.crypto.YaanCipher
 import com.yaan.core.data.db.DatabaseDriverFactory
 import com.yaan.core.data.db.VaultDatabaseInitializer
 import com.yaan.core.data.db.YaanDatabase
+import com.yaan.core.data.remote.supabase.SupabaseAuthClient
+import com.yaan.core.data.remote.supabase.SupabaseConfig
 import com.yaan.core.data.repository.DefaultUserSessionRepository
 import com.yaan.core.data.repository.InMemorySyncRepository
 import com.yaan.core.data.repository.SqlDelightBriefingRepository
@@ -34,6 +36,9 @@ val dataModule = module {
         db
     }
 
+    single<SupabaseConfig> { SupabaseConfig() }
+    single<SupabaseAuthClient> { SupabaseAuthClient(config = get()) }
+
     single<TaskRepository> { SqlDelightTaskRepository(database = get(), dispatchers = get()) }
     single<NoteRepository> {
         SqlDelightNoteRepository(
@@ -53,5 +58,11 @@ val dataModule = module {
     single<BriefingRepository> { SqlDelightBriefingRepository(database = get(), dispatchers = get()) }
     single<MemoryRepository> { SqlDelightMemoryRepository(database = get(), dispatchers = get()) }
     single<SyncRepository> { InMemorySyncRepository() }
-    single<UserSessionRepository> { DefaultUserSessionRepository(keyManager = get(), dispatchers = get()) }
+    single<UserSessionRepository> {
+        DefaultUserSessionRepository(
+            keyManager = get(),
+            dispatchers = get(),
+            supabaseAuthClient = getOrNull()
+        )
+    }
 }

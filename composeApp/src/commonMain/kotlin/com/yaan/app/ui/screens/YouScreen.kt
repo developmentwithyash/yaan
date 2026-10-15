@@ -215,6 +215,32 @@ fun YouScreen(
                     resolvedSessionRepo?.logoutAndCryptoShred()
                     isAccountModalOpen = false
                 }
+            },
+            onSignIn = { email, password ->
+                coroutineScope.launch {
+                    when (val res = resolvedSessionRepo?.signInWithEmail(email, password)) {
+                        is com.yaan.core.common.result.YaanResult.Success -> {
+                            isAccountModalOpen = false
+                        }
+                        is com.yaan.core.common.result.YaanResult.Failure -> {
+                            // Handled in modal or via snackbar
+                        }
+                        null -> {}
+                    }
+                }
+            },
+            onSignUp = { email, password, displayName, ageConfirmed ->
+                coroutineScope.launch {
+                    when (val res = resolvedSessionRepo?.signUpWithEmail(email, password, displayName, ageConfirmed)) {
+                        is com.yaan.core.common.result.YaanResult.Success -> {
+                            isAccountModalOpen = false
+                        }
+                        is com.yaan.core.common.result.YaanResult.Failure -> {
+                            // Handled in modal or via snackbar
+                        }
+                        null -> {}
+                    }
+                }
             }
         )
     }

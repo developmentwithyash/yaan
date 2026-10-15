@@ -3,9 +3,19 @@ package com.yaan.core.data.repository
 import com.yaan.core.common.dispatcher.CoroutineDispatchers
 import com.yaan.core.common.result.YaanResult
 import com.yaan.core.data.crypto.InMemoryVaultKeyManager
+import com.yaan.core.data.remote.supabase.SupabaseAuthClient
 import com.yaan.core.domain.model.AccountTier
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.mock.MockEngine
+import io.ktor.client.engine.mock.respond
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.headersOf
+import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.runTest
+import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -126,5 +136,90 @@ class UserSessionRepositoryTest {
         assertTrue(profile.isOnboardingCompleted)
         assertTrue(profile.ageConfirmed18Plus)
         assertTrue(repo.getCurrentProfile().isOnboardingCompleted)
+    }
+
+    @Test
+    fun `test signInWithEmail validation rejects bad inputs`() = runTest {
+        val keyManager = InMemoryVaultKeyManager()
+        val repo = DefaultUserSessionRepository(keyManager, testDispatchers)
+
+        // Empty email
+        val res1 = repo.signInWithEmail("", "secret123")
+        assertTrue(res1 is YaanResult.Failure)
+
+        // Invalid email format
+        val res2 = repo.signInWithEmail("invalidemail", "secret123")
+        assertTrue(res2 is YaanResult.Failure)
+
+        // Short password
+        val res3 = repo.signInWithEmail("user@yaan.ai", "123")
+        assertTrue(res3 is YaanResult.Failure)
+    }
+
+    @Test
+    fun `test signUpWithEmail validation rejects underage`() = runTest {
+        val keyManager = InMemoryVaultKeyManager()
+        val repo = DefaultUserSessionRepository(keyManager, testDispatchers)
+
+        val res = repo.signUpWithEmail("young@yaan.ai", "secret123", "Young User", ageConfirmed18Plus = false)
+        assertTrue(res is YaanResult.Failure)
+    }
+
+    @Test
+    fun `test signInWithEmail offline fallback succeeds with local token`() = runTest {
+        val keyManager = InMemoryVaultKeyManager()
+        val repo = DefaultUserSessionRepository(keyManager, testDispatchers, supabaseAuthClient = null)
+
+        val res = repo.signInWithEmail("executive@yaan.ai", "secure_pass_123")
+        assertTrue(res is YaanResult.Success)
+        val profile = (res as YaanResult.Success).data
+        assertEquals("executive@yaan.ai", profile.email)
+        assertEquals("executive", profile.displayName)
+        assertTrue(profile.isOnboardingCompleted)
+        assertFalse(profile.isVaultLocked)
+    }
+
+    @Test
+    fun `test signInWithEmail with mocked Supabase client succeeds`() = runTest {
+        val mockEngine = MockEngine { request ->
+            when {
+                request.url.encodedPath.contains("token") -> {
+                    respond(
+                        content = """{"access_token":"eyMockJwtToken","token_type":"bearer","user":{"id":"usr_supabase_99","email":"alex@yaan.ai","user_metadata":{"display_name":"Alex Mercer"}}}""",
+                        status = HttpStatusCode.OK,
+                        headers = headersOf(HttpHeaders.ContentType, "application/json")
+                    )
+                }
+                request.url.encodedPath.contains("profiles") -> {
+                    respond(
+                        content = """[{"id":"usr_supabase_99","email":"alex@yaan.ai","display_name":"Alex Mercer Profile","tier":"PRO","age_confirmed_18_plus":true}]""",
+                        status = HttpStatusCode.OK,
+                        headers = headersOf(HttpHeaders.ContentType, "application/json")
+                    )
+                }
+                else -> {
+                    respond("{}", HttpStatusCode.OK)
+                }
+            }
+        }
+
+        val httpClient = HttpClient(mockEngine) {
+            install(ContentNegotiation) {
+                json(Json { ignoreUnknownKeys = true })
+            }
+        }
+        val supabaseClient = SupabaseAuthClient(httpClient = httpClient)
+        val keyManager = InMemoryVaultKeyManager()
+        val repo = DefaultUserSessionRepository(keyManager, testDispatchers, supabaseAuthClient = supabaseClient)
+
+        val res = repo.signInWithEmail("alex@yaan.ai", "password123")
+        assertTrue(res is YaanResult.Success)
+        val profile = (res as YaanResult.Success).data
+        assertEquals("usr_supabase_99", profile.userId)
+        assertEquals("alex@yaan.ai", profile.email)
+        assertEquals("Alex Mercer Profile", profile.displayName)
+        assertEquals("eyMockJwtToken", profile.authToken)
+        assertEquals(AccountTier.PRO, profile.tier)
+        assertTrue(profile.ageConfirmed18Plus)
     }
 }

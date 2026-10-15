@@ -31,6 +31,16 @@ sealed interface YaanError {
         override val message: String
     ) : YaanError
 
+    data class AuthenticationError(
+        override val message: String,
+        val cause: Throwable? = null
+    ) : YaanError
+
+    data class NotFoundError(
+        override val message: String,
+        val cause: Throwable? = null
+    ) : YaanError
+
     data class UnknownError(
         override val message: String,
         val cause: Throwable? = null

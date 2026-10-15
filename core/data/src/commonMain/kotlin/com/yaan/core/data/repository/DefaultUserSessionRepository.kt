@@ -4,6 +4,7 @@ import com.yaan.core.common.dispatcher.CoroutineDispatchers
 import com.yaan.core.common.result.YaanError
 import com.yaan.core.common.result.YaanResult
 import com.yaan.core.data.crypto.VaultKeyManager
+import com.yaan.core.data.remote.supabase.SupabaseAuthClient
 import com.yaan.core.domain.model.AccountTier
 import com.yaan.core.domain.model.UserProfile
 import com.yaan.core.domain.repository.UserSessionRepository
@@ -11,14 +12,17 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.jsonPrimitive
 
 /**
  * High-performance, zero-knowledge implementation of UserSessionRepository.
- * Maintains local session state, biometric gate status, and crypto-shredding hooks.
+ * Maintains local session state, biometric gate status, and crypto-shredding hooks,
+ * with cloud synchronization via Supabase GoTrue Auth and PostgreSQL PostgREST.
  */
 class DefaultUserSessionRepository(
     private val keyManager: VaultKeyManager,
     private val dispatchers: CoroutineDispatchers,
+    private val supabaseAuthClient: SupabaseAuthClient? = null,
     initialProfile: UserProfile? = null
 ) : UserSessionRepository {
 
@@ -113,12 +117,153 @@ class DefaultUserSessionRepository(
             YaanResult.Success(updated)
         }
 
+    override suspend fun signInWithEmail(email: String, password: String): YaanResult<UserProfile> =
+        withContext(dispatchers.io) {
+            val trimmedEmail = email.trim()
+            if (trimmedEmail.isEmpty() || !trimmedEmail.contains("@")) {
+                return@withContext YaanResult.Failure(
+                    YaanError.ValidationError("email", "Please enter a valid email address.")
+                )
+            }
+            if (password.length < 6) {
+                return@withContext YaanResult.Failure(
+                    YaanError.ValidationError("password", "Password must be at least 6 characters.")
+                )
+            }
+
+            if (supabaseAuthClient != null) {
+                when (val authRes = supabaseAuthClient.signInWithPassword(trimmedEmail, password)) {
+                    is YaanResult.Success -> {
+                        val auth = authRes.data
+                        val userId = auth.user?.id ?: "usr_${(100000..999999).random()}"
+                        
+                        // Fetch extended profile if available
+                        val profileRes = supabaseAuthClient.fetchProfile(userId, auth.accessToken)
+                        val profile = (profileRes as? YaanResult.Success)?.data
+
+                        val metaName = auth.user?.userMetadata?.get("display_name")?.jsonPrimitive?.content
+                        val resolvedName = profile?.displayName?.ifEmpty { null }
+                            ?: metaName?.ifEmpty { null }
+                            ?: trimmedEmail.substringBefore("@")
+                        val resolvedTier = parseTier(profile?.tier)
+
+                        val updated = UserProfile(
+                            userId = userId,
+                            displayName = resolvedName,
+                            email = trimmedEmail,
+                            tier = resolvedTier,
+                            authToken = auth.accessToken,
+                            biometricLockEnabled = profileState.value.biometricLockEnabled,
+                            isVaultLocked = false,
+                            pairedDevicesCount = profileState.value.pairedDevicesCount,
+                            passkeyRegistered = profileState.value.passkeyRegistered,
+                            isOnboardingCompleted = true,
+                            ageConfirmed18Plus = profile?.ageConfirmed18Plus ?: true,
+                            createdAtEpochMs = com.yaan.core.common.datetime.nowInstant().toEpochMilliseconds()
+                        )
+                        profileState.value = updated
+                        YaanResult.Success(updated)
+                    }
+                    is YaanResult.Failure -> YaanResult.Failure(authRes.error)
+                }
+            } else {
+                // Offline fallback / mock mode
+                val current = profileState.value
+                val updated = current.copy(
+                    userId = "usr_local_${trimmedEmail.hashCode().toString().take(8)}",
+                    displayName = trimmedEmail.substringBefore("@"),
+                    email = trimmedEmail,
+                    authToken = "mock_supabase_jwt_${trimmedEmail.hashCode()}",
+                    isVaultLocked = false,
+                    isOnboardingCompleted = true
+                )
+                profileState.value = updated
+                YaanResult.Success(updated)
+            }
+        }
+
+    override suspend fun signUpWithEmail(
+        email: String,
+        password: String,
+        displayName: String,
+        ageConfirmed18Plus: Boolean
+    ): YaanResult<UserProfile> =
+        withContext(dispatchers.io) {
+            val trimmedEmail = email.trim()
+            if (trimmedEmail.isEmpty() || !trimmedEmail.contains("@")) {
+                return@withContext YaanResult.Failure(
+                    YaanError.ValidationError("email", "Please enter a valid email address.")
+                )
+            }
+            if (password.length < 6) {
+                return@withContext YaanResult.Failure(
+                    YaanError.ValidationError("password", "Password must be at least 6 characters.")
+                )
+            }
+            if (!ageConfirmed18Plus) {
+                return@withContext YaanResult.Failure(
+                    YaanError.ValidationError(
+                        field = "age",
+                        message = "YAAN Beta requires users to be 18 years or older in compliance with the Digital Personal Data Protection Act 2023."
+                    )
+                )
+            }
+
+            val cleanName = displayName.trim().ifEmpty { trimmedEmail.substringBefore("@") }
+
+            if (supabaseAuthClient != null) {
+                when (val authRes = supabaseAuthClient.signUp(trimmedEmail, password, cleanName, ageConfirmed18Plus)) {
+                    is YaanResult.Success -> {
+                        val auth = authRes.data
+                        val userId = auth.user?.id ?: "usr_${(100000..999999).random()}"
+                        val updated = UserProfile(
+                            userId = userId,
+                            displayName = cleanName,
+                            email = trimmedEmail,
+                            tier = AccountTier.FREE,
+                            authToken = auth.accessToken.ifEmpty { "pending_email_verification" },
+                            biometricLockEnabled = profileState.value.biometricLockEnabled,
+                            isVaultLocked = false,
+                            pairedDevicesCount = 1,
+                            passkeyRegistered = false,
+                            isOnboardingCompleted = true,
+                            ageConfirmed18Plus = true,
+                            createdAtEpochMs = com.yaan.core.common.datetime.nowInstant().toEpochMilliseconds()
+                        )
+                        profileState.value = updated
+                        YaanResult.Success(updated)
+                    }
+                    is YaanResult.Failure -> YaanResult.Failure(authRes.error)
+                }
+            } else {
+                // Offline fallback / mock mode
+                val current = profileState.value
+                val updated = current.copy(
+                    userId = "usr_local_${trimmedEmail.hashCode().toString().take(8)}",
+                    displayName = cleanName,
+                    email = trimmedEmail,
+                    authToken = "mock_supabase_jwt_${trimmedEmail.hashCode()}",
+                    isVaultLocked = false,
+                    isOnboardingCompleted = true,
+                    ageConfirmed18Plus = true
+                )
+                profileState.value = updated
+                YaanResult.Success(updated)
+            }
+        }
+
     override suspend fun logoutAndCryptoShred(): YaanResult<Unit> =
         withContext(dispatchers.io) {
-            // 1. Shred master encryption keys
+            val current = profileState.value
+            // 1. Invalidate remote cloud session if Supabase is active
+            if (supabaseAuthClient != null && current.authToken.startsWith("ey")) {
+                runCatching { supabaseAuthClient.signOut(current.authToken) }
+            }
+
+            // 2. Shred local master encryption keys
             keyManager.shredKey()
 
-            // 2. Reset session to locked anonymous un-onboarded state
+            // 3. Reset session to locked anonymous un-onboarded state
             profileState.value = UserProfile(
                 userId = "anonymous_user",
                 displayName = "Anonymous User",
@@ -135,4 +280,10 @@ class DefaultUserSessionRepository(
             )
             YaanResult.Success(Unit)
         }
+
+    private fun parseTier(tierStr: String?): AccountTier = when (tierStr?.uppercase()) {
+        "PRO" -> AccountTier.PRO
+        "TEAM" -> AccountTier.TEAM
+        else -> AccountTier.FREE
+    }
 }
