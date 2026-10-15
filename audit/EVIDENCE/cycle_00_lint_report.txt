@@ -1,0 +1,30 @@
+/Users/yash/Yash-Workspace/products/yaan/composeApp/src/androidMain/AndroidManifest.xml:7: Error: Permission is only granted to system apps [ProtectedPermissions]
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "ProtectedPermissions":
+   Permissions with the protection level signature, privileged or
+   signatureOrSystem are only granted to system apps. If an app is a regular
+   non-system app, it will never be able to use these permissions.
+
+/Users/yash/Yash-Workspace/products/yaan/composeApp/src/androidMain/AndroidManifest.xml:14: Warning: The attribute android:allowBackup is deprecated from Android 12 and higher and may be removed in future versions. Consider adding the attribute android:dataExtractionRules specifying an @xml resource which configures cloud backups and device transfers on Android 12 and higher. [DataExtractionRules]
+        android:allowBackup="false"
+                             ~~~~~
+
+   Explanation for issues of type "DataExtractionRules":
+   Before Android 12, the attributes android:allowBackup and
+   android:fullBackupContent were used to configure all forms of backup,
+   including cloud backups, device-to-device transfers and adb backup.
+
+   In Android 12 and higher, these attributes have been deprecated and will
+   only apply to cloud backups. You should instead use the attribute
+   android:dataExtractionRules, specifying an @xml resource that configures
+   which files to back up, for cloud backups and for device-to-device
+   transfers, separately. If your minSdkVersion supports older versions,
+   you'll still want to specify an android:fullBackupContent resource if the
+   default behavior is not right for your app.
+
+   https://developer.android.com/about/versions/12/backup-restore#xml-changes
+   https://goo.gle/DataExtractionRules
+
+1 errors, 1 warnings

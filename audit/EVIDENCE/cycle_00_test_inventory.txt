@@ -1,0 +1,7 @@
+=== TEST INVENTORY PER MODULE ===
+Module backend: tests=21, failures=0, errors=0, skipped=0
+Module composeApp: tests=15, failures=0, errors=0, skipped=0
+Module core: tests=40, failures=0, errors=0, skipped=0
+Module feature: tests=4, failures=0, errors=0, skipped=0
+Module shared: tests=2, failures=0, errors=0, skipped=0
+Total Tests: 82

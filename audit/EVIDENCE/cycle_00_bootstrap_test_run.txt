@@ -1,0 +1,931 @@
+Type-safe project accessors is an incubating feature.
+> Task :feature:briefing:cleanIosSimulatorArm64Test UP-TO-DATE
+> Task :core:data:cleanIosSimulatorArm64Test UP-TO-DATE
+> Task :feature:actions:cleanIosSimulatorArm64Test UP-TO-DATE
+> Task :core:common:cleanIosSimulatorArm64Test UP-TO-DATE
+> Task :core:domain:cleanIosSimulatorArm64Test UP-TO-DATE
+> Task :feature:briefing:cleanIosX64Test UP-TO-DATE
+> Task :shared:cleanIosSimulatorArm64Test UP-TO-DATE
+> Task :feature:briefing:cleanAllTests UP-TO-DATE
+> Task :composeApp:cleanIosSimulatorArm64Test UP-TO-DATE
+> Task :core:common:cleanIosX64Test UP-TO-DATE
+> Task :core:common:cleanAllTests UP-TO-DATE
+> Task :feature:actions:cleanIosX64Test UP-TO-DATE
+> Task :feature:actions:cleanAllTests UP-TO-DATE
+> Task :core:domain:cleanIosX64Test UP-TO-DATE
+> Task :core:domain:cleanAllTests UP-TO-DATE
+> Task :core:data:cleanIosX64Test UP-TO-DATE
+> Task :shared:cleanIosX64Test UP-TO-DATE
+> Task :core:data:cleanAllTests UP-TO-DATE
+> Task :shared:cleanAllTests UP-TO-DATE
+> Task :composeApp:cleanIosX64Test UP-TO-DATE
+> Task :composeApp:cleanAllTests UP-TO-DATE
+> Task :backend:clean
+> Task :feature:capture:cleanIosSimulatorArm64Test UP-TO-DATE
+> Task :feature:capture:cleanIosX64Test UP-TO-DATE
+> Task :feature:capture:cleanAllTests UP-TO-DATE
+> Task :feature:briefing:clean
+> Task :feature:memory:cleanIosSimulatorArm64Test UP-TO-DATE
+> Task :feature:memory:cleanIosX64Test UP-TO-DATE
+> Task :feature:memory:cleanAllTests UP-TO-DATE
+> Task :shared:clean
+> Task :feature:notes:cleanIosSimulatorArm64Test UP-TO-DATE
+> Task :feature:notes:cleanIosX64Test UP-TO-DATE
+> Task :feature:notes:cleanAllTests UP-TO-DATE
+> Task :feature:actions:clean
+> Task :feature:reminders:cleanIosSimulatorArm64Test UP-TO-DATE
+> Task :feature:reminders:cleanIosX64Test UP-TO-DATE
+> Task :feature:reminders:cleanAllTests UP-TO-DATE
+> Task :core:common:clean
+> Task :feature:tasks:cleanIosSimulatorArm64Test UP-TO-DATE
+> Task :feature:tasks:cleanIosX64Test UP-TO-DATE
+> Task :feature:tasks:cleanAllTests UP-TO-DATE
+> Task :feature:notes:clean
+> Task :feature:voice:cleanIosSimulatorArm64Test UP-TO-DATE
+> Task :feature:voice:cleanIosX64Test UP-TO-DATE
+> Task :feature:voice:cleanAllTests UP-TO-DATE
+> Task :feature:memory:clean
+> Task :core:common:preBuild UP-TO-DATE
+> Task :core:common:preDebugBuild UP-TO-DATE
+> Task :feature:reminders:clean
+> Task :feature:actions:preBuild UP-TO-DATE
+> Task :feature:actions:preDebugBuild UP-TO-DATE
+> Task :feature:capture:clean
+> Task :feature:briefing:preBuild UP-TO-DATE
+> Task :feature:briefing:preDebugBuild UP-TO-DATE
+> Task :feature:briefing:writeDebugAarMetadata
+> Task :feature:capture:preBuild UP-TO-DATE
+> Task :feature:capture:preDebugBuild UP-TO-DATE
+> Task :core:data:clean
+> Task :core:data:preBuild UP-TO-DATE
+> Task :core:data:preDebugBuild UP-TO-DATE
+> Task :core:common:writeDebugAarMetadata
+> Task :feature:tasks:clean
+> Task :feature:memory:preBuild UP-TO-DATE
+> Task :feature:memory:preDebugBuild UP-TO-DATE
+> Task :feature:notes:preBuild UP-TO-DATE
+> Task :feature:notes:preDebugBuild UP-TO-DATE
+> Task :feature:actions:writeDebugAarMetadata
+> Task :feature:reminders:preBuild UP-TO-DATE
+> Task :feature:reminders:preDebugBuild UP-TO-DATE
+> Task :feature:capture:writeDebugAarMetadata
+> Task :feature:tasks:preBuild UP-TO-DATE
+> Task :feature:tasks:preDebugBuild UP-TO-DATE
+> Task :core:data:writeDebugAarMetadata
+> Task :feature:memory:writeDebugAarMetadata
+> Task :core:domain:clean
+> Task :feature:tasks:writeDebugAarMetadata
+> Task :feature:reminders:writeDebugAarMetadata
+> Task :feature:notes:writeDebugAarMetadata
+> Task :core:domain:preBuild UP-TO-DATE
+> Task :core:domain:preDebugBuild UP-TO-DATE
+> Task :core:domain:writeDebugAarMetadata
+> Task :feature:voice:clean
+> Task :feature:voice:preBuild UP-TO-DATE
+> Task :feature:voice:preDebugBuild UP-TO-DATE
+> Task :feature:voice:writeDebugAarMetadata
+> Task :feature:actions:generateDebugResValues FROM-CACHE
+> Task :feature:capture:generateDebugResValues FROM-CACHE
+> Task :core:domain:generateDebugResValues FROM-CACHE
+> Task :core:common:generateDebugResValues FROM-CACHE
+> Task :feature:briefing:generateDebugResValues FROM-CACHE
+> Task :core:data:generateDebugResValues FROM-CACHE
+> Task :feature:briefing:generateDebugResources FROM-CACHE
+> Task :feature:capture:generateDebugResources FROM-CACHE
+> Task :core:common:generateDebugResources FROM-CACHE
+> Task :feature:actions:generateDebugResources FROM-CACHE
+> Task :feature:capture:packageDebugResources FROM-CACHE
+> Task :feature:briefing:packageDebugResources FROM-CACHE
+> Task :core:domain:generateDebugResources FROM-CACHE
+> Task :feature:notes:generateDebugResValues FROM-CACHE
+> Task :feature:reminders:generateDebugResValues FROM-CACHE
+> Task :feature:notes:generateDebugResources FROM-CACHE
+> Task :feature:reminders:generateDebugResources FROM-CACHE
+> Task :core:common:packageDebugResources FROM-CACHE
+> Task :feature:actions:packageDebugResources FROM-CACHE
+> Task :feature:tasks:generateDebugResValues FROM-CACHE
+> Task :feature:voice:generateDebugResValues FROM-CACHE
+> Task :core:domain:packageDebugResources FROM-CACHE
+> Task :feature:reminders:packageDebugResources FROM-CACHE
+> Task :feature:voice:generateDebugResources FROM-CACHE
+> Task :core:common:extractDeepLinksDebug FROM-CACHE
+> Task :feature:tasks:generateDebugResources FROM-CACHE
+> Task :core:domain:extractDeepLinksDebug FROM-CACHE
+> Task :core:data:generateDebugResources FROM-CACHE
+> Task :feature:voice:packageDebugResources FROM-CACHE
+> Task :feature:tasks:packageDebugResources FROM-CACHE
+> Task :core:common:processDebugManifest FROM-CACHE
+> Task :feature:capture:extractDeepLinksDebug FROM-CACHE
+> Task :feature:briefing:extractDeepLinksDebug FROM-CACHE
+> Task :feature:notes:packageDebugResources FROM-CACHE
+> Task :core:data:packageDebugResources FROM-CACHE
+> Task :feature:actions:extractDeepLinksDebug FROM-CACHE
+> Task :feature:notes:extractDeepLinksDebug FROM-CACHE
+> Task :core:data:extractDeepLinksDebug FROM-CACHE
+> Task :feature:capture:processDebugManifest FROM-CACHE
+> Task :feature:briefing:processDebugManifest FROM-CACHE
+> Task :feature:actions:processDebugManifest FROM-CACHE
+> Task :feature:reminders:extractDeepLinksDebug FROM-CACHE
+> Task :feature:tasks:extractDeepLinksDebug FROM-CACHE
+> Task :feature:voice:extractDeepLinksDebug FROM-CACHE
+> Task :feature:notes:processDebugManifest FROM-CACHE
+> Task :core:common:compileDebugLibraryResources FROM-CACHE
+> Task :feature:tasks:processDebugManifest FROM-CACHE
+> Task :feature:actions:compileDebugLibraryResources FROM-CACHE
+> Task :feature:voice:processDebugManifest FROM-CACHE
+> Task :feature:reminders:processDebugManifest FROM-CACHE
+> Task :feature:briefing:compileDebugLibraryResources FROM-CACHE
+> Task :feature:capture:compileDebugLibraryResources FROM-CACHE
+> Task :feature:memory:generateDebugResValues FROM-CACHE
+> Task :core:data:processDebugManifest FROM-CACHE
+> Task :core:common:parseDebugLocalResources FROM-CACHE
+> Task :core:data:compileDebugLibraryResources FROM-CACHE
+> Task :core:data:parseDebugLocalResources FROM-CACHE
+> Task :feature:capture:parseDebugLocalResources FROM-CACHE
+> Task :core:data:generateDebugRFile FROM-CACHE
+> Task :core:domain:processDebugManifest FROM-CACHE
+> Task :core:common:generateDebugRFile FROM-CACHE
+> Task :core:domain:compileDebugLibraryResources FROM-CACHE
+> Task :feature:capture:generateDebugRFile FROM-CACHE
+> Task :feature:notes:compileDebugLibraryResources FROM-CACHE
+> Task :feature:reminders:compileDebugLibraryResources FROM-CACHE
+> Task :feature:actions:parseDebugLocalResources FROM-CACHE
+> Task :feature:memory:generateDebugResources FROM-CACHE
+> Task :composeApp:clean
+> Task :feature:tasks:compileDebugLibraryResources FROM-CACHE
+> Task :composeApp:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :core:domain:parseDebugLocalResources FROM-CACHE
+> Task :feature:briefing:parseDebugLocalResources FROM-CACHE
+> Task :feature:reminders:parseDebugLocalResources FROM-CACHE
+> Task :composeApp:convertXmlValueResourcesForAndroidMain NO-SOURCE
+> Task :feature:notes:parseDebugLocalResources FROM-CACHE
+> Task :feature:tasks:parseDebugLocalResources FROM-CACHE
+> Task :composeApp:copyNonXmlValueResourcesForAndroidMain NO-SOURCE
+> Task :composeApp:prepareComposeResourcesTaskForAndroidMain NO-SOURCE
+> Task :composeApp:generateResourceAccessorsForAndroidMain NO-SOURCE
+> Task :feature:actions:generateDebugRFile FROM-CACHE
+> Task :feature:memory:packageDebugResources FROM-CACHE
+> Task :feature:reminders:generateDebugRFile FROM-CACHE
+> Task :core:common:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :core:domain:generateDebugRFile FROM-CACHE
+> Task :core:data:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :composeApp:convertXmlValueResourcesForCommonMain NO-SOURCE
+> Task :feature:briefing:generateDebugRFile FROM-CACHE
+> Task :core:domain:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :feature:notes:generateDebugRFile FROM-CACHE
+> Task :feature:tasks:generateDebugRFile FROM-CACHE
+> Task :feature:actions:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :feature:voice:compileDebugLibraryResources FROM-CACHE
+> Task :feature:actions:convertXmlValueResourcesForAndroidMain NO-SOURCE
+> Task :feature:briefing:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :feature:briefing:convertXmlValueResourcesForAndroidMain NO-SOURCE
+> Task :feature:actions:copyNonXmlValueResourcesForAndroidMain NO-SOURCE
+> Task :core:domain:javaPreCompileDebug FROM-CACHE
+> Task :feature:capture:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :feature:capture:convertXmlValueResourcesForAndroidMain NO-SOURCE
+> Task :feature:briefing:copyNonXmlValueResourcesForAndroidMain NO-SOURCE
+> Task :feature:capture:copyNonXmlValueResourcesForAndroidMain NO-SOURCE
+> Task :feature:actions:prepareComposeResourcesTaskForAndroidMain NO-SOURCE
+> Task :feature:actions:generateResourceAccessorsForAndroidMain SKIPPED
+> Task :feature:memory:extractDeepLinksDebug FROM-CACHE
+> Task :feature:briefing:prepareComposeResourcesTaskForAndroidMain NO-SOURCE
+> Task :feature:voice:parseDebugLocalResources FROM-CACHE
+> Task :feature:actions:convertXmlValueResourcesForCommonMain NO-SOURCE
+> Task :feature:briefing:generateResourceAccessorsForAndroidMain SKIPPED
+> Task :feature:capture:prepareComposeResourcesTaskForAndroidMain NO-SOURCE
+> Task :feature:actions:copyNonXmlValueResourcesForCommonMain NO-SOURCE
+> Task :feature:briefing:convertXmlValueResourcesForCommonMain NO-SOURCE
+> Task :feature:capture:generateResourceAccessorsForAndroidMain SKIPPED
+> Task :feature:actions:prepareComposeResourcesTaskForCommonMain NO-SOURCE
+> Task :feature:actions:generateResourceAccessorsForCommonMain SKIPPED
+> Task :feature:actions:generateActualResourceCollectorsForAndroidMain SKIPPED
+> Task :feature:actions:generateComposeResClass SKIPPED
+> Task :feature:actions:generateExpectResourceCollectorsForCommonMain SKIPPED
+> Task :feature:briefing:copyNonXmlValueResourcesForCommonMain NO-SOURCE
+> Task :feature:capture:convertXmlValueResourcesForCommonMain NO-SOURCE
+> Task :feature:actions:convertXmlValueResourcesForAndroidDebug NO-SOURCE
+> Task :feature:briefing:prepareComposeResourcesTaskForCommonMain NO-SOURCE
+> Task :feature:briefing:generateResourceAccessorsForCommonMain SKIPPED
+> Task :feature:briefing:generateActualResourceCollectorsForAndroidMain SKIPPED
+> Task :feature:briefing:generateComposeResClass SKIPPED
+> Task :feature:briefing:generateExpectResourceCollectorsForCommonMain SKIPPED
+> Task :feature:capture:copyNonXmlValueResourcesForCommonMain NO-SOURCE
+> Task :feature:actions:copyNonXmlValueResourcesForAndroidDebug NO-SOURCE
+> Task :feature:briefing:convertXmlValueResourcesForAndroidDebug NO-SOURCE
+> Task :feature:actions:prepareComposeResourcesTaskForAndroidDebug NO-SOURCE
+> Task :feature:capture:prepareComposeResourcesTaskForCommonMain NO-SOURCE
+> Task :feature:actions:generateResourceAccessorsForAndroidDebug SKIPPED
+> Task :feature:capture:generateResourceAccessorsForCommonMain SKIPPED
+> Task :feature:voice:generateDebugRFile FROM-CACHE
+> Task :feature:briefing:copyNonXmlValueResourcesForAndroidDebug NO-SOURCE
+> Task :feature:notes:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :feature:notes:convertXmlValueResourcesForAndroidMain NO-SOURCE
+> Task :feature:capture:generateActualResourceCollectorsForAndroidMain SKIPPED
+> Task :feature:memory:processDebugManifest FROM-CACHE
+> Task :feature:notes:copyNonXmlValueResourcesForAndroidMain NO-SOURCE
+> Task :feature:briefing:prepareComposeResourcesTaskForAndroidDebug NO-SOURCE
+> Task :feature:briefing:generateResourceAccessorsForAndroidDebug SKIPPED
+> Task :feature:notes:prepareComposeResourcesTaskForAndroidMain NO-SOURCE
+> Task :feature:capture:generateComposeResClass SKIPPED
+> Task :feature:capture:generateExpectResourceCollectorsForCommonMain SKIPPED
+> Task :feature:notes:generateResourceAccessorsForAndroidMain SKIPPED
+> Task :feature:notes:convertXmlValueResourcesForCommonMain NO-SOURCE
+> Task :feature:notes:copyNonXmlValueResourcesForCommonMain NO-SOURCE
+> Task :feature:capture:convertXmlValueResourcesForAndroidDebug NO-SOURCE
+> Task :feature:memory:compileDebugLibraryResources FROM-CACHE
+> Task :composeApp:copyNonXmlValueResourcesForCommonMain
+> Task :feature:briefing:javaPreCompileDebug FROM-CACHE
+> Task :feature:actions:javaPreCompileDebug FROM-CACHE
+> Task :feature:notes:prepareComposeResourcesTaskForCommonMain NO-SOURCE
+> Task :feature:capture:copyNonXmlValueResourcesForAndroidDebug NO-SOURCE
+> Task :feature:notes:generateResourceAccessorsForCommonMain SKIPPED
+> Task :feature:reminders:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :feature:tasks:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :composeApp:prepareComposeResourcesTaskForCommonMain UP-TO-DATE
+> Task :feature:tasks:convertXmlValueResourcesForAndroidMain NO-SOURCE
+> Task :feature:tasks:copyNonXmlValueResourcesForAndroidMain NO-SOURCE
+> Task :feature:notes:generateActualResourceCollectorsForAndroidMain SKIPPED
+> Task :feature:capture:prepareComposeResourcesTaskForAndroidDebug NO-SOURCE
+> Task :feature:reminders:convertXmlValueResourcesForAndroidMain NO-SOURCE
+> Task :feature:notes:generateComposeResClass SKIPPED
+> Task :feature:capture:generateResourceAccessorsForAndroidDebug SKIPPED
+> Task :feature:tasks:prepareComposeResourcesTaskForAndroidMain NO-SOURCE
+> Task :feature:notes:generateExpectResourceCollectorsForCommonMain SKIPPED
+> Task :feature:reminders:copyNonXmlValueResourcesForAndroidMain NO-SOURCE
+> Task :feature:notes:convertXmlValueResourcesForAndroidDebug NO-SOURCE
+> Task :feature:notes:copyNonXmlValueResourcesForAndroidDebug NO-SOURCE
+> Task :feature:notes:prepareComposeResourcesTaskForAndroidDebug NO-SOURCE
+> Task :feature:notes:generateResourceAccessorsForAndroidDebug SKIPPED
+> Task :feature:memory:parseDebugLocalResources FROM-CACHE
+> Task :feature:tasks:generateResourceAccessorsForAndroidMain SKIPPED
+> Task :feature:tasks:convertXmlValueResourcesForCommonMain NO-SOURCE
+> Task :feature:tasks:copyNonXmlValueResourcesForCommonMain NO-SOURCE
+> Task :feature:tasks:prepareComposeResourcesTaskForCommonMain NO-SOURCE
+> Task :feature:tasks:generateResourceAccessorsForCommonMain SKIPPED
+> Task :feature:tasks:generateActualResourceCollectorsForAndroidMain SKIPPED
+> Task :feature:tasks:generateComposeResClass SKIPPED
+> Task :feature:tasks:generateExpectResourceCollectorsForCommonMain SKIPPED
+> Task :feature:tasks:convertXmlValueResourcesForAndroidDebug NO-SOURCE
+> Task :feature:tasks:copyNonXmlValueResourcesForAndroidDebug NO-SOURCE
+> Task :feature:tasks:prepareComposeResourcesTaskForAndroidDebug NO-SOURCE
+> Task :feature:tasks:generateResourceAccessorsForAndroidDebug SKIPPED
+> Task :feature:notes:javaPreCompileDebug FROM-CACHE
+> Task :feature:voice:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :feature:capture:javaPreCompileDebug FROM-CACHE
+> Task :shared:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :shared:preBuild UP-TO-DATE
+> Task :feature:reminders:prepareComposeResourcesTaskForAndroidMain NO-SOURCE
+> Task :shared:preDebugBuild UP-TO-DATE
+> Task :feature:reminders:generateResourceAccessorsForAndroidMain SKIPPED
+> Task :feature:voice:convertXmlValueResourcesForAndroidMain NO-SOURCE
+> Task :feature:tasks:javaPreCompileDebug FROM-CACHE
+> Task :core:domain:preDebugUnitTestBuild UP-TO-DATE
+> Task :feature:reminders:convertXmlValueResourcesForCommonMain NO-SOURCE
+> Task :feature:voice:copyNonXmlValueResourcesForAndroidMain NO-SOURCE
+> Task :feature:memory:generateDebugRFile FROM-CACHE
+> Task :shared:generateDebugResValues FROM-CACHE
+> Task :feature:reminders:copyNonXmlValueResourcesForCommonMain NO-SOURCE
+> Task :feature:memory:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :feature:reminders:prepareComposeResourcesTaskForCommonMain NO-SOURCE
+> Task :feature:voice:prepareComposeResourcesTaskForAndroidMain NO-SOURCE
+> Task :feature:reminders:generateResourceAccessorsForCommonMain SKIPPED
+> Task :core:data:generateCommonMainYaanDatabaseInterface FROM-CACHE
+> Task :feature:voice:generateResourceAccessorsForAndroidMain SKIPPED
+> Task :feature:reminders:generateActualResourceCollectorsForAndroidMain SKIPPED
+> Task :feature:voice:convertXmlValueResourcesForCommonMain NO-SOURCE
+> Task :feature:reminders:generateComposeResClass SKIPPED
+> Task :feature:reminders:generateExpectResourceCollectorsForCommonMain SKIPPED
+> Task :shared:generateDebugResources FROM-CACHE
+> Task :feature:memory:convertXmlValueResourcesForAndroidMain NO-SOURCE
+> Task :feature:reminders:convertXmlValueResourcesForAndroidDebug NO-SOURCE
+> Task :core:data:javaPreCompileDebug FROM-CACHE
+> Task :feature:voice:copyNonXmlValueResourcesForCommonMain NO-SOURCE
+> Task :feature:memory:copyNonXmlValueResourcesForAndroidMain NO-SOURCE
+> Task :core:data:preDebugUnitTestBuild UP-TO-DATE
+> Task :feature:reminders:copyNonXmlValueResourcesForAndroidDebug NO-SOURCE
+> Task :feature:voice:prepareComposeResourcesTaskForCommonMain NO-SOURCE
+> Task :feature:memory:prepareComposeResourcesTaskForAndroidMain NO-SOURCE
+> Task :feature:voice:generateResourceAccessorsForCommonMain SKIPPED
+> Task :feature:memory:generateResourceAccessorsForAndroidMain SKIPPED
+> Task :feature:reminders:prepareComposeResourcesTaskForAndroidDebug NO-SOURCE
+> Task :feature:reminders:generateResourceAccessorsForAndroidDebug SKIPPED
+> Task :feature:voice:generateActualResourceCollectorsForAndroidMain SKIPPED
+> Task :feature:memory:convertXmlValueResourcesForCommonMain NO-SOURCE
+> Task :feature:voice:generateComposeResClass SKIPPED
+> Task :feature:memory:copyNonXmlValueResourcesForCommonMain NO-SOURCE
+> Task :feature:voice:generateExpectResourceCollectorsForCommonMain SKIPPED
+> Task :feature:reminders:javaPreCompileDebug FROM-CACHE
+> Task :feature:voice:convertXmlValueResourcesForAndroidDebug NO-SOURCE
+> Task :feature:actions:preDebugUnitTestBuild UP-TO-DATE
+> Task :feature:memory:prepareComposeResourcesTaskForCommonMain NO-SOURCE
+> Task :shared:packageDebugResources FROM-CACHE
+> Task :feature:memory:generateResourceAccessorsForCommonMain SKIPPED
+> Task :feature:voice:copyNonXmlValueResourcesForAndroidDebug NO-SOURCE
+> Task :feature:memory:generateActualResourceCollectorsForAndroidMain SKIPPED
+> Task :feature:memory:generateComposeResClass SKIPPED
+> Task :feature:memory:generateExpectResourceCollectorsForCommonMain SKIPPED
+> Task :feature:voice:prepareComposeResourcesTaskForAndroidDebug NO-SOURCE
+> Task :feature:voice:generateResourceAccessorsForAndroidDebug SKIPPED
+> Task :feature:memory:convertXmlValueResourcesForAndroidDebug NO-SOURCE
+> Task :feature:memory:copyNonXmlValueResourcesForAndroidDebug NO-SOURCE
+> Task :feature:memory:prepareComposeResourcesTaskForAndroidDebug NO-SOURCE
+> Task :feature:voice:javaPreCompileDebug FROM-CACHE
+> Task :shared:parseDebugLocalResources FROM-CACHE
+> Task :feature:memory:generateResourceAccessorsForAndroidDebug SKIPPED
+> Task :feature:briefing:preDebugUnitTestBuild UP-TO-DATE
+> Task :feature:memory:javaPreCompileDebug FROM-CACHE
+> Task :feature:capture:preDebugUnitTestBuild UP-TO-DATE
+> Task :shared:generateDebugRFile FROM-CACHE
+> Task :shared:javaPreCompileDebug FROM-CACHE
+> Task :shared:preDebugUnitTestBuild UP-TO-DATE
+> Task :core:domain:generateDebugUnitTestStubRFile FROM-CACHE
+> Task :core:domain:javaPreCompileDebugUnitTest FROM-CACHE
+> Task :feature:memory:preDebugUnitTestBuild UP-TO-DATE
+> Task :composeApp:generateResourceAccessorsForCommonMain
+> Task :composeApp:generateActualResourceCollectorsForAndroidMain
+> Task :composeApp:generateComposeResClass
+> Task :composeApp:preBuild UP-TO-DATE
+> Task :composeApp:preDebugBuild UP-TO-DATE
+> Task :composeApp:generateDebugBuildConfig FROM-CACHE
+> Task :composeApp:generateExpectResourceCollectorsForCommonMain
+> Task :composeApp:convertXmlValueResourcesForAndroidDebug NO-SOURCE
+> Task :composeApp:copyNonXmlValueResourcesForAndroidDebug NO-SOURCE
+> Task :composeApp:prepareComposeResourcesTaskForAndroidDebug NO-SOURCE
+> Task :composeApp:generateResourceAccessorsForAndroidDebug NO-SOURCE
+> Task :core:common:compileDebugKotlinAndroid FROM-CACHE
+> Task :core:common:javaPreCompileDebug FROM-CACHE
+> Task :core:common:compileDebugJavaWithJavac NO-SOURCE
+> Task :core:common:bundleLibCompileToJarDebug
+> Task :core:data:generateDebugUnitTestStubRFile FROM-CACHE
+> Task :feature:actions:generateDebugUnitTestStubRFile FROM-CACHE
+> Task :shared:generateDebugUnitTestStubRFile FROM-CACHE
+> Task :feature:briefing:generateDebugUnitTestStubRFile FROM-CACHE
+> Task :feature:capture:generateDebugUnitTestStubRFile FROM-CACHE
+> Task :feature:memory:generateDebugUnitTestStubRFile FROM-CACHE
+> Task :feature:briefing:convertXmlValueResourcesForAndroidUnitTest NO-SOURCE
+> Task :feature:capture:convertXmlValueResourcesForAndroidUnitTest NO-SOURCE
+> Task :feature:actions:convertXmlValueResourcesForAndroidUnitTest NO-SOURCE
+> Task :feature:actions:copyNonXmlValueResourcesForAndroidUnitTest NO-SOURCE
+> Task :feature:capture:copyNonXmlValueResourcesForAndroidUnitTest NO-SOURCE
+> Task :feature:briefing:copyNonXmlValueResourcesForAndroidUnitTest NO-SOURCE
+> Task :feature:briefing:prepareComposeResourcesTaskForAndroidUnitTest NO-SOURCE
+> Task :feature:briefing:generateResourceAccessorsForAndroidUnitTest SKIPPED
+> Task :feature:actions:prepareComposeResourcesTaskForAndroidUnitTest NO-SOURCE
+> Task :feature:actions:generateResourceAccessorsForAndroidUnitTest SKIPPED
+> Task :core:data:javaPreCompileDebugUnitTest FROM-CACHE
+> Task :feature:briefing:convertXmlValueResourcesForAndroidUnitTestDebug NO-SOURCE
+> Task :shared:javaPreCompileDebugUnitTest FROM-CACHE
+> Task :feature:briefing:copyNonXmlValueResourcesForAndroidUnitTestDebug NO-SOURCE
+> Task :feature:actions:convertXmlValueResourcesForAndroidUnitTestDebug NO-SOURCE
+> Task :feature:capture:prepareComposeResourcesTaskForAndroidUnitTest NO-SOURCE
+> Task :feature:memory:convertXmlValueResourcesForAndroidUnitTest NO-SOURCE
+> Task :feature:actions:copyNonXmlValueResourcesForAndroidUnitTestDebug NO-SOURCE
+> Task :feature:briefing:prepareComposeResourcesTaskForAndroidUnitTestDebug NO-SOURCE
+> Task :feature:memory:copyNonXmlValueResourcesForAndroidUnitTest NO-SOURCE
+> Task :feature:actions:prepareComposeResourcesTaskForAndroidUnitTestDebug NO-SOURCE
+> Task :feature:actions:generateResourceAccessorsForAndroidUnitTestDebug SKIPPED
+> Task :feature:memory:prepareComposeResourcesTaskForAndroidUnitTest NO-SOURCE
+> Task :feature:briefing:generateResourceAccessorsForAndroidUnitTestDebug SKIPPED
+> Task :feature:memory:generateResourceAccessorsForAndroidUnitTest SKIPPED
+> Task :feature:capture:generateResourceAccessorsForAndroidUnitTest SKIPPED
+> Task :feature:briefing:convertXmlValueResourcesForCommonTest NO-SOURCE
+> Task :feature:capture:convertXmlValueResourcesForAndroidUnitTestDebug NO-SOURCE
+> Task :feature:memory:convertXmlValueResourcesForAndroidUnitTestDebug NO-SOURCE
+> Task :feature:capture:copyNonXmlValueResourcesForAndroidUnitTestDebug NO-SOURCE
+> Task :feature:actions:convertXmlValueResourcesForCommonTest NO-SOURCE
+> Task :feature:briefing:copyNonXmlValueResourcesForCommonTest NO-SOURCE
+> Task :core:common:bundleLibRuntimeToJarDebug
+> Task :feature:memory:copyNonXmlValueResourcesForAndroidUnitTestDebug NO-SOURCE
+> Task :feature:actions:copyNonXmlValueResourcesForCommonTest NO-SOURCE
+> Task :feature:notes:preDebugUnitTestBuild UP-TO-DATE
+> Task :feature:actions:prepareComposeResourcesTaskForCommonTest NO-SOURCE
+> Task :feature:actions:generateResourceAccessorsForCommonTest SKIPPED
+> Task :feature:memory:prepareComposeResourcesTaskForAndroidUnitTestDebug NO-SOURCE
+> Task :feature:capture:prepareComposeResourcesTaskForAndroidUnitTestDebug NO-SOURCE
+> Task :feature:memory:generateResourceAccessorsForAndroidUnitTestDebug SKIPPED
+> Task :feature:memory:convertXmlValueResourcesForCommonTest NO-SOURCE
+> Task :feature:capture:generateResourceAccessorsForAndroidUnitTestDebug SKIPPED
+> Task :feature:briefing:prepareComposeResourcesTaskForCommonTest NO-SOURCE
+> Task :feature:memory:copyNonXmlValueResourcesForCommonTest NO-SOURCE
+> Task :feature:capture:convertXmlValueResourcesForCommonTest NO-SOURCE
+> Task :feature:briefing:generateResourceAccessorsForCommonTest SKIPPED
+> Task :feature:capture:copyNonXmlValueResourcesForCommonTest NO-SOURCE
+> Task :feature:memory:prepareComposeResourcesTaskForCommonTest NO-SOURCE
+> Task :feature:capture:prepareComposeResourcesTaskForCommonTest NO-SOURCE
+> Task :feature:actions:javaPreCompileDebugUnitTest FROM-CACHE
+> Task :feature:capture:generateResourceAccessorsForCommonTest SKIPPED
+> Task :feature:memory:generateResourceAccessorsForCommonTest SKIPPED
+> Task :feature:briefing:javaPreCompileDebugUnitTest FROM-CACHE
+> Task :feature:reminders:preDebugUnitTestBuild UP-TO-DATE
+> Task :feature:tasks:preDebugUnitTestBuild UP-TO-DATE
+> Task :feature:capture:javaPreCompileDebugUnitTest FROM-CACHE
+> Task :feature:voice:preDebugUnitTestBuild UP-TO-DATE
+> Task :feature:memory:javaPreCompileDebugUnitTest FROM-CACHE
+> Task :core:common:processDebugJavaRes
+> Task :backend:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :core:common:preDebugUnitTestBuild UP-TO-DATE
+> Task :core:common:generateDebugUnitTestStubRFile FROM-CACHE
+> Task :feature:tasks:generateDebugUnitTestStubRFile FROM-CACHE
+> Task :feature:tasks:convertXmlValueResourcesForAndroidUnitTest NO-SOURCE
+> Task :feature:notes:generateDebugUnitTestStubRFile FROM-CACHE
+> Task :feature:tasks:copyNonXmlValueResourcesForAndroidUnitTest NO-SOURCE
+> Task :feature:notes:convertXmlValueResourcesForAndroidUnitTest NO-SOURCE
+> Task :feature:tasks:prepareComposeResourcesTaskForAndroidUnitTest NO-SOURCE
+> Task :feature:tasks:generateResourceAccessorsForAndroidUnitTest SKIPPED
+> Task :feature:tasks:convertXmlValueResourcesForAndroidUnitTestDebug NO-SOURCE
+> Task :feature:tasks:copyNonXmlValueResourcesForAndroidUnitTestDebug NO-SOURCE
+> Task :feature:tasks:prepareComposeResourcesTaskForAndroidUnitTestDebug NO-SOURCE
+> Task :feature:tasks:generateResourceAccessorsForAndroidUnitTestDebug SKIPPED
+> Task :feature:tasks:convertXmlValueResourcesForCommonTest NO-SOURCE
+> Task :feature:tasks:copyNonXmlValueResourcesForCommonTest NO-SOURCE
+> Task :feature:tasks:prepareComposeResourcesTaskForCommonTest NO-SOURCE
+> Task :feature:tasks:generateResourceAccessorsForCommonTest SKIPPED
+> Task :feature:tasks:javaPreCompileDebugUnitTest FROM-CACHE
+> Task :feature:notes:copyNonXmlValueResourcesForAndroidUnitTest NO-SOURCE
+> Task :feature:notes:prepareComposeResourcesTaskForAndroidUnitTest NO-SOURCE
+> Task :feature:notes:generateResourceAccessorsForAndroidUnitTest SKIPPED
+> Task :feature:reminders:generateDebugUnitTestStubRFile FROM-CACHE
+> Task :feature:reminders:convertXmlValueResourcesForAndroidUnitTest NO-SOURCE
+> Task :feature:notes:convertXmlValueResourcesForAndroidUnitTestDebug NO-SOURCE
+> Task :feature:reminders:copyNonXmlValueResourcesForAndroidUnitTest NO-SOURCE
+> Task :feature:reminders:prepareComposeResourcesTaskForAndroidUnitTest NO-SOURCE
+> Task :feature:reminders:generateResourceAccessorsForAndroidUnitTest SKIPPED
+> Task :feature:reminders:convertXmlValueResourcesForAndroidUnitTestDebug NO-SOURCE
+> Task :feature:reminders:copyNonXmlValueResourcesForAndroidUnitTestDebug NO-SOURCE
+> Task :feature:notes:copyNonXmlValueResourcesForAndroidUnitTestDebug NO-SOURCE
+> Task :feature:reminders:prepareComposeResourcesTaskForAndroidUnitTestDebug NO-SOURCE
+> Task :feature:voice:generateDebugUnitTestStubRFile FROM-CACHE
+> Task :feature:reminders:generateResourceAccessorsForAndroidUnitTestDebug SKIPPED
+> Task :feature:voice:convertXmlValueResourcesForAndroidUnitTest NO-SOURCE
+> Task :feature:voice:copyNonXmlValueResourcesForAndroidUnitTest NO-SOURCE
+> Task :feature:reminders:convertXmlValueResourcesForCommonTest NO-SOURCE
+> Task :feature:notes:prepareComposeResourcesTaskForAndroidUnitTestDebug NO-SOURCE
+> Task :feature:reminders:copyNonXmlValueResourcesForCommonTest NO-SOURCE
+> Task :feature:voice:prepareComposeResourcesTaskForAndroidUnitTest NO-SOURCE
+> Task :feature:reminders:prepareComposeResourcesTaskForCommonTest NO-SOURCE
+> Task :feature:notes:generateResourceAccessorsForAndroidUnitTestDebug SKIPPED
+> Task :feature:voice:generateResourceAccessorsForAndroidUnitTest SKIPPED
+> Task :feature:reminders:generateResourceAccessorsForCommonTest SKIPPED
+> Task :feature:voice:convertXmlValueResourcesForAndroidUnitTestDebug NO-SOURCE
+> Task :feature:voice:copyNonXmlValueResourcesForAndroidUnitTestDebug NO-SOURCE
+> Task :feature:voice:prepareComposeResourcesTaskForAndroidUnitTestDebug NO-SOURCE
+> Task :feature:notes:convertXmlValueResourcesForCommonTest NO-SOURCE
+> Task :feature:voice:generateResourceAccessorsForAndroidUnitTestDebug SKIPPED
+> Task :feature:voice:convertXmlValueResourcesForCommonTest NO-SOURCE
+> Task :feature:voice:copyNonXmlValueResourcesForCommonTest NO-SOURCE
+> Task :feature:voice:prepareComposeResourcesTaskForCommonTest NO-SOURCE
+> Task :feature:voice:generateResourceAccessorsForCommonTest SKIPPED
+> Task :feature:notes:copyNonXmlValueResourcesForCommonTest NO-SOURCE
+> Task :feature:reminders:javaPreCompileDebugUnitTest FROM-CACHE
+> Task :feature:notes:prepareComposeResourcesTaskForCommonTest NO-SOURCE
+> Task :feature:voice:javaPreCompileDebugUnitTest FROM-CACHE
+> Task :feature:notes:generateResourceAccessorsForCommonTest SKIPPED
+> Task :feature:notes:javaPreCompileDebugUnitTest FROM-CACHE
+> Task :core:domain:compileDebugKotlinAndroid FROM-CACHE
+> Task :core:domain:compileDebugJavaWithJavac NO-SOURCE
+> Task :core:domain:bundleLibCompileToJarDebug
+> Task :composeApp:generateDebugResValues FROM-CACHE
+> Task :feature:briefing:mergeDebugShaders
+> Task :feature:capture:mergeDebugShaders
+> Task :feature:briefing:compileDebugShaders NO-SOURCE
+> Task :core:data:mergeDebugShaders
+> Task :feature:actions:mergeDebugShaders
+> Task :core:common:compileDebugUnitTestKotlinAndroid FROM-CACHE
+> Task :feature:actions:compileDebugShaders NO-SOURCE
+> Task :composeApp:mapDebugSourceSetPaths
+> Task :core:common:javaPreCompileDebugUnitTest FROM-CACHE
+> Task :core:common:compileDebugUnitTestJavaWithJavac NO-SOURCE
+> Task :composeApp:generateDebugResources FROM-CACHE
+> Task :core:domain:processDebugJavaRes
+> Task :composeApp:checkDebugAarMetadata
+> Task :feature:actions:copyDebugComposeResourcesToAndroidAssets
+> Task :feature:actions:debugAssetsCopyForAGP NO-SOURCE
+> Task :core:common:processDebugUnitTestJavaRes
+> Task :feature:actions:generateDebugAssets UP-TO-DATE
+> Task :core:domain:bundleLibRuntimeToJarDebug
+> Task :feature:briefing:copyDebugComposeResourcesToAndroidAssets
+> Task :feature:capture:compileDebugShaders NO-SOURCE
+> Task :feature:briefing:debugAssetsCopyForAGP NO-SOURCE
+> Task :feature:briefing:generateDebugAssets UP-TO-DATE
+> Task :feature:capture:copyDebugComposeResourcesToAndroidAssets
+> Task :feature:capture:debugAssetsCopyForAGP NO-SOURCE
+> Task :feature:capture:generateDebugAssets UP-TO-DATE
+> Task :feature:briefing:packageDebugAssets
+> Task :feature:capture:packageDebugAssets
+> Task :feature:actions:packageDebugAssets
+> Task :feature:memory:mergeDebugShaders
+> Task :feature:memory:compileDebugShaders NO-SOURCE
+> Task :feature:notes:mergeDebugShaders
+> Task :feature:memory:copyDebugComposeResourcesToAndroidAssets
+> Task :feature:memory:debugAssetsCopyForAGP NO-SOURCE
+> Task :feature:memory:generateDebugAssets UP-TO-DATE
+> Task :feature:reminders:mergeDebugShaders
+> Task :feature:reminders:compileDebugShaders NO-SOURCE
+> Task :feature:reminders:copyDebugComposeResourcesToAndroidAssets
+> Task :feature:reminders:debugAssetsCopyForAGP NO-SOURCE
+> Task :feature:reminders:generateDebugAssets UP-TO-DATE
+> Task :core:common:testDebugUnitTest FROM-CACHE
+> Task :feature:reminders:packageDebugAssets
+> Task :core:common:mergeDebugShaders
+> Task :feature:tasks:mergeDebugShaders
+> Task :core:common:compileDebugShaders NO-SOURCE
+> Task :core:common:debugAssetsCopyForAGP NO-SOURCE
+> Task :core:common:generateDebugAssets UP-TO-DATE
+> Task :feature:tasks:compileDebugShaders NO-SOURCE
+> Task :feature:notes:compileDebugShaders NO-SOURCE
+> Task :feature:tasks:copyDebugComposeResourcesToAndroidAssets
+> Task :feature:tasks:debugAssetsCopyForAGP NO-SOURCE
+> Task :feature:tasks:generateDebugAssets UP-TO-DATE
+> Task :core:common:packageDebugAssets
+> Task :feature:tasks:packageDebugAssets
+> Task :feature:voice:mergeDebugShaders
+> Task :feature:voice:compileDebugShaders NO-SOURCE
+> Task :feature:voice:copyDebugComposeResourcesToAndroidAssets
+> Task :feature:voice:debugAssetsCopyForAGP NO-SOURCE
+> Task :feature:voice:generateDebugAssets UP-TO-DATE
+> Task :feature:notes:copyDebugComposeResourcesToAndroidAssets
+> Task :feature:notes:debugAssetsCopyForAGP NO-SOURCE
+> Task :feature:notes:generateDebugAssets UP-TO-DATE
+> Task :core:domain:compileDebugUnitTestKotlinAndroid FROM-CACHE
+> Task :feature:memory:packageDebugAssets
+> Task :feature:voice:packageDebugAssets
+> Task :backend:compileKotlin FROM-CACHE
+> Task :backend:compileJava NO-SOURCE
+> Task :backend:processResources NO-SOURCE
+> Task :backend:classes UP-TO-DATE
+> Task :feature:notes:packageDebugAssets
+> Task :core:common:mergeDebugJniLibFolders
+> Task :core:common:mergeDebugNativeLibs NO-SOURCE
+> Task :core:common:bundleLibRuntimeToDirDebug
+> Task :core:domain:compileDebugUnitTestJavaWithJavac NO-SOURCE
+> Task :core:domain:processDebugUnitTestJavaRes
+> Task :feature:actions:mergeDebugJniLibFolders
+> Task :feature:actions:mergeDebugNativeLibs NO-SOURCE
+> Task :feature:actions:copyDebugJniLibsProjectOnly
+> Task :feature:briefing:mergeDebugJniLibFolders
+> Task :core:common:copyDebugJniLibsProjectOnly
+> Task :feature:briefing:mergeDebugNativeLibs NO-SOURCE
+> Task :feature:briefing:copyDebugJniLibsProjectOnly
+> Task :feature:capture:mergeDebugJniLibFolders
+> Task :feature:capture:mergeDebugNativeLibs NO-SOURCE
+> Task :feature:capture:copyDebugJniLibsProjectOnly
+> Task :feature:memory:mergeDebugJniLibFolders
+> Task :feature:memory:mergeDebugNativeLibs NO-SOURCE
+> Task :feature:memory:copyDebugJniLibsProjectOnly
+> Task :core:domain:testDebugUnitTest FROM-CACHE
+> Task :core:domain:mergeDebugShaders
+> Task :feature:reminders:mergeDebugJniLibFolders
+> Task :core:domain:compileDebugShaders NO-SOURCE
+> Task :feature:reminders:mergeDebugNativeLibs NO-SOURCE
+> Task :core:domain:debugAssetsCopyForAGP NO-SOURCE
+> Task :core:domain:generateDebugAssets UP-TO-DATE
+> Task :feature:notes:mergeDebugJniLibFolders
+> Task :feature:notes:mergeDebugNativeLibs NO-SOURCE
+> Task :feature:notes:copyDebugJniLibsProjectOnly
+> Task :feature:tasks:mergeDebugJniLibFolders
+> Task :feature:tasks:mergeDebugNativeLibs NO-SOURCE
+> Task :feature:tasks:copyDebugJniLibsProjectOnly
+> Task :shared:mergeDebugJniLibFolders
+> Task :core:common:stripDebugDebugSymbols NO-SOURCE
+> Task :core:common:copyDebugJniLibsProjectAndLocalJars
+> Task :feature:voice:mergeDebugJniLibFolders
+> Task :shared:mergeDebugNativeLibs NO-SOURCE
+> Task :feature:voice:mergeDebugNativeLibs NO-SOURCE
+> Task :feature:voice:copyDebugJniLibsProjectOnly
+> Task :shared:stripDebugDebugSymbols NO-SOURCE
+> Task :feature:actions:stripDebugDebugSymbols NO-SOURCE
+> Task :feature:actions:copyDebugJniLibsProjectAndLocalJars
+> Task :shared:copyDebugJniLibsProjectAndLocalJars
+> Task :shared:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :feature:actions:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :feature:actions:prepareDebugArtProfile UP-TO-DATE
+> Task :feature:actions:prepareLintJarForPublish UP-TO-DATE
+> Task :feature:briefing:stripDebugDebugSymbols NO-SOURCE
+> Task :feature:briefing:copyDebugJniLibsProjectAndLocalJars
+> Task :feature:reminders:copyDebugJniLibsProjectOnly
+> Task :feature:briefing:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :feature:capture:stripDebugDebugSymbols NO-SOURCE
+> Task :feature:briefing:prepareDebugArtProfile UP-TO-DATE
+> Task :feature:briefing:prepareLintJarForPublish UP-TO-DATE
+> Task :feature:capture:copyDebugJniLibsProjectAndLocalJars
+> Task :feature:capture:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :feature:memory:stripDebugDebugSymbols NO-SOURCE
+> Task :feature:capture:prepareDebugArtProfile UP-TO-DATE
+> Task :feature:capture:prepareLintJarForPublish UP-TO-DATE
+> Task :feature:memory:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :core:data:compileDebugKotlinAndroid FROM-CACHE
+> Task :core:domain:packageDebugAssets
+> Task :feature:memory:copyDebugJniLibsProjectAndLocalJars
+> Task :core:data:compileDebugJavaWithJavac NO-SOURCE
+> Task :shared:mergeDebugShaders
+> Task :shared:compileDebugShaders NO-SOURCE
+> Task :feature:memory:prepareDebugArtProfile UP-TO-DATE
+> Task :shared:debugAssetsCopyForAGP NO-SOURCE
+> Task :shared:generateDebugAssets UP-TO-DATE
+> Task :feature:notes:stripDebugDebugSymbols NO-SOURCE
+> Task :backend:jar
+> Task :core:data:bundleLibRuntimeToJarDebug
+> Task :core:domain:mergeDebugJniLibFolders
+> Task :core:domain:mergeDebugNativeLibs NO-SOURCE
+> Task :shared:packageDebugAssets
+> Task :core:domain:copyDebugJniLibsProjectOnly
+> Task :core:common:extractDebugAnnotations FROM-CACHE
+> Task :core:domain:stripDebugDebugSymbols NO-SOURCE
+> Task :shared:prepareDebugArtProfile UP-TO-DATE
+> Task :core:common:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :core:data:bundleLibCompileToJarDebug
+> Task :core:common:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :shared:prepareLintJarForPublish UP-TO-DATE
+> Task :core:common:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :core:domain:copyDebugJniLibsProjectAndLocalJars
+> Task :core:common:prepareDebugArtProfile UP-TO-DATE
+> Task :core:common:prepareLintJarForPublish UP-TO-DATE
+> Task :core:data:processDebugJavaRes
+> Task :feature:memory:prepareLintJarForPublish UP-TO-DATE
+> Task :shared:processDebugManifest FROM-CACHE
+> Task :core:common:mergeDebugJavaResource
+> Task :core:domain:bundleLibRuntimeToDirDebug
+> Task :composeApp:mergeDebugResources FROM-CACHE
+> Task :core:domain:extractDebugAnnotations
+> Task :composeApp:packageDebugResources FROM-CACHE
+> Task :backend:compileTestKotlin FROM-CACHE
+> Task :composeApp:parseDebugLocalResources FROM-CACHE
+> Task :feature:capture:compileDebugKotlinAndroid FROM-CACHE
+> Task :feature:memory:compileDebugKotlinAndroid FROM-CACHE
+> Task :feature:memory:compileDebugJavaWithJavac NO-SOURCE
+> Task :feature:actions:compileDebugKotlinAndroid FROM-CACHE
+> Task :feature:actions:compileDebugJavaWithJavac NO-SOURCE
+> Task :feature:briefing:compileDebugKotlinAndroid FROM-CACHE
+> Task :composeApp:createDebugCompatibleScreenManifests
+> Task :feature:capture:compileDebugJavaWithJavac NO-SOURCE
+> Task :feature:briefing:compileDebugJavaWithJavac NO-SOURCE
+> Task :composeApp:extractDeepLinksDebug FROM-CACHE
+> Task :feature:briefing:bundleLibCompileToJarDebug
+> Task :feature:capture:bundleLibCompileToJarDebug
+> Task :feature:memory:bundleLibCompileToJarDebug
+> Task :feature:actions:bundleLibRuntimeToJarDebug
+> Task :composeApp:processDebugMainManifest FROM-CACHE
+> Task :feature:actions:bundleLibCompileToJarDebug
+> Task :composeApp:processDebugManifest FROM-CACHE
+> Task :feature:briefing:processDebugJavaRes
+> Task :feature:actions:processDebugJavaRes
+> Task :feature:briefing:bundleLibRuntimeToJarDebug
+> Task :feature:notes:compileDebugKotlinAndroid FROM-CACHE
+> Task :composeApp:processDebugManifestForPackage FROM-CACHE
+> Task :feature:memory:bundleLibRuntimeToJarDebug
+> Task :feature:capture:bundleLibRuntimeToJarDebug
+> Task :feature:notes:compileDebugJavaWithJavac NO-SOURCE
+> Task :feature:notes:bundleLibCompileToJarDebug
+> Task :feature:memory:processDebugJavaRes
+> Task :feature:reminders:compileDebugKotlinAndroid FROM-CACHE
+> Task :feature:reminders:compileDebugJavaWithJavac NO-SOURCE
+> Task :feature:capture:processDebugJavaRes
+> Task :feature:notes:bundleLibRuntimeToJarDebug
+> Task :feature:notes:processDebugJavaRes
+> Task :feature:reminders:bundleLibRuntimeToJarDebug
+> Task :feature:reminders:bundleLibCompileToJarDebug
+> Task :feature:actions:compileDebugUnitTestKotlinAndroid NO-SOURCE
+> Task :feature:briefing:compileDebugUnitTestKotlinAndroid NO-SOURCE
+> Task :feature:actions:compileDebugUnitTestJavaWithJavac NO-SOURCE
+> Task :feature:briefing:compileDebugUnitTestJavaWithJavac NO-SOURCE
+> Task :feature:actions:processDebugUnitTestJavaRes NO-SOURCE
+> Task :feature:reminders:processDebugJavaRes
+> Task :feature:actions:testDebugUnitTest NO-SOURCE
+> Task :feature:briefing:processDebugUnitTestJavaRes NO-SOURCE
+> Task :feature:memory:compileDebugUnitTestKotlinAndroid NO-SOURCE
+> Task :feature:memory:compileDebugUnitTestJavaWithJavac NO-SOURCE
+> Task :feature:tasks:compileDebugKotlinAndroid FROM-CACHE
+> Task :feature:tasks:compileDebugJavaWithJavac NO-SOURCE
+> Task :feature:memory:processDebugUnitTestJavaRes NO-SOURCE
+> Task :feature:memory:testDebugUnitTest NO-SOURCE
+> Task :feature:notes:compileDebugUnitTestKotlinAndroid NO-SOURCE
+> Task :feature:notes:compileDebugUnitTestJavaWithJavac NO-SOURCE
+> Task :feature:notes:processDebugUnitTestJavaRes NO-SOURCE
+> Task :feature:briefing:testDebugUnitTest NO-SOURCE
+> Task :feature:notes:testDebugUnitTest NO-SOURCE
+> Task :backend:compileTestJava NO-SOURCE
+> Task :feature:reminders:compileDebugUnitTestKotlinAndroid NO-SOURCE
+> Task :feature:reminders:compileDebugUnitTestJavaWithJavac NO-SOURCE
+> Task :feature:reminders:processDebugUnitTestJavaRes NO-SOURCE
+> Task :feature:reminders:testDebugUnitTest NO-SOURCE
+> Task :backend:processTestResources NO-SOURCE
+> Task :backend:testClasses UP-TO-DATE
+> Task :feature:tasks:bundleLibCompileToJarDebug
+> Task :feature:tasks:bundleLibRuntimeToJarDebug
+> Task :shared:compileDebugKotlinAndroid FROM-CACHE
+> Task :shared:compileDebugJavaWithJavac NO-SOURCE
+> Task :feature:tasks:processDebugJavaRes
+> Task :feature:tasks:compileDebugUnitTestKotlinAndroid NO-SOURCE
+> Task :feature:tasks:compileDebugUnitTestJavaWithJavac NO-SOURCE
+> Task :shared:bundleLibRuntimeToJarDebug
+> Task :feature:tasks:processDebugUnitTestJavaRes NO-SOURCE
+> Task :shared:bundleLibCompileToJarDebug
+> Task :shared:processDebugJavaRes
+> Task :feature:tasks:testDebugUnitTest NO-SOURCE
+> Task :composeApp:processDebugResources FROM-CACHE
+> Task :backend:test FROM-CACHE
+> Task :core:data:compileDebugUnitTestKotlinAndroid FROM-CACHE
+> Task :core:data:compileDebugUnitTestJavaWithJavac NO-SOURCE
+> Task :feature:voice:compileDebugKotlinAndroid FROM-CACHE
+> Task :feature:voice:compileDebugJavaWithJavac NO-SOURCE
+> Task :core:data:processDebugUnitTestJavaRes
+> Task :feature:voice:bundleLibRuntimeToJarDebug
+> Task :feature:voice:bundleLibCompileToJarDebug
+> Task :feature:voice:processDebugJavaRes
+> Task :composeApp:javaPreCompileDebug FROM-CACHE
+> Task :feature:capture:compileDebugUnitTestKotlinAndroid FROM-CACHE
+> Task :feature:capture:compileDebugUnitTestJavaWithJavac NO-SOURCE
+> Task :feature:capture:processDebugUnitTestJavaRes
+> Task :feature:notes:bundleLibRuntimeToDirDebug
+> Task :feature:reminders:bundleLibRuntimeToDirDebug
+> Task :feature:memory:bundleLibRuntimeToDirDebug
+> Task :feature:briefing:bundleLibRuntimeToDirDebug
+> Task :feature:tasks:bundleLibRuntimeToDirDebug
+> Task :shared:compileDebugUnitTestKotlinAndroid FROM-CACHE
+> Task :shared:compileDebugUnitTestJavaWithJavac NO-SOURCE
+> Task :core:data:testDebugUnitTest FROM-CACHE
+> Task :core:data:compileDebugShaders NO-SOURCE
+> Task :core:data:debugAssetsCopyForAGP NO-SOURCE
+> Task :core:data:generateDebugAssets UP-TO-DATE
+> Task :shared:processDebugUnitTestJavaRes
+> Task :feature:actions:bundleLibRuntimeToDirDebug
+> Task :core:common:syncDebugLibJars FROM-CACHE
+> Task :core:domain:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :core:domain:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :core:domain:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :core:data:packageDebugAssets
+> Task :feature:voice:compileDebugUnitTestKotlinAndroid FROM-CACHE
+> Task :feature:voice:compileDebugUnitTestJavaWithJavac NO-SOURCE
+> Task :core:common:bundleDebugAar
+> Task :core:common:assembleDebug
+> Task :core:domain:prepareDebugArtProfile UP-TO-DATE
+> Task :core:domain:prepareLintJarForPublish UP-TO-DATE
+> Task :feature:capture:testDebugUnitTest FROM-CACHE
+> Task :feature:voice:processDebugUnitTestJavaRes
+> Task :feature:capture:bundleLibRuntimeToDirDebug
+> Task :shared:testDebugUnitTest FROM-CACHE
+> Task :core:domain:mergeDebugJavaResource
+> Task :core:data:mergeDebugJniLibFolders
+> Task :feature:voice:testDebugUnitTest FROM-CACHE
+> Task :core:data:mergeDebugNativeLibs NO-SOURCE
+> Task :core:data:copyDebugJniLibsProjectOnly
+> Task :core:data:stripDebugDebugSymbols NO-SOURCE
+> Task :feature:voice:bundleLibRuntimeToDirDebug
+> Task :core:data:bundleLibRuntimeToDirDebug
+> Task :core:data:copyDebugJniLibsProjectAndLocalJars
+> Task :composeApp:compileDebugKotlinAndroid FROM-CACHE
+> Task :feature:actions:extractDebugAnnotations
+> Task :feature:actions:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :feature:actions:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :feature:actions:mergeDebugJavaResource
+> Task :feature:briefing:extractDebugAnnotations
+> Task :feature:capture:extractDebugAnnotations
+> Task :shared:extractDebugAnnotations
+> Task :feature:briefing:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :shared:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :feature:capture:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :composeApp:compileDebugJavaWithJavac FROM-CACHE
+> Task :feature:capture:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :feature:briefing:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :shared:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :feature:actions:syncDebugLibJars FROM-CACHE
+> Task :core:data:extractDebugAnnotations
+> Task :feature:capture:mergeDebugJavaResource
+> Task :feature:actions:bundleDebugAar
+> Task :core:data:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :core:data:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :feature:briefing:mergeDebugJavaResource
+> Task :feature:actions:assembleDebug
+> Task :shared:writeDebugAarMetadata
+> Task :shared:mergeDebugJavaResource
+> Task :core:data:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :core:data:prepareDebugArtProfile UP-TO-DATE
+> Task :feature:briefing:syncDebugLibJars FROM-CACHE
+> Task :shared:syncDebugLibJars FROM-CACHE
+> Task :core:data:prepareLintJarForPublish UP-TO-DATE
+> Task :composeApp:convertXmlValueResourcesForAndroidUnitTest NO-SOURCE
+> Task :composeApp:copyNonXmlValueResourcesForAndroidUnitTest NO-SOURCE
+> Task :feature:capture:syncDebugLibJars FROM-CACHE
+> Task :feature:capture:bundleDebugAar
+> Task :feature:capture:assembleDebug
+> Task :core:data:mergeDebugJavaResource
+> Task :feature:briefing:bundleDebugAar
+> Task :feature:briefing:assembleDebug
+> Task :feature:notes:copyDebugJniLibsProjectAndLocalJars
+> Task :composeApp:prepareComposeResourcesTaskForAndroidUnitTest NO-SOURCE
+> Task :composeApp:generateResourceAccessorsForAndroidUnitTest NO-SOURCE
+> Task :composeApp:convertXmlValueResourcesForAndroidUnitTestDebug NO-SOURCE
+> Task :composeApp:copyNonXmlValueResourcesForAndroidUnitTestDebug NO-SOURCE
+> Task :composeApp:bundleDebugClassesToRuntimeJar
+> Task :composeApp:prepareComposeResourcesTaskForAndroidUnitTestDebug NO-SOURCE
+> Task :shared:bundleDebugAar
+> Task :feature:reminders:stripDebugDebugSymbols NO-SOURCE
+> Task :shared:assembleDebug
+> Task :feature:memory:extractDebugAnnotations
+> Task :feature:tasks:stripDebugDebugSymbols NO-SOURCE
+> Task :feature:memory:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :feature:reminders:copyDebugJniLibsProjectAndLocalJars
+> Task :feature:memory:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :feature:tasks:copyDebugJniLibsProjectAndLocalJars
+> Task :composeApp:generateResourceAccessorsForAndroidUnitTestDebug NO-SOURCE
+> Task :feature:memory:mergeDebugJavaResource
+> Task :composeApp:convertXmlValueResourcesForCommonTest NO-SOURCE
+> Task :composeApp:copyNonXmlValueResourcesForCommonTest NO-SOURCE
+> Task :composeApp:prepareComposeResourcesTaskForCommonTest NO-SOURCE
+> Task :composeApp:bundleDebugClassesToCompileJar
+> Task :composeApp:generateResourceAccessorsForCommonTest NO-SOURCE
+> Task :feature:memory:syncDebugLibJars FROM-CACHE
+> Task :feature:notes:extractDebugAnnotations
+> Task :feature:tasks:extractDebugAnnotations
+> Task :feature:voice:stripDebugDebugSymbols NO-SOURCE
+> Task :feature:notes:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :feature:tasks:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :feature:tasks:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :feature:notes:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :feature:voice:copyDebugJniLibsProjectAndLocalJars
+> Task :feature:tasks:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :feature:notes:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :feature:memory:bundleDebugAar
+> Task :feature:memory:assembleDebug
+> Task :feature:notes:prepareDebugArtProfile UP-TO-DATE
+> Task :feature:notes:prepareLintJarForPublish UP-TO-DATE
+> Task :feature:tasks:prepareDebugArtProfile UP-TO-DATE
+> Task :feature:tasks:prepareLintJarForPublish UP-TO-DATE
+> Task :core:data:syncDebugLibJars
+> Task :feature:notes:mergeDebugJavaResource
+> Task :feature:voice:extractDebugAnnotations
+> Task :feature:reminders:extractDebugAnnotations
+> Task :feature:voice:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :feature:reminders:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :feature:tasks:mergeDebugJavaResource
+> Task :feature:voice:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :feature:reminders:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :feature:notes:syncDebugLibJars FROM-CACHE
+> Task :core:data:bundleDebugAar
+> Task :core:data:assembleDebug
+> Task :feature:notes:bundleDebugAar
+> Task :feature:tasks:syncDebugLibJars FROM-CACHE
+> Task :feature:notes:assembleDebug
+> Task :feature:reminders:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :feature:tasks:bundleDebugAar
+> Task :core:domain:syncDebugLibJars
+> Task :feature:tasks:assembleDebug
+> Task :feature:voice:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :feature:voice:prepareDebugArtProfile UP-TO-DATE
+> Task :feature:reminders:prepareDebugArtProfile UP-TO-DATE
+> Task :feature:voice:prepareLintJarForPublish UP-TO-DATE
+> Task :core:domain:bundleDebugAar
+> Task :core:domain:assembleDebug
+> Task :feature:reminders:prepareLintJarForPublish UP-TO-DATE
+> Task :feature:reminders:mergeDebugJavaResource
+> Task :feature:voice:mergeDebugJavaResource
+> Task :feature:voice:syncDebugLibJars FROM-CACHE
+> Task :feature:reminders:syncDebugLibJars FROM-CACHE
+> Task :feature:voice:bundleDebugAar
+> Task :feature:voice:assembleDebug
+> Task :feature:reminders:bundleDebugAar
+> Task :feature:reminders:assembleDebug
+> Task :composeApp:compileDebugUnitTestKotlinAndroid FROM-CACHE
+> Task :composeApp:preDebugUnitTestBuild UP-TO-DATE
+> Task :composeApp:javaPreCompileDebugUnitTest FROM-CACHE
+> Task :composeApp:compileDebugUnitTestJavaWithJavac NO-SOURCE
+> Task :composeApp:processDebugJavaRes
+> Task :composeApp:processDebugUnitTestJavaRes
+> Task :composeApp:testDebugUnitTest FROM-CACHE
+> Task :composeApp:mergeDebugNativeDebugMetadata NO-SOURCE
+> Task :composeApp:mergeDebugShaders
+> Task :composeApp:compileDebugShaders NO-SOURCE
+> Task :composeApp:copyDebugComposeResourcesToAndroidAssets
+> Task :composeApp:debugAssetsCopyForAGP NO-SOURCE
+> Task :composeApp:generateDebugAssets UP-TO-DATE
+> Task :composeApp:mergeDebugAssets
+> Task :composeApp:compressDebugAssets FROM-CACHE
+> Task :composeApp:desugarDebugFileDependencies FROM-CACHE
+> Task :composeApp:dexBuilderDebug FROM-CACHE
+> Task :composeApp:mergeDebugGlobalSynthetics FROM-CACHE
+> Task :composeApp:mergeDebugJniLibFolders
+> Task :composeApp:mergeDebugNativeLibs
+> Task :composeApp:checkDebugDuplicateClasses
+> Task :composeApp:validateSigningDebug
+> Task :composeApp:mergeExtDexDebug FROM-CACHE
+> Task :composeApp:mergeLibDexDebug FROM-CACHE
+> Task :composeApp:mergeProjectDexDebug FROM-CACHE
+> Task :composeApp:writeDebugAppMetadata
+> Task :composeApp:writeDebugSigningConfigVersions
+
+> Task :composeApp:stripDebugDebugSymbols
+Unable to strip the following libraries, packaging them as they are: libandroidx.graphics.path.so, libdatastore_shared_counter.so.
+
+> Task :composeApp:mergeDebugJavaResource
+> Task :composeApp:packageDebug
+> Task :composeApp:createDebugApkListingFileRedirect
+> Task :composeApp:assembleDebug
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.9/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 13s
+489 actionable tasks: 209 executed, 193 from cache, 87 up-to-date
