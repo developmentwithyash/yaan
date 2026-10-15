@@ -14,7 +14,7 @@
 | **1. Functional Correctness** | 🟡 In Progress | Basic CRUD in SQLite; 82 unit tests pass | 82 unit tests pass | 100% Critical journeys verified (EXTERNAL) | `F-002`, `F-003`, `F-004`, `F-005` | 45% (Lab Unit Only) | Baseline |
 | **2. Critical-Journey Coverage** | 🔴 Incomplete | 3/8 journeys fully working in UI | 3/8 journeys working | 8/8 journeys verified end-to-end (EXTERNAL) | `F-002`, `F-003`, `F-004`, `F-005` | 37.5% | Baseline |
 | **3. Business-Logic Correctness** | 🟢 Good | VectorClock, Redactor, AuthGuard unit-tested | 82 unit tests passing | 0 known logic contradictions (EXTERNAL) | None known | 85% | Baseline |
-| **4. Code Quality & Architecture** | 🟡 Warning | Lint fails on `SCHEDULE_EXACT_ALARM` | 1 Error, 1 Warning in AGP Lint | 0 Lint Errors, 0 Warnings (EXTERNAL) | `F-001` | 100% Compile | Baseline |
+| **4. Code Quality & Architecture** | 🟢 Clean | Lint fails on `SCHEDULE_EXACT_ALARM` | 0 Lint Errors, 0 Warnings (`lintDebug`) | 0 Lint Errors, 0 Warnings (EXTERNAL) | None (`F-001` resolved) | 100% Compile | Improving |
 | **5. Security** | 🟢 Good | Hardware AES-GCM-256 at rest, AuthGuard, injection guard | 12 security tests passing | OWASP Top 10 Mobile Clean (EXTERNAL) | None open | 90% | Baseline |
 | **6. Privacy** | 🟡 Moderate | ConsentManager active; LLM egress needs sync with disclosures | Redaction active, opt-in cloud | Zero unauthorized egress (EXTERNAL) | `F-007` | 80% | Baseline |
 | **7. Performance** | 🟡 Provisional | APK size 19 MB; build time 13s | 19 MB APK, 13s build | APK < 25 MB, Cold Start < 1200ms (PROVISIONAL) | Uncalibrated on device | Lab Build Only | Baseline |

@@ -11,7 +11,7 @@
 
 | Gate | Description | Current State | Evidence & Verification Path | Blocking Findings |
 |:---:|---|:---:|---|:---:|
-| **G1** | Clean build from clean checkout; full test suite green with recorded counts; 0 lint errors | 🔴 **OPEN** | Unit tests pass (82/82); but `lintDebug` failed with 1 error, 1 warning | `F-001` |
+| **G1** | Clean build from clean checkout; full test suite green with recorded counts; 0 lint errors | 🟢 **PASSED** | Unit tests pass (82/82); `composeApp:lintDebug` passes with 0 errors, 0 warnings (`cycle_01_lint_clean.txt`) | None (`F-001` resolved) |
 | **G2** | Every critical journey has a passing automated test and a manual device check | 🔴 **OPEN** | Journeys 1, 2, 4 partially tested; Journeys 3, 5, 6, 7 missing platform bridge | `F-002`, `F-003`, `F-004` |
 | **G3** | No open P0 or P1 findings (per RELEASE POLICY) | 🔴 **OPEN** | 2 open P0s (`F-002`, `F-006`); 4 open P1s (`F-001`, `F-003`, `F-004`, `F-007`) | `F-001` to `F-007` |
 | **G4** | Security: threat model written, secrets scan clean, dependency scan reviewed, network inventory matches privacy text | 🟡 **OPEN** | `THREAT_MODEL.md` exists; AES-GCM-256 verified; need network egress audit | `F-007` |

@@ -10,7 +10,7 @@
 
 | ID | Title | Loop / Category | Priority | Severity (1-5) | Likelihood (1-5) | Evidence Class | Status | Attempts | Linked Commits / Tests |
 |---|---|---|:---:|:---:|:---:|:---:|:---:|:---:|---|
-| **`F-001`** | Android Lint failure on `SCHEDULE_EXACT_ALARM` & deprecated `allowBackup` | G/B (Code Quality/Platform) | **P1** | 4 | 5 | VERIFIED | **OPEN** | 0 | `audit/EVIDENCE/cycle_00_lint_report.txt` |
+| **`F-001`** | Android Lint failure on `SCHEDULE_EXACT_ALARM` & deprecated `allowBackup` | G/B (Code Quality/Platform) | **P1** | 4 | 5 | VERIFIED | **DONE** | 1 | `audit/EVIDENCE/cycle_01_lint_clean.txt` |
 | **`F-002`** | Missing Android AlarmManager Bridge, Notification Channel & Boot Reschedule Receiver | A/F (Reliability/Correctness) | **P0** | 5 | 5 | VERIFIED | **OPEN** | 0 | `core/data`, `composeApp/src/androidMain` |
 | **`F-003`** | Missing Notification & Microphone permission request flow & degraded state UI | A/E (UX/Correctness) | **P1** | 4 | 4 | VERIFIED | **OPEN** | 0 | `composeApp/src/commonMain` |
 | **`F-004`** | Action proposals lack affirmative confirmation and execution UI in screens | A/C (Security/Correctness) | **P1** | 4 | 4 | VERIFIED | **OPEN** | 0 | `AskYaanScreen.kt`, `HomeScreen.kt` |

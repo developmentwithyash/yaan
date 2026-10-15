@@ -42,3 +42,24 @@
   - `audit/EVIDENCE/cycle_00_lint_report.txt`
 - **Status Change**: System bootstrapped. Finding `F-001` (Lint blocker) selected as next immediate task.
 - **Next Recommended Action**: Execute Cycle 01: Fix `F-001` (Replace `SCHEDULE_EXACT_ALARM` with `USE_EXACT_ALARM`, add `data_extraction_rules.xml`), run `:composeApp:lintDebug` to verify G1 clean build/lint.
+
+---
+
+## Cycle 01 — Fix Finding `F-001` (AGP Lint Failure on Exact Alarm & Backup Rules)
+- **Date**: 2026-10-15
+- **Start Commit**: `0442f87`
+- **End Commit**: `[Pending Cycle 01 Commit]`
+- **Finding Worked On**: `F-001` (Android Lint failure on `SCHEDULE_EXACT_ALARM` & deprecated `allowBackup`)
+- **What Changed**:
+  - In `composeApp/src/androidMain/AndroidManifest.xml`: replaced restricted `SCHEDULE_EXACT_ALARM` with standard `USE_EXACT_ALARM` for reminder apps; added `android:dataExtractionRules` and `android:fullBackupContent`.
+  - Created `composeApp/src/androidMain/res/xml/data_extraction_rules.xml` prohibiting cloud and D2D extraction of local vault databases, keys, and shared preferences.
+  - Created `composeApp/src/androidMain/res/xml/backup_rules.xml` prohibiting legacy backups.
+- **Commands Run & Result Summary**:
+  - `./gradlew :composeApp:lintDebug`: Passed with 0 errors, 0 warnings (`No issues found`).
+  - `./gradlew testDebugUnitTest :backend:test`: Full test suite green (82/82 passing, 0 regressions).
+- **Evidence Paths**:
+  - `audit/EVIDENCE/cycle_01_lint_clean.txt`
+- **Status Change**: `F-001` moved to **DONE**. Gate **G1** moved to **PASSED**. Scorecard Dimension 4 moved to **🟢 Clean**.
+- **Trend**: **Improving** (Gate G1 passed, 0 lint errors).
+- **Next Recommended Action**: Execute Cycle 02: Work on highest-priority P0 blocker `F-002` (Implement Android AlarmManager scheduling bridge, Notification channel, and BootCompletedReceiver so reminders deliver and survive reboot).
+
