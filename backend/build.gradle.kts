@@ -33,6 +33,10 @@ dependencies {
     // Logging
     implementation(libs.napier)
 
+    // Shared Core Domain & Common (KMP Shared Schemas & Validation)
+    implementation(projects.core.common)
+    implementation(projects.core.domain)
+
     // Testing
     testImplementation(libs.kotlin.test)
     testImplementation(libs.ktor.server.test.host)

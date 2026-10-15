@@ -5,6 +5,8 @@ import com.yaan.backend.briefing.briefingRoutes
 import com.yaan.backend.config.AppConfig
 import com.yaan.backend.inference.InferenceMeshService
 import com.yaan.backend.inference.inferenceRoutes
+import com.yaan.backend.planner.PlannerService
+import com.yaan.backend.planner.plannerRoutes
 import com.yaan.backend.sync.CrdtRelayService
 import com.yaan.backend.sync.syncRoutes
 import com.yaan.backend.vault.VaultBackupService
@@ -37,7 +39,8 @@ fun Application.module(
     relayService: CrdtRelayService = CrdtRelayService(),
     inferenceService: InferenceMeshService = InferenceMeshService(config),
     vaultService: VaultBackupService = VaultBackupService(),
-    briefingService: BriefingWorkerService = BriefingWorkerService()
+    briefingService: BriefingWorkerService = BriefingWorkerService(),
+    plannerService: PlannerService = PlannerService(config)
 ) {
     // 1. Serialization
     install(ContentNegotiation) {
@@ -122,5 +125,6 @@ data class ErrorResponse(
         inferenceRoutes(inferenceService)
         vaultRoutes(vaultService)
         briefingRoutes(briefingService)
+        plannerRoutes(plannerService)
     }
 }
