@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -21,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import kotlinx.coroutines.delay
 import com.yaan.app.navigation.YaanDestination
 import com.yaan.app.ui.components.YaanBottomNavigation
 import com.yaan.app.ui.components.YaanTopBar
@@ -71,6 +73,12 @@ fun YaanApp(
     var currentDestination by remember { mutableStateOf(YaanDestination.Home) }
     var isLiveVoiceOpen by remember { mutableStateOf(false) }
     var isBrandScreenVisible by remember { mutableStateOf(false) }
+    var isAppInitializing by remember { mutableStateOf(true) }
+
+    LaunchedEffect(Unit) {
+        delay(1600)
+        isAppInitializing = false
+    }
 
     YaanTheme(darkTheme = isDarkTheme) {
         Box(
@@ -82,6 +90,7 @@ fun YaanApp(
                 topBar = {
                     YaanTopBar(
                         title = currentDestination.title,
+                        isLoading = isAppInitializing,
                         onMicClick = { isLiveVoiceOpen = true },
                         onProfileClick = { currentDestination = YaanDestination.You },
                         onLogoClick = { isBrandScreenVisible = true }

@@ -62,5 +62,6 @@ sealed interface AskYaanUiAction {
     data object DismissActionProposal : AskYaanUiAction
     data object UndoActionProposal : AskYaanUiAction
     data object SubmitQuery : AskYaanUiAction
+    data class ExecutePrompt(val prompt: String) : AskYaanUiAction
     data object LaunchVoice : AskYaanUiAction
 }

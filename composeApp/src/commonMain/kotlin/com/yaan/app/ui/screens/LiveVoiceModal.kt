@@ -29,6 +29,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Chat
+import androidx.compose.material.icons.automirrored.filled.VolumeOff
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.CallEnd
@@ -38,11 +40,10 @@ import androidx.compose.material.icons.filled.GraphicEq
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.RecordVoiceOver
 import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material.icons.filled.Videocam
-import androidx.compose.material.icons.filled.VolumeOff
-import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -116,9 +117,16 @@ fun LiveVoiceModal(
         )
     }
     var isConfirmed by remember { mutableStateOf(false) }
+
     var speedIndex by remember { mutableStateOf(0) }
     val speeds = listOf(1.0f, 1.2f, 1.5f)
     val speedLabels = listOf("1.0x", "1.2x", "1.5x")
+
+    // Voice Selection (British Refined, American Studio, Australian Warm)
+    var voiceIndex by remember { mutableStateOf(0) }
+    val voiceLangs = listOf("en-GB", "en-US", "en-AU")
+    val voiceLabels = listOf("Voice: British", "Voice: American", "Voice: Australian")
+
     var isMuted by remember { mutableStateOf(false) }
 
     fun executeVoiceCommand(command: String) {
@@ -134,7 +142,7 @@ fun LiveVoiceModal(
             sessionState = VoiceSessionState.SPEAKING
 
             if (!isMuted) {
-                voiceSpeaker.speak(result.replyText, speeds[speedIndex])
+                voiceSpeaker.speak(result.replyText, speeds[speedIndex], voiceLangs[voiceIndex])
             }
         }
     }
@@ -216,7 +224,7 @@ fun LiveVoiceModal(
                     Text(
                         text = when (sessionState) {
                             VoiceSessionState.LISTENING -> " · Listening"
-                            VoiceSessionState.THINKING -> " · Thinking (0ms)"
+                            VoiceSessionState.THINKING -> " · Loading AI (0ms)"
                             VoiceSessionState.SPEAKING -> " · Speaking"
                             else -> " · Ready"
                         },
@@ -238,7 +246,7 @@ fun LiveVoiceModal(
                             .background(YaanTheme.extendedColors.surfaceContainerLow)
                     ) {
                         Icon(
-                            imageVector = if (isMuted) Icons.Default.VolumeOff else Icons.Default.VolumeUp,
+                            imageVector = if (isMuted) Icons.AutoMirrored.Filled.VolumeOff else Icons.AutoMirrored.Filled.VolumeUp,
                             contentDescription = "Mute",
                             tint = MaterialTheme.colorScheme.onSurface,
                             modifier = Modifier.size(18.dp)
@@ -388,8 +396,8 @@ fun LiveVoiceModal(
                 Text(
                     text = when (sessionState) {
                         VoiceSessionState.LISTENING -> "Listening to audio..."
-                        VoiceSessionState.THINKING -> "Reasoning on-device..."
-                        VoiceSessionState.SPEAKING -> "Speaking aloud..."
+                        VoiceSessionState.THINKING -> "Loading AI response on-device..."
+                        VoiceSessionState.SPEAKING -> "Speaking aloud (${voiceLangs[voiceIndex]})..."
                         else -> "Tap Hold to Talk below"
                     },
                     style = MaterialTheme.typography.labelSmall.copy(
@@ -455,10 +463,10 @@ fun LiveVoiceModal(
                         }
 
                         Text(
-                            text = "0ms on-device",
+                            text = if (sessionState == VoiceSessionState.THINKING) "Loading AI..." else "0ms on-device",
                             style = MaterialTheme.typography.labelSmall.copy(
                                 fontSize = 11.sp,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                color = if (sessionState == VoiceSessionState.THINKING) Color(0xFFD97706) else MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         )
                     }
@@ -518,7 +526,7 @@ fun LiveVoiceModal(
                                             )
                                             isConfirmed = true
                                             if (!isMuted) {
-                                                voiceSpeaker.speak("Action committed and locked to your vault.")
+                                                voiceSpeaker.speak("Action committed and locked to your vault.", speeds[speedIndex], voiceLangs[voiceIndex])
                                             }
                                         }
                                     } else {
@@ -531,7 +539,7 @@ fun LiveVoiceModal(
                 }
             }
 
-            // ── 5. Quick Voice Accelerator Pills ──────────────────────────────
+            // ── 5. Quick Voice Accelerator Pills (Direct Execution) ───────────
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -560,12 +568,13 @@ fun LiveVoiceModal(
                 )
             }
 
-            // ── 6. Mode Switcher Chips Row ────────────────────────────────────
+            // ── 6. Mode Switcher & Voice Accent Chooser ───────────────────────
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                // Text chat mode
                 Row(
                     modifier = Modifier
                         .clip(CircleShape)
@@ -594,8 +603,39 @@ fun LiveVoiceModal(
                     )
                 }
 
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(6.dp))
 
+                // Voice Accent Toggle (British / American / Australian)
+                Row(
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .background(YaanTheme.extendedColors.sandSurface)
+                        .border(1.dp, YaanTheme.extendedColors.delicateBorder, CircleShape)
+                        .padding(horizontal = 10.dp, vertical = 6.dp)
+                        .clickable {
+                            voiceIndex = (voiceIndex + 1) % voiceLangs.size
+                        },
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.RecordVoiceOver,
+                        contentDescription = null,
+                        tint = YaanTheme.extendedColors.bronzeAccent,
+                        modifier = Modifier.size(13.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = voiceLabels[voiceIndex],
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(6.dp))
+
+                // Speech Speed Toggle (1.0x, 1.2x, 1.5x)
                 Row(
                     modifier = Modifier
                         .clip(CircleShape)
@@ -707,7 +747,7 @@ fun LiveVoiceModal(
                     Text(
                         text = when (sessionState) {
                             VoiceSessionState.LISTENING -> "Tap to Process"
-                            VoiceSessionState.THINKING -> "Thinking..."
+                            VoiceSessionState.THINKING -> "Loading AI..."
                             VoiceSessionState.SPEAKING -> "Tap to Stop"
                             else -> "Tap to Speak"
                         },

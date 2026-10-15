@@ -59,6 +59,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
@@ -104,6 +105,43 @@ fun AskYaanScreen(
     val focusManager = LocalFocusManager.current
     val assistantEngine = remember {
         YaanAssistantEngine(noteRepository, taskRepository, memoryRepository)
+    }
+
+    fun submitPrompt(promptText: String) {
+        keyboardController?.hide()
+        focusManager.clearFocus()
+
+        val q = promptText.trim()
+        if (q.isNotEmpty()) {
+            val userMsg = ChatMessageUi(
+                id = "msg_${nowInstant().toEpochMilliseconds()}",
+                sender = "USER",
+                text = q
+            )
+            uiState = uiState.copy(
+                inputText = "",
+                messages = uiState.messages + userMsg,
+                isStreaming = true
+            )
+
+            coroutineScope.launch {
+                val result = assistantEngine.processQuery(q)
+                val yaanMsg = ChatMessageUi(
+                    id = "msg_${nowInstant().toEpochMilliseconds()}_reply",
+                    sender = "YAAN",
+                    text = result.replyText,
+                    citations = result.citations,
+                    proposedAction = result.proposedAction
+                )
+
+                uiState = uiState.copy(
+                    isStreaming = false,
+                    messages = uiState.messages + yaanMsg,
+                    responseMarkdown = result.replyText,
+                    proposedAction = result.proposedAction ?: uiState.proposedAction
+                )
+            }
+        }
     }
 
     AskYaanScreenContent(
@@ -166,41 +204,10 @@ fun AskYaanScreen(
                     }
                 }
                 AskYaanUiAction.SubmitQuery -> {
-                    // 1. Immediately dismiss virtual keyboard & clear focus
-                    keyboardController?.hide()
-                    focusManager.clearFocus()
-
-                    val q = uiState.inputText.trim()
-                    if (q.isNotEmpty()) {
-                        val userMsg = ChatMessageUi(
-                            id = "msg_${nowInstant().toEpochMilliseconds()}",
-                            sender = "USER",
-                            text = q
-                        )
-                        uiState = uiState.copy(
-                            inputText = "",
-                            messages = uiState.messages + userMsg,
-                            isStreaming = true
-                        )
-
-                        coroutineScope.launch {
-                            val result = assistantEngine.processQuery(q)
-                            val yaanMsg = ChatMessageUi(
-                                id = "msg_${nowInstant().toEpochMilliseconds()}_reply",
-                                sender = "YAAN",
-                                text = result.replyText,
-                                citations = result.citations,
-                                proposedAction = result.proposedAction
-                            )
-
-                            uiState = uiState.copy(
-                                isStreaming = false,
-                                messages = uiState.messages + yaanMsg,
-                                responseMarkdown = result.replyText,
-                                proposedAction = result.proposedAction ?: uiState.proposedAction
-                            )
-                        }
-                    }
+                    submitPrompt(uiState.inputText)
+                }
+                is AskYaanUiAction.ExecutePrompt -> {
+                    submitPrompt(action.prompt)
                 }
                 AskYaanUiAction.LaunchVoice -> {
                     keyboardController?.hide()
@@ -334,6 +341,7 @@ fun AskYaanScreenContent(
                 }
             }
 
+            // Context beacon row (showing Loading while reasoning)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -349,14 +357,14 @@ fun AskYaanScreenContent(
                         modifier = Modifier
                             .size(6.dp)
                             .clip(CircleShape)
-                            .background(YaanTheme.extendedColors.bronzeAccent)
+                            .background(if (state.isStreaming) Color(0xFFF59E0B) else YaanTheme.extendedColors.bronzeAccent)
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
-                        text = "Ask YAAN Autonomous Navigator",
+                        text = if (state.isStreaming) "Loading AI · Reasoning (0ms)..." else "Ask YAAN Autonomous Navigator",
                         style = MaterialTheme.typography.labelSmall.copy(
                             fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.onSurface
+                            color = if (state.isStreaming) Color(0xFFD97706) else MaterialTheme.colorScheme.onSurface
                         )
                     )
                 }
@@ -542,13 +550,13 @@ fun AskYaanScreenContent(
                         modifier = Modifier
                             .size(6.dp)
                             .clip(CircleShape)
-                            .background(YaanTheme.extendedColors.bronzeAccent)
+                            .background(Color(0xFFF59E0B))
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "YAAN is reasoning on-device...",
+                        text = "Loading AI response on-device...",
                         style = MaterialTheme.typography.bodySmall.copy(
-                            color = YaanTheme.extendedColors.bronzeAccent,
+                            color = Color(0xFFD97706),
                             fontWeight = FontWeight.Medium
                         )
                     )
@@ -620,7 +628,7 @@ fun AskYaanScreenContent(
                 }
             }
 
-            // ── Contextual Accelerator Suggestion Pills ────────────────────────
+            // ── Contextual Accelerator Suggestion Pills (Direct-Execution onClick) ─
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -630,22 +638,22 @@ fun AskYaanScreenContent(
                 YaanChip(
                     text = "What are my tasks?",
                     leadingIcon = Icons.Default.EventAvailable,
-                    onClick = { onAction(AskYaanUiAction.UpdateInput("What are my tasks?")) }
+                    onClick = { onAction(AskYaanUiAction.ExecutePrompt("What are my tasks?")) }
                 )
                 YaanChip(
                     text = "What's my day look like?",
                     leadingIcon = Icons.Default.Analytics,
-                    onClick = { onAction(AskYaanUiAction.UpdateInput("What's my day look like?")) }
+                    onClick = { onAction(AskYaanUiAction.ExecutePrompt("What's my day look like?")) }
                 )
                 YaanChip(
                     text = "Add task: Review Q3 financials",
                     leadingIcon = Icons.Default.Add,
-                    onClick = { onAction(AskYaanUiAction.UpdateInput("Add task: Review Q3 financials")) }
+                    onClick = { onAction(AskYaanUiAction.ExecutePrompt("Add task: Review Q3 financials")) }
                 )
                 YaanChip(
                     text = "What can you do?",
                     leadingIcon = Icons.Default.Verified,
-                    onClick = { onAction(AskYaanUiAction.UpdateInput("What can you do?")) }
+                    onClick = { onAction(AskYaanUiAction.ExecutePrompt("What can you do?")) }
                 )
             }
         }

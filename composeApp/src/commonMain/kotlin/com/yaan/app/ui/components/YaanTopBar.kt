@@ -43,7 +43,8 @@ import com.yaan.app.ui.theme.YaanTheme
 @Composable
 fun YaanTopBar(
     title: String,
-    subtitle: String = "Online · Local Vault",
+    isLoading: Boolean = false,
+    subtitle: String = if (isLoading) "Loading... · Initializing Vault" else "Ready · Local Vault",
     onMicClick: () -> Unit = {},
     onAddClick: () -> Unit = {},
     onProfileClick: () -> Unit = {},
@@ -55,7 +56,7 @@ fun YaanTopBar(
         initialValue = 0.3f,
         targetValue = 1.0f,
         animationSpec = infiniteRepeatable(
-            animation = tween(1000),
+            animation = tween(if (isLoading) 500 else 1000),
             repeatMode = RepeatMode.Reverse
         )
     )
@@ -116,14 +117,15 @@ fun YaanTopBar(
                             .size(6.dp)
                             .clip(CircleShape)
                             .alpha(pulseAlpha)
-                            .background(Color(0xFF059669))
+                            .background(if (isLoading) Color(0xFFF59E0B) else Color(0xFF059669))
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
                         text = subtitle,
                         style = MaterialTheme.typography.labelSmall.copy(
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            fontSize = 11.sp
+                            color = if (isLoading) Color(0xFFD97706) else MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontSize = 11.sp,
+                            fontWeight = if (isLoading) FontWeight.SemiBold else FontWeight.Normal
                         )
                     )
                 }
