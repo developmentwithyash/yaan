@@ -27,15 +27,19 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Chat
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.automirrored.filled.VolumeOff
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
+import androidx.compose.material.icons.filled.AlarmAdd
 import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.CallEnd
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.EditNote
 import androidx.compose.material.icons.filled.GraphicEq
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Mic
@@ -67,6 +71,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.yaan.app.ai.YaanAssistantEngine
+import com.yaan.app.ui.components.ActionProposalCard
 import com.yaan.app.ui.components.YaanCard
 import com.yaan.app.ui.components.YaanChip
 import com.yaan.app.ui.components.YaanPrimaryButton
@@ -104,6 +109,7 @@ fun LiveVoiceModal(
 
     var sessionState by remember { mutableStateOf(VoiceSessionState.IDLE) }
     var userUtterance by remember { mutableStateOf("Hold to talk or tap a voice prompt below...") }
+    var typedPrompt by remember { mutableStateOf("") }
     var yaanResponse by remember { mutableStateOf("YAAN Live Voice Assistant is active. Speak any command, request a briefing, or search your encrypted vault.") }
     var proposedAction by remember {
         mutableStateOf<ProposedActionUi?>(
@@ -116,7 +122,6 @@ fun LiveVoiceModal(
             )
         )
     }
-    var isConfirmed by remember { mutableStateOf(false) }
 
     var speedIndex by remember { mutableStateOf(0) }
     val speeds = listOf(1.0f, 1.2f, 1.5f)
@@ -130,15 +135,16 @@ fun LiveVoiceModal(
     var isMuted by remember { mutableStateOf(false) }
 
     fun executeVoiceCommand(command: String) {
-        userUtterance = "“$command”"
+        val cleanCmd = command.trim()
+        if (cleanCmd.isEmpty()) return
+        userUtterance = "“$cleanCmd”"
         sessionState = VoiceSessionState.THINKING
         voiceSpeaker.stop()
 
         coroutineScope.launch {
-            val result = assistantEngine.processQuery(command)
-            yaanResponse = "“${result.replyText}”"
-            proposedAction = result.proposedAction ?: proposedAction
-            isConfirmed = false
+            val result = assistantEngine.processQuery(cleanCmd)
+            yaanResponse = result.replyText
+            proposedAction = result.proposedAction
             sessionState = VoiceSessionState.SPEAKING
 
             if (!isMuted) {
@@ -407,30 +413,60 @@ fun LiveVoiceModal(
                 )
             }
 
-            // ── 3. User Utterance Transcript Bubble ───────────────────────────
+            // ── 3. Interactive Prompt Bar ─────────────────────────────────────
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(12.dp))
                     .background(YaanTheme.extendedColors.sandSurface)
                     .border(1.dp, YaanTheme.extendedColors.delicateBorder.copy(alpha = 0.6f), RoundedCornerShape(12.dp))
-                    .padding(12.dp),
+                    .padding(horizontal = 12.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
                     imageVector = Icons.Default.Person,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(16.dp)
+                    tint = YaanTheme.extendedColors.bronzeAccent,
+                    modifier = Modifier.size(18.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = userUtterance,
-                    style = MaterialTheme.typography.bodySmall.copy(
-                        color = MaterialTheme.colorScheme.onSurface,
-                        lineHeight = 18.sp
-                    )
+                BasicTextField(
+                    value = typedPrompt,
+                    onValueChange = { typedPrompt = it },
+                    modifier = Modifier.weight(1f),
+                    textStyle = MaterialTheme.typography.bodyMedium.copy(
+                        color = MaterialTheme.colorScheme.onSurface
+                    ),
+                    singleLine = true,
+                    decorationBox = { innerTextField ->
+                        if (typedPrompt.isEmpty()) {
+                            Text(
+                                text = userUtterance,
+                                style = MaterialTheme.typography.bodySmall.copy(
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            )
+                        }
+                        innerTextField()
+                    }
                 )
+                if (typedPrompt.isNotBlank()) {
+                    IconButton(
+                        onClick = {
+                            val p = typedPrompt
+                            typedPrompt = ""
+                            executeVoiceCommand(p)
+                        },
+                        modifier = Modifier.size(32.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.Send,
+                            contentDescription = "Send",
+                            tint = YaanTheme.extendedColors.bronzeAccent,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                }
             }
 
             // ── 4. YAAN Intelligence Response Card ────────────────────────────
@@ -479,64 +515,41 @@ fun LiveVoiceModal(
                         )
                     )
 
-                    // Embedded Schedule / Action Confirmation Card
+                    // Grounded Action Proposal Card with Two-Phase Confirmation & Rollback
                     proposedAction?.let { action ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clip(RoundedCornerShape(8.dp))
-                                .background(YaanTheme.extendedColors.sandSurface)
-                                .border(1.dp, YaanTheme.extendedColors.delicateBorder.copy(alpha = 0.6f), RoundedCornerShape(8.dp))
-                                .padding(8.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.weight(1f)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.CalendarToday,
-                                    contentDescription = null,
-                                    tint = YaanTheme.extendedColors.bronzeAccent,
-                                    modifier = Modifier.size(15.dp)
-                                )
-                                Spacer(modifier = Modifier.width(6.dp))
-                                Text(
-                                    text = action.title,
-                                    style = MaterialTheme.typography.labelSmall.copy(
-                                        fontWeight = FontWeight.Medium,
-                                        color = MaterialTheme.colorScheme.onSurface
-                                    ),
-                                    maxLines = 1
-                                )
-                            }
-
-                            YaanPrimaryButton(
-                                text = if (isConfirmed) "Committed" else "Confirm",
-                                onClick = {
-                                    if (!isConfirmed && taskRepository != null) {
-                                        coroutineScope.launch {
-                                            val scheduleNote = action.subtitle.substringBefore(" ·").trim()
-                                            taskRepository.upsertTask(
-                                                Task(
-                                                    id = "task_voice_${nowInstant().toEpochMilliseconds()}",
-                                                    title = action.title,
-                                                    notes = scheduleNote,
-                                                    priority = TaskPriority.HIGH
-                                                )
+                        ActionProposalCard(
+                            proposal = action,
+                            onConfirm = {
+                                if (!action.isConfirmed && taskRepository != null) {
+                                    coroutineScope.launch {
+                                        val scheduleNote = action.subtitle.substringBefore(" ·").trim()
+                                        taskRepository.upsertTask(
+                                            Task(
+                                                id = "task_voice_${action.id}",
+                                                title = action.title.removePrefix("Proposed: ").removePrefix("Action: "),
+                                                notes = scheduleNote,
+                                                priority = TaskPriority.HIGH
                                             )
-                                            isConfirmed = true
-                                            if (!isMuted) {
-                                                voiceSpeaker.speak("Action committed and locked to your vault.", speeds[speedIndex], voiceLangs[voiceIndex])
-                                            }
+                                        )
+                                        proposedAction = action.copy(isConfirmed = true, isDismissed = false, isUndone = false)
+                                        if (!isMuted) {
+                                            voiceSpeaker.speak("Action confirmed and locked to your vault.", speeds[speedIndex], voiceLangs[voiceIndex])
                                         }
-                                    } else {
-                                        isConfirmed = true
                                     }
+                                } else {
+                                    proposedAction = action.copy(isConfirmed = true)
                                 }
-                            )
-                        }
+                            },
+                            onDismiss = {
+                                proposedAction = action.copy(isDismissed = true)
+                            },
+                            onUndo = {
+                                coroutineScope.launch {
+                                    taskRepository?.deleteTask("task_voice_${action.id}")
+                                    proposedAction = action.copy(isUndone = true, isConfirmed = false)
+                                }
+                            }
+                        )
                     }
                 }
             }
@@ -549,9 +562,14 @@ fun LiveVoiceModal(
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 YaanChip(
-                    text = "Review my commitments",
-                    leadingIcon = Icons.Default.CalendarToday,
-                    onClick = { executeVoiceCommand("Review my commitments and prepare daily plan") }
+                    text = "Remind me for doctor tomorrow 2pm",
+                    leadingIcon = Icons.Default.AlarmAdd,
+                    onClick = { executeVoiceCommand("can you set a reminder for tommoroww 2pm for doctor") }
+                )
+                YaanChip(
+                    text = "Note: WiFi password is Orion99",
+                    leadingIcon = Icons.Default.EditNote,
+                    onClick = { executeVoiceCommand("Note: WiFi password is Orion99") }
                 )
                 YaanChip(
                     text = "What are my tasks?",
@@ -559,9 +577,9 @@ fun LiveVoiceModal(
                     onClick = { executeVoiceCommand("What are my tasks?") }
                 )
                 YaanChip(
-                    text = "Add task: Review Q3 financials",
+                    text = "Review my commitments",
                     leadingIcon = Icons.Default.CalendarToday,
-                    onClick = { executeVoiceCommand("Add task: Review Q3 financials") }
+                    onClick = { executeVoiceCommand("Review my commitments and prepare daily plan") }
                 )
                 YaanChip(
                     text = "What's my day look like?",
@@ -691,10 +709,18 @@ fun LiveVoiceModal(
                         )
                         .clickable {
                             if (sessionState == VoiceSessionState.IDLE) {
-                                sessionState = VoiceSessionState.LISTENING
-                                userUtterance = "Listening... Tap 'Hold to talk' or speak a prompt"
+                                if (typedPrompt.isNotBlank()) {
+                                    val p = typedPrompt
+                                    typedPrompt = ""
+                                    executeVoiceCommand(p)
+                                } else {
+                                    sessionState = VoiceSessionState.LISTENING
+                                    userUtterance = "Listening... Speak or tap any prompt above"
+                                }
                             } else if (sessionState == VoiceSessionState.LISTENING) {
-                                executeVoiceCommand("Review my commitments and prepare daily plan")
+                                val p = if (typedPrompt.isNotBlank()) typedPrompt else "can you set a reminder for tommoroww 2pm for doctor"
+                                typedPrompt = ""
+                                executeVoiceCommand(p)
                             } else if (sessionState == VoiceSessionState.SPEAKING) {
                                 voiceSpeaker.stop()
                                 sessionState = VoiceSessionState.IDLE
@@ -727,10 +753,18 @@ fun LiveVoiceModal(
                         )
                         .clickable {
                             if (sessionState == VoiceSessionState.IDLE) {
-                                sessionState = VoiceSessionState.LISTENING
-                                userUtterance = "Listening... Tap to execute command"
+                                if (typedPrompt.isNotBlank()) {
+                                    val p = typedPrompt
+                                    typedPrompt = ""
+                                    executeVoiceCommand(p)
+                                } else {
+                                    sessionState = VoiceSessionState.LISTENING
+                                    userUtterance = "Listening... Speak or tap any prompt above"
+                                }
                             } else if (sessionState == VoiceSessionState.LISTENING) {
-                                executeVoiceCommand("Review my commitments and prepare daily plan")
+                                val p = if (typedPrompt.isNotBlank()) typedPrompt else "can you set a reminder for tommoroww 2pm for doctor"
+                                typedPrompt = ""
+                                executeVoiceCommand(p)
                             } else if (sessionState == VoiceSessionState.SPEAKING) {
                                 voiceSpeaker.stop()
                                 sessionState = VoiceSessionState.IDLE

@@ -46,7 +46,14 @@ data class AskYaanUiState(
             id = "msg_init_welcome",
             sender = "YAAN",
             text = "Welcome to YAAN, your personal autonomous navigator. How can I assist you today? I can help you manage tasks, capture notes, search your vault, or brief your schedule.",
-            timestamp = "Just now"
+            timestamp = "Just now",
+            proposedAction = ProposedActionUi(
+                id = "action_01",
+                title = "Reschedule Dentist Appointment to 2:15 PM",
+                subtitle = "Avoids 25-minute conflict with Q3 Cloud Spend Review",
+                actionType = "CALENDAR_RESCHEDULE",
+                isConfirmed = false
+            )
         )
     )
 )

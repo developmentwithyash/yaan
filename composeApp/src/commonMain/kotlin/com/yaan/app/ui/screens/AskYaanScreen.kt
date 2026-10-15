@@ -138,7 +138,7 @@ fun AskYaanScreen(
                     isStreaming = false,
                     messages = uiState.messages + yaanMsg,
                     responseMarkdown = result.replyText,
-                    proposedAction = result.proposedAction ?: uiState.proposedAction
+                    proposedAction = result.proposedAction
                 )
             }
         }
@@ -162,7 +162,7 @@ fun AskYaanScreen(
                 }
                 AskYaanUiAction.ConfirmActionProposal -> {
                     coroutineScope.launch {
-                        val prop = uiState.proposedAction
+                        val prop = uiState.proposedAction ?: uiState.messages.lastOrNull { it.proposedAction != null }?.proposedAction
                         if (prop != null && !prop.isConfirmed && taskRepository != null) {
                             val scheduleNote = prop.subtitle.substringBefore(" ·").trim()
                             taskRepository.upsertTask(
@@ -174,33 +174,55 @@ fun AskYaanScreen(
                                 )
                             )
                         }
+                        val targetId = prop?.id
+                        val updatedMessages = uiState.messages.map { m ->
+                            if (m.proposedAction != null && (targetId == null || m.proposedAction.id == targetId)) {
+                                m.copy(proposedAction = m.proposedAction.copy(isConfirmed = true, isDismissed = false, isUndone = false))
+                            } else m
+                        }
                         uiState = uiState.copy(
                             proposedAction = uiState.proposedAction?.copy(
                                 isConfirmed = true,
                                 isDismissed = false,
                                 isUndone = false
                             ),
+                            messages = updatedMessages,
                             responseMarkdown = "Action confirmed and committed to local vault. State updated."
                         )
                     }
                 }
                 AskYaanUiAction.DismissActionProposal -> {
+                    val prop = uiState.proposedAction ?: uiState.messages.lastOrNull { it.proposedAction != null }?.proposedAction
+                    val targetId = prop?.id
+                    val updatedMessages = uiState.messages.map { m ->
+                        if (m.proposedAction != null && (targetId == null || m.proposedAction.id == targetId)) {
+                            m.copy(proposedAction = m.proposedAction.copy(isDismissed = true))
+                        } else m
+                    }
                     uiState = uiState.copy(
                         proposedAction = uiState.proposedAction?.copy(isDismissed = true),
+                        messages = updatedMessages,
                         responseMarkdown = "Action proposal dismissed. No vault state was modified."
                     )
                 }
                 AskYaanUiAction.UndoActionProposal -> {
                     coroutineScope.launch {
-                        val prop = uiState.proposedAction
+                        val prop = uiState.proposedAction ?: uiState.messages.lastOrNull { it.proposedAction != null }?.proposedAction
                         if (prop != null && prop.isConfirmed && taskRepository != null) {
                             taskRepository.deleteTask("task_committed_${prop.id}")
+                        }
+                        val targetId = prop?.id
+                        val updatedMessages = uiState.messages.map { m ->
+                            if (m.proposedAction != null && (targetId == null || m.proposedAction.id == targetId)) {
+                                m.copy(proposedAction = m.proposedAction.copy(isUndone = true, isConfirmed = false))
+                            } else m
                         }
                         uiState = uiState.copy(
                             proposedAction = uiState.proposedAction?.copy(
                                 isUndone = true,
                                 isConfirmed = false
                             ),
+                            messages = updatedMessages,
                             responseMarkdown = "Action reverted. Vault task removed and restored to prior state."
                         )
                     }
