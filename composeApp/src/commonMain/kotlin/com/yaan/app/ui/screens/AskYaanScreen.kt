@@ -164,10 +164,12 @@ fun AskYaanScreen(
                     coroutineScope.launch {
                         val prop = uiState.proposedAction
                         if (prop != null && !prop.isConfirmed && taskRepository != null) {
+                            val scheduleNote = prop.subtitle.substringBefore(" ·").trim()
                             taskRepository.upsertTask(
                                 Task(
                                     id = "task_committed_${prop.id}",
                                     title = prop.title.removePrefix("Proposed: ").removePrefix("Action: "),
+                                    notes = scheduleNote,
                                     priority = TaskPriority.HIGH
                                 )
                             )

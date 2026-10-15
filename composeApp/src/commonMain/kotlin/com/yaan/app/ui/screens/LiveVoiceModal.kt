@@ -517,10 +517,12 @@ fun LiveVoiceModal(
                                 onClick = {
                                     if (!isConfirmed && taskRepository != null) {
                                         coroutineScope.launch {
+                                            val scheduleNote = action.subtitle.substringBefore(" ·").trim()
                                             taskRepository.upsertTask(
                                                 Task(
                                                     id = "task_voice_${nowInstant().toEpochMilliseconds()}",
                                                     title = action.title,
+                                                    notes = scheduleNote,
                                                     priority = TaskPriority.HIGH
                                                 )
                                             )
