@@ -7,6 +7,8 @@ import com.yaan.core.common.result.YaanError
 import com.yaan.core.common.result.YaanResult
 import com.yaan.core.data.db.ReminderEntity
 import com.yaan.core.data.db.YaanDatabase
+import com.yaan.core.domain.alarm.AlarmScheduler
+import com.yaan.core.domain.alarm.NoOpAlarmScheduler
 import com.yaan.core.domain.model.AlarmAckState
 import com.yaan.core.domain.model.Reminder
 import com.yaan.core.domain.model.ReminderTier
@@ -19,6 +21,7 @@ import kotlinx.datetime.Instant
 class SqlDelightReminderRepository(
     private val database: YaanDatabase,
     private val dispatchers: CoroutineDispatchers,
+    private val alarmScheduler: AlarmScheduler = NoOpAlarmScheduler(),
 ) : ReminderRepository {
     private val queries = database.yaanDatabaseQueries
 
@@ -58,6 +61,7 @@ class SqlDelightReminderRepository(
                 channel = if (reminder.isAlarmSound) "ALARM" else "NOTIFICATION",
                 created_at = reminder.createdAt.toEpochMilliseconds()
             )
+            alarmScheduler.schedule(reminder)
             YaanResult.Success(Unit)
         } catch (e: Exception) {
             YaanResult.Failure(YaanError.StorageError("Failed to schedule reminder ${reminder.id}: ${e.message}", e))
@@ -68,6 +72,7 @@ class SqlDelightReminderRepository(
         try {
             if (ackState == AlarmAckState.DISMISSED) {
                 queries.dismissReminder(id)
+                alarmScheduler.cancel(id)
             }
             YaanResult.Success(Unit)
         } catch (e: Exception) {
@@ -78,6 +83,7 @@ class SqlDelightReminderRepository(
     override suspend fun deleteReminder(id: String): YaanResult<Unit> = withContext(dispatchers.io) {
         try {
             queries.deleteReminder(id)
+            alarmScheduler.cancel(id)
             YaanResult.Success(Unit)
         } catch (e: Exception) {
             YaanResult.Failure(YaanError.StorageError("Failed to delete reminder $id: ${e.message}", e))

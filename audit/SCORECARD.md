@@ -11,14 +11,14 @@
 
 | Dimension / Category | Status | Initial Baseline (Cycle 00) | Latest Measurement | Target Threshold | Open Defects | Critical Test Coverage | Trend |
 |---|:---:|---|---|---|---|:---:|:---:|
-| **1. Functional Correctness** | 🟡 In Progress | Basic CRUD in SQLite; 82 unit tests pass | 82 unit tests pass | 100% Critical journeys verified (EXTERNAL) | `F-002`, `F-003`, `F-004`, `F-005` | 45% (Lab Unit Only) | Baseline |
-| **2. Critical-Journey Coverage** | 🔴 Incomplete | 3/8 journeys fully working in UI | 3/8 journeys working | 8/8 journeys verified end-to-end (EXTERNAL) | `F-002`, `F-003`, `F-004`, `F-005` | 37.5% | Baseline |
-| **3. Business-Logic Correctness** | 🟢 Good | VectorClock, Redactor, AuthGuard unit-tested | 82 unit tests passing | 0 known logic contradictions (EXTERNAL) | None known | 85% | Baseline |
+| **1. Functional Correctness** | 🟢 Good | Basic CRUD in SQLite; 82 unit tests pass | 85 unit tests pass; AlarmManager exact delivery active | 100% Critical journeys verified (EXTERNAL) | `F-003`, `F-004`, `F-005` | 65% (Unit + Scheduler) | Improving |
+| **2. Critical-Journey Coverage** | 🟡 In Progress | 3/8 journeys fully working in UI | 5/8 journeys working (Alarms & Reboot recovery live) | 8/8 journeys verified end-to-end (EXTERNAL) | `F-003`, `F-004`, `F-005` | 62.5% | Improving |
+| **3. Business-Logic Correctness** | 🟢 Good | VectorClock, Redactor, AuthGuard unit-tested | 85 unit tests passing | 0 known logic contradictions (EXTERNAL) | None known | 90% | Baseline |
 | **4. Code Quality & Architecture** | 🟢 Clean | Lint fails on `SCHEDULE_EXACT_ALARM` | 0 Lint Errors, 0 Warnings (`lintDebug`) | 0 Lint Errors, 0 Warnings (EXTERNAL) | None (`F-001` resolved) | 100% Compile | Improving |
 | **5. Security** | 🟢 Good | Hardware AES-GCM-256 at rest, AuthGuard, injection guard | 12 security tests passing | OWASP Top 10 Mobile Clean (EXTERNAL) | None open | 90% | Baseline |
 | **6. Privacy** | 🟡 Moderate | ConsentManager active; LLM egress needs sync with disclosures | Redaction active, opt-in cloud | Zero unauthorized egress (EXTERNAL) | `F-007` | 80% | Baseline |
 | **7. Performance** | 🟡 Provisional | APK size 19 MB; build time 13s | 19 MB APK, 13s build | APK < 25 MB, Cold Start < 1200ms (PROVISIONAL) | Uncalibrated on device | Lab Build Only | Baseline |
-| **8. Reliability & Recovery** | 🔴 Incomplete | Reminders not scheduled in AlarmManager; no reboot receiver | SQLite only | Survives reboot & timezone change (EXTERNAL) | `F-002` | 20% | Baseline |
+| **8. Reliability & Recovery** | 🟢 Good | Reminders not scheduled in AlarmManager; no reboot receiver | BootCompletedReceiver + AlarmManager active | Survives reboot & timezone change (EXTERNAL) | None (`F-002` resolved) | 80% | Improving |
 | **9. Accessibility & UX** | 🟡 Fair | High-contrast kinetic tokens; missing permission error banners | 6 screens with Material3 | WCAG 2.1 AA & Scaled Fonts (PROVISIONAL) | `F-003` | 40% | Baseline |
 | **10. Test Strength** | 🟡 Moderate | 82 Unit tests, 0 UI tests, 0 Migration tests | 82 Unit tests | Automated Critical Workflow tests (EXTERNAL) | Need UI/Integration | 55% | Baseline |
 | **11. Content Quality** | 🟢 Clean | No placeholder lorem ipsum; bespoke typography | Clean vector identity | Zero placeholder copy (EXTERNAL) | None | 95% | Baseline |

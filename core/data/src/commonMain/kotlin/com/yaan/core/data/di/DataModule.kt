@@ -43,7 +43,13 @@ val dataModule = module {
             keyManager = get()
         )
     }
-    single<ReminderRepository> { SqlDelightReminderRepository(database = get(), dispatchers = get()) }
+    single<ReminderRepository> {
+        SqlDelightReminderRepository(
+            database = get(),
+            dispatchers = get(),
+            alarmScheduler = getOrNull() ?: com.yaan.core.domain.alarm.NoOpAlarmScheduler()
+        )
+    }
     single<BriefingRepository> { SqlDelightBriefingRepository(database = get(), dispatchers = get()) }
     single<MemoryRepository> { SqlDelightMemoryRepository(database = get(), dispatchers = get()) }
     single<SyncRepository> { InMemorySyncRepository() }

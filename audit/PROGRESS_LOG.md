@@ -63,3 +63,32 @@
 - **Trend**: **Improving** (Gate G1 passed, 0 lint errors).
 - **Next Recommended Action**: Execute Cycle 02: Work on highest-priority P0 blocker `F-002` (Implement Android AlarmManager scheduling bridge, Notification channel, and BootCompletedReceiver so reminders deliver and survive reboot).
 
+---
+
+## Cycle 02 — Fix Finding `F-002` (Android AlarmManager Bridge, Notification Channels & Boot Receiver)
+- **Date**: 2026-10-15
+- **Start Commit**: `10e0a36`
+- **End Commit**: `[Pending Cycle 02 Commit]`
+- **Finding Worked On**: `F-002` (Missing Android AlarmManager Bridge, Notification Channel & Boot Reschedule Receiver; Critical User Journeys 3 & 6)
+- **What Changed**:
+  - In `core:domain`: Created `AlarmScheduler` interface and `NoOpAlarmScheduler` fallback in `com.yaan.core.domain.alarm`.
+  - In `core:data`: Updated `SqlDelightReminderRepository` to accept `AlarmScheduler` and delegate `schedule(reminder)` and `cancel(id)` on inserts, dismissals, and deletions. Updated `DataModule.kt`.
+  - In `core:data:commonTest`: Created `SqlDelightReminderSchedulerTest` with 3 automated unit tests verifying that scheduling dispatches to `AlarmScheduler`, dismissing updates status and cancels alarm, and deleting removes from SQLite and cancels alarm.
+  - In `composeApp/src/androidMain`:
+    - Created `AndroidAlarmScheduler`: Uses `AlarmManager.setExactAndAllowWhileIdle()` on Android 6.0+ with graceful fallback to `setAndAllowWhileIdle()` if exact alarm permission is revoked.
+    - Created `AlarmBroadcastReceiver`: Handles `ACTION_FIRE_REMINDER` (heads-up notification with sound/priority), `ACTION_ACKNOWLEDGE` (marks dismissed in repository via `goAsync()`), and `ACTION_SNOOZE` (reschedules for +10m).
+    - Created `BootCompletedReceiver`: Listens to `BOOT_COMPLETED`, `MY_PACKAGE_REPLACED`, `TIMEZONE_CHANGED`, and `TIME_SET`. Queries pending un-dismissed reminders from `ReminderRepository` and re-registers them in `AlarmManager` (or alerts for missed reminders).
+    - Updated `YaanApplication`: Configured `NotificationChannel("yaan_reminders")` and `NotificationChannel("yaan_alarms")`; registered `AndroidAlarmScheduler` in Koin.
+    - Updated `AndroidManifest.xml`: Declared both receivers.
+- **Commands Run & Result Summary**:
+  - `./gradlew :core:data:testDebugUnitTest :composeApp:testDebugUnitTest :backend:test`: Passed with 85 tests (3 new tests, 0 failures, 0 regressions).
+  - `./gradlew :composeApp:lintDebug`: Passed with 0 errors, 0 warnings (`No issues found`).
+  - `./gradlew :composeApp:assembleDebug :composeApp:compileKotlinIosSimulatorArm64`: Both targets compiled successfully (`BUILD SUCCESSFUL in 20s`).
+- **Evidence Paths**:
+  - `core/data/build/test-results/testDebugUnitTest/TEST-com.yaan.core.data.repository.SqlDelightReminderSchedulerTest.xml`
+  - `audit/EVIDENCE/cycle_02_build_evidence.txt`
+- **Status Change**: `F-002` moved to **DONE**.
+- **Trend**: **Improving** (Critical Journeys 3 & 6 platform bridge and persistence implemented and tested; 85/85 tests green).
+- **Next Recommended Action**: Execute Cycle 03: Work on P0 finding `F-006` (Age eligibility gate and onboarding declaration for India DPDP Act 2023 / COPPA) and P1 finding `F-003` (Notification & microphone permission rationale and degraded state handling).
+
+

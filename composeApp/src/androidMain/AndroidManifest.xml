@@ -30,6 +30,23 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Local Alarm Notification and Action Receiver -->
+        <receiver
+            android:name=".notification.AlarmBroadcastReceiver"
+            android:exported="false" />
+
+        <!-- Device Boot, App Update, and Timezone Rescheduling Receiver -->
+        <receiver
+            android:name=".notification.BootCompletedReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.TIME_SET" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
