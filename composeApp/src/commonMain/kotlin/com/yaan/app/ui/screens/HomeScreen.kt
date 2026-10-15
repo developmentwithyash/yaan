@@ -57,12 +57,17 @@ import com.yaan.app.ui.components.YaanCard
 import com.yaan.app.ui.components.YaanChip
 import com.yaan.app.ui.components.YaanGhostButton
 import com.yaan.app.ui.components.YaanPrimaryButton
+import androidx.compose.runtime.LaunchedEffect
 import com.yaan.app.ui.components.YaanQuickCaptureDock
 import com.yaan.app.ui.components.YaanSecondaryButton
 import com.yaan.app.ui.state.HomeUiAction
 import com.yaan.app.ui.state.HomeUiState
 import com.yaan.app.ui.state.TaskItemUi
 import com.yaan.app.ui.theme.YaanTheme
+import com.yaan.core.domain.model.TaskPriority
+import com.yaan.core.domain.model.TaskStatus
+import com.yaan.core.domain.repository.BriefingRepository
+import com.yaan.core.domain.repository.TaskRepository
 import com.yaan.core.domain.usecase.CaptureIntentUseCase
 import kotlinx.coroutines.launch
 
@@ -76,22 +81,67 @@ import kotlinx.coroutines.launch
 fun HomeScreen(
     onNavigateToAskYaan: () -> Unit = {},
     onLaunchVoice: () -> Unit = {},
+    taskRepository: TaskRepository? = null,
+    briefingRepository: BriefingRepository? = null,
     captureUseCase: CaptureIntentUseCase? = null,
     modifier: Modifier = Modifier
 ) {
     var uiState by remember { mutableStateOf(HomeUiState()) }
     val coroutineScope = rememberCoroutineScope()
 
+    LaunchedEffect(taskRepository) {
+        if (taskRepository != null) {
+            taskRepository.observeTasks().collect { repoTasks ->
+                if (repoTasks.isNotEmpty()) {
+                    uiState = uiState.copy(
+                        tasks = repoTasks.map { t ->
+                            TaskItemUi(
+                                id = t.id,
+                                title = t.title,
+                                dueTime = t.dueAt?.toString() ?: "Today",
+                                tag = t.priority.name,
+                                isHighPriority = t.priority == TaskPriority.HIGH || t.priority == TaskPriority.URGENT,
+                                completed = t.status == TaskStatus.COMPLETED
+                            )
+                        }
+                    )
+                }
+            }
+        }
+    }
+
+    LaunchedEffect(briefingRepository) {
+        if (briefingRepository != null) {
+            briefingRepository.observeLatestBriefing().collect { b ->
+                if (b != null) {
+                    val conf = b.conflicts.firstOrNull()
+                    uiState = uiState.copy(
+                        briefingHeadline = "Daily Briefing",
+                        briefingSummary = b.summaryMarkdown,
+                        conflictTitle = conf?.description ?: uiState.conflictTitle,
+                        conflictResolution = conf?.proposedResolution ?: uiState.conflictResolution
+                    )
+                }
+            }
+        }
+    }
+
     HomeScreenContent(
         state = uiState,
         onAction = { action ->
             when (action) {
                 is HomeUiAction.ToggleTask -> {
-                    uiState = uiState.copy(
-                        tasks = uiState.tasks.map { task ->
-                            if (task.id == action.id) task.copy(completed = !task.completed) else task
+                    coroutineScope.launch {
+                        if (taskRepository != null) {
+                            taskRepository.toggleTaskCompleted(action.id)
+                        } else {
+                            uiState = uiState.copy(
+                                tasks = uiState.tasks.map { task ->
+                                    if (task.id == action.id) task.copy(completed = !task.completed) else task
+                                }
+                            )
                         }
-                    )
+                    }
                 }
 
                 HomeUiAction.DismissBriefing -> {

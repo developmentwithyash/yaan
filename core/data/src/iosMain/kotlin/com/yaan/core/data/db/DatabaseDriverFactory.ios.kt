@@ -1,0 +1,13 @@
+package com.yaan.core.data.db
+
+import app.cash.sqldelight.db.SqlDriver
+import app.cash.sqldelight.driver.native.NativeSqliteDriver
+
+actual class DatabaseDriverFactory {
+    actual fun createDriver(): SqlDriver {
+        return NativeSqliteDriver(
+            schema = YaanDatabase.Schema,
+            name = "yaan_vault.db"
+        )
+    }
+}

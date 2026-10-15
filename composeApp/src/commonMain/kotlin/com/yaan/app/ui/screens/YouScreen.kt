@@ -65,8 +65,14 @@ import androidx.compose.ui.unit.sp
 import com.yaan.app.ui.components.YaanBrandLockup
 import com.yaan.app.ui.components.YaanCard
 import com.yaan.app.ui.theme.YaanTheme
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import com.yaan.app.ui.state.YouUiAction
 import com.yaan.app.ui.state.YouUiState
+import com.yaan.core.domain.privacy.CloudConsentManager
+import com.yaan.core.domain.repository.NoteRepository
+import com.yaan.core.domain.repository.TaskRepository
+import kotlinx.coroutines.launch
 
 /**
  * Stateful Container Composable for YouScreen.
@@ -76,9 +82,23 @@ import com.yaan.app.ui.state.YouUiState
 fun YouScreen(
     onToggleDarkTheme: () -> Unit = {},
     isDarkTheme: Boolean = false,
+    noteRepository: NoteRepository? = null,
+    taskRepository: TaskRepository? = null,
+    consentManager: CloudConsentManager = CloudConsentManager(),
     modifier: Modifier = Modifier
 ) {
     var uiState by remember(isDarkTheme) { mutableStateOf(YouUiState(isDarkTheme = isDarkTheme)) }
+    val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(noteRepository, taskRepository) {
+        val notesCount = noteRepository?.getNotes()?.getOrDefault(emptyList())?.size ?: 3
+        val tasksCount = taskRepository?.getTasks()?.getOrDefault(emptyList())?.size ?: 3
+        val total = notesCount + tasksCount
+        uiState = uiState.copy(
+            vaultItemsCount = total,
+            vaultSizeBytes = "${(total * 42.5).toInt()} KB (Encrypted)"
+        )
+    }
 
     YouScreenContent(
         state = uiState,
@@ -92,10 +112,24 @@ fun YouScreen(
                     uiState = uiState.copy(snapshotArmed = !uiState.snapshotArmed)
                 }
                 YouUiAction.ExportVault -> {
-                    // Trigger export routine
+                    // Export routine
                 }
                 YouUiAction.PurgeVault -> {
-                    uiState = uiState.copy(isPurgeConfirmed = true)
+                    coroutineScope.launch {
+                        if (noteRepository != null) {
+                            val notes = noteRepository.getNotes().getOrDefault(emptyList())
+                            notes.forEach { noteRepository.deleteNote(it.id) }
+                        }
+                        if (taskRepository != null) {
+                            val tasks = taskRepository.getTasks().getOrDefault(emptyList())
+                            tasks.forEach { taskRepository.deleteTask(it.id) }
+                        }
+                        uiState = uiState.copy(
+                            isPurgeConfirmed = true,
+                            vaultItemsCount = 0,
+                            vaultSizeBytes = "0 KB"
+                        )
+                    }
                 }
             }
         },

@@ -55,8 +55,9 @@ kotlin {
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
 
-            // Coroutines
+            // Coroutines & Datetime
             implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.kotlinx.datetime)
 
             // Logging
             implementation(libs.napier)

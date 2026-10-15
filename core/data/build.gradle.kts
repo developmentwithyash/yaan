@@ -55,6 +55,7 @@ kotlin {
             implementation(libs.turbine)
             implementation(libs.ktor.client.mock)
             implementation(libs.kotest.assertions)
+            implementation(libs.sqldelight.sqlite.driver)
         }
     }
 }

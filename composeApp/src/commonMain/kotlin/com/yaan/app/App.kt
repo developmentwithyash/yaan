@@ -9,7 +9,6 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -31,9 +30,31 @@ import com.yaan.app.ui.screens.NotesScreen
 import com.yaan.app.ui.screens.PlanScreen
 import com.yaan.app.ui.screens.YouScreen
 import com.yaan.app.ui.theme.YaanTheme
+import com.yaan.core.domain.repository.BriefingRepository
+import com.yaan.core.domain.repository.MemoryRepository
+import com.yaan.core.domain.repository.NoteRepository
+import com.yaan.core.domain.repository.ReminderRepository
+import com.yaan.core.domain.repository.TaskRepository
+import com.yaan.core.domain.usecase.CaptureIntentUseCase
+import org.koin.compose.currentKoinScope
 
 @Composable
-fun YaanApp() {
+fun YaanApp(
+    taskRepository: TaskRepository? = null,
+    noteRepository: NoteRepository? = null,
+    reminderRepository: ReminderRepository? = null,
+    briefingRepository: BriefingRepository? = null,
+    memoryRepository: MemoryRepository? = null,
+    captureUseCase: CaptureIntentUseCase? = null,
+) {
+    val koin = currentKoinScope()
+    val resolvedTaskRepo = taskRepository ?: koin.getOrNull<TaskRepository>()
+    val resolvedNoteRepo = noteRepository ?: koin.getOrNull<NoteRepository>()
+    val resolvedReminderRepo = reminderRepository ?: koin.getOrNull<ReminderRepository>()
+    val resolvedBriefingRepo = briefingRepository ?: koin.getOrNull<BriefingRepository>()
+    val resolvedMemoryRepo = memoryRepository ?: koin.getOrNull<MemoryRepository>()
+    val resolvedCaptureUseCase = captureUseCase ?: koin.getOrNull<CaptureIntentUseCase>()
+
     var isDarkTheme by remember { mutableStateOf(false) }
     var currentDestination by remember { mutableStateOf(YaanDestination.Home) }
     var isLiveVoiceOpen by remember { mutableStateOf(false) }
@@ -79,18 +100,30 @@ fun YaanApp() {
                         when (destination) {
                             YaanDestination.Home -> HomeScreen(
                                 onNavigateToAskYaan = { currentDestination = YaanDestination.AskYaan },
-                                onLaunchVoice = { isLiveVoiceOpen = true }
+                                onLaunchVoice = { isLiveVoiceOpen = true },
+                                taskRepository = resolvedTaskRepo,
+                                briefingRepository = resolvedBriefingRepo,
+                                captureUseCase = resolvedCaptureUseCase
                             )
-                            YaanDestination.Plan -> PlanScreen()
+                            YaanDestination.Plan -> PlanScreen(
+                                taskRepository = resolvedTaskRepo,
+                                reminderRepository = resolvedReminderRepo
+                            )
                             YaanDestination.AskYaan -> AskYaanScreen(
-                                onLaunchVoice = { isLiveVoiceOpen = true }
+                                onLaunchVoice = { isLiveVoiceOpen = true },
+                                noteRepository = resolvedNoteRepo,
+                                taskRepository = resolvedTaskRepo,
+                                memoryRepository = resolvedMemoryRepo
                             )
                             YaanDestination.Notes -> NotesScreen(
-                                onNavigateToAskYaan = { currentDestination = YaanDestination.AskYaan }
+                                onNavigateToAskYaan = { currentDestination = YaanDestination.AskYaan },
+                                noteRepository = resolvedNoteRepo
                             )
                             YaanDestination.You -> YouScreen(
                                 onToggleDarkTheme = { isDarkTheme = !isDarkTheme },
-                                isDarkTheme = isDarkTheme
+                                isDarkTheme = isDarkTheme,
+                                noteRepository = resolvedNoteRepo,
+                                taskRepository = resolvedTaskRepo
                             )
                         }
                     }

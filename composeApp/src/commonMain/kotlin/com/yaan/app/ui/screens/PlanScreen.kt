@@ -65,8 +65,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.yaan.app.ui.components.YaanCard
 import com.yaan.app.ui.theme.YaanTheme
+import androidx.compose.runtime.rememberCoroutineScope
 import com.yaan.app.ui.state.PlanUiAction
 import com.yaan.app.ui.state.PlanUiState
+import com.yaan.core.domain.model.Task
+import com.yaan.core.domain.model.TaskPriority
+import com.yaan.core.domain.repository.ReminderRepository
+import com.yaan.core.domain.repository.TaskRepository
+import kotlinx.coroutines.launch
 
 /**
  * Stateful Container Composable for PlanScreen.
@@ -74,9 +80,12 @@ import com.yaan.app.ui.state.PlanUiState
  */
 @Composable
 fun PlanScreen(
+    taskRepository: TaskRepository? = null,
+    reminderRepository: ReminderRepository? = null,
     modifier: Modifier = Modifier
 ) {
     var uiState by remember { mutableStateOf(PlanUiState()) }
+    val coroutineScope = rememberCoroutineScope()
 
     PlanScreenContent(
         state = uiState,
@@ -90,6 +99,21 @@ fun PlanScreen(
                 }
                 is PlanUiAction.UpdateFastAction -> {
                     uiState = uiState.copy(fastActionText = action.text)
+                    val trimmed = action.text.trim()
+                    if (trimmed.endsWith("\n") || trimmed.length > 40) {
+                        if (taskRepository != null && trimmed.isNotEmpty()) {
+                            coroutineScope.launch {
+                                taskRepository.upsertTask(
+                                    Task(
+                                        id = "task_fast_${com.yaan.core.common.datetime.nowInstant().toEpochMilliseconds()}",
+                                        title = trimmed.trim(),
+                                        priority = TaskPriority.HIGH
+                                    )
+                                )
+                                uiState = uiState.copy(fastActionText = "")
+                            }
+                        }
+                    }
                 }
                 is PlanUiAction.ToggleTask -> {
                     uiState = when (action.taskKey) {

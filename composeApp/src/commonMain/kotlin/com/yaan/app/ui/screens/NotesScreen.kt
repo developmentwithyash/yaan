@@ -61,8 +61,13 @@ import androidx.compose.ui.unit.sp
 import com.yaan.app.ui.components.YaanCard
 import com.yaan.app.ui.theme.YaanTheme
 
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
+import com.yaan.app.ui.state.NoteItemUi
 import com.yaan.app.ui.state.NotesUiAction
 import com.yaan.app.ui.state.NotesUiState
+import com.yaan.core.domain.repository.NoteRepository
+import kotlinx.coroutines.launch
 
 /**
  * Stateful Container Composable for NotesScreen.
@@ -71,9 +76,34 @@ import com.yaan.app.ui.state.NotesUiState
 @Composable
 fun NotesScreen(
     onNavigateToAskYaan: () -> Unit = {},
+    noteRepository: NoteRepository? = null,
     modifier: Modifier = Modifier
 ) {
     var uiState by remember { mutableStateOf(NotesUiState()) }
+    val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(noteRepository) {
+        if (noteRepository != null) {
+            noteRepository.observeNotes().collect { repoNotes ->
+                if (repoNotes.isNotEmpty()) {
+                    uiState = uiState.copy(
+                        notes = repoNotes.map { n ->
+                            NoteItemUi(
+                                id = n.id,
+                                title = n.title,
+                                preview = n.contentCiphertext,
+                                tag = n.tags.firstOrNull()?.name ?: "Personal",
+                                timestamp = "Saved",
+                                isPinned = n.isPinned,
+                                isEncrypted = true,
+                                audioDuration = n.audioMemo?.let { "${it.durationMs / 1000}s" }
+                            )
+                        }
+                    )
+                }
+            }
+        }
+    }
 
     NotesScreenContent(
         state = uiState,
@@ -81,6 +111,31 @@ fun NotesScreen(
             when (action) {
                 is NotesUiAction.UpdateSearchQuery -> {
                     uiState = uiState.copy(searchQuery = action.query)
+                    if (noteRepository != null) {
+                        coroutineScope.launch {
+                            val res = if (action.query.isEmpty()) {
+                                noteRepository.getNotes()
+                            } else {
+                                noteRepository.searchNotes(action.query)
+                            }
+                            res.onSuccess { filtered ->
+                                uiState = uiState.copy(
+                                    notes = filtered.map { n ->
+                                        NoteItemUi(
+                                            id = n.id,
+                                            title = n.title,
+                                            preview = n.contentCiphertext,
+                                            tag = n.tags.firstOrNull()?.name ?: "Personal",
+                                            timestamp = "Saved",
+                                            isPinned = n.isPinned,
+                                            isEncrypted = true,
+                                            audioDuration = n.audioMemo?.let { "${it.durationMs / 1000}s" }
+                                        )
+                                    }
+                                )
+                            }
+                        }
+                    }
                 }
                 is NotesUiAction.SelectFilter -> {
                     uiState = uiState.copy(selectedFilter = action.filter)
@@ -89,7 +144,13 @@ fun NotesScreen(
                     uiState = uiState.copy(isPlayingAudio = !uiState.isPlayingAudio)
                 }
                 is NotesUiAction.DeleteNote -> {
-                    uiState = uiState.copy(notes = uiState.notes.filterNot { it.id == action.id })
+                    coroutineScope.launch {
+                        if (noteRepository != null) {
+                            noteRepository.deleteNote(action.id)
+                        } else {
+                            uiState = uiState.copy(notes = uiState.notes.filterNot { it.id == action.id })
+                        }
+                    }
                 }
                 NotesUiAction.NavigateToAskYaan -> {
                     onNavigateToAskYaan()

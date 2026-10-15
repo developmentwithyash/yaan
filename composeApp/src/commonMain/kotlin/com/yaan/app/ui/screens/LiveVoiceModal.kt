@@ -132,7 +132,7 @@ fun LiveVoiceModal(
                         )
                     )
                     Text(
-                        text = " · Whisper Neural",
+                        text = " · Push-to-Talk",
                         style = MaterialTheme.typography.labelSmall.copy(
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )

@@ -71,8 +71,16 @@ import com.yaan.app.ui.components.YaanPrimaryButton
 import com.yaan.app.ui.components.YaanSecondaryButton
 import com.yaan.app.ui.theme.YaanTheme
 
+import androidx.compose.runtime.rememberCoroutineScope
 import com.yaan.app.ui.state.AskYaanUiAction
 import com.yaan.app.ui.state.AskYaanUiState
+import com.yaan.app.ui.state.ProposedActionUi
+import com.yaan.core.domain.model.Task
+import com.yaan.core.domain.model.TaskPriority
+import com.yaan.core.domain.repository.MemoryRepository
+import com.yaan.core.domain.repository.NoteRepository
+import com.yaan.core.domain.repository.TaskRepository
+import kotlinx.coroutines.launch
 
 /**
  * Stateful Container Composable for AskYaanScreen.
@@ -81,9 +89,13 @@ import com.yaan.app.ui.state.AskYaanUiState
 @Composable
 fun AskYaanScreen(
     onLaunchVoice: () -> Unit = {},
+    noteRepository: NoteRepository? = null,
+    taskRepository: TaskRepository? = null,
+    memoryRepository: MemoryRepository? = null,
     modifier: Modifier = Modifier
 ) {
     var uiState by remember { mutableStateOf(AskYaanUiState()) }
+    val coroutineScope = rememberCoroutineScope()
 
     AskYaanScreenContent(
         state = uiState,
@@ -102,17 +114,75 @@ fun AskYaanScreen(
                     uiState = uiState.copy(thoughtExpanded = !uiState.thoughtExpanded)
                 }
                 AskYaanUiAction.ConfirmActionProposal -> {
-                    uiState = uiState.copy(
-                        proposedAction = uiState.proposedAction?.copy(isConfirmed = true)
-                    )
+                    coroutineScope.launch {
+                        val prop = uiState.proposedAction
+                        if (prop != null && !prop.isConfirmed && taskRepository != null) {
+                            taskRepository.upsertTask(
+                                Task(
+                                    id = "task_committed_${prop.id}",
+                                    title = prop.title.removePrefix("Proposed: ").removePrefix("Action: "),
+                                    priority = TaskPriority.HIGH
+                                )
+                            )
+                        }
+                        uiState = uiState.copy(
+                            proposedAction = uiState.proposedAction?.copy(isConfirmed = true),
+                            responseMarkdown = "Action confirmed and committed to local vault. State updated."
+                        )
+                    }
                 }
                 AskYaanUiAction.SubmitQuery -> {
                     val q = uiState.inputText.trim()
                     if (q.isNotEmpty()) {
-                        uiState = uiState.copy(
-                            inputText = "",
-                            responseMarkdown = "Responding to: \"$q\" using on-device epistemic search..."
-                        )
+                        val lower = q.lowercase()
+                        val isActionIntent = lower.startsWith("reschedule") ||
+                                lower.startsWith("shift") ||
+                                lower.startsWith("create task") ||
+                                lower.startsWith("add task") ||
+                                lower.startsWith("new task") ||
+                                lower.startsWith("remind me") ||
+                                lower.startsWith("postpone")
+
+                        if (isActionIntent) {
+                            val proposal = ProposedActionUi(
+                                id = "action_${com.yaan.core.common.datetime.nowInstant().toEpochMilliseconds()}",
+                                title = "Proposed: $q",
+                                subtitle = "Grounded on user command · Requires affirmative tap to commit",
+                                actionType = "EXECUTIVE_ACTION",
+                                isConfirmed = false
+                            )
+                            uiState = uiState.copy(
+                                inputText = "",
+                                proposedAction = proposal,
+                                responseMarkdown = "I've staged this action proposal for your review. No data has been modified. Please confirm below to commit."
+                            )
+                        } else {
+                            coroutineScope.launch {
+                                if (noteRepository != null) {
+                                    val notesRes = noteRepository.searchNotes(q)
+                                    val matchedNotes = notesRes.getOrDefault(emptyList())
+
+                                    if (matchedNotes.isNotEmpty()) {
+                                        val top = matchedNotes.first()
+                                        uiState = uiState.copy(
+                                            inputText = "",
+                                            responseMarkdown = "Based on your encrypted vault notes:\n\n${top.contentCiphertext}\n\n[Citation: ${top.title} (ID: ${top.id})]"
+                                        )
+                                    } else {
+                                        // Honest abstention
+                                        uiState = uiState.copy(
+                                            inputText = "",
+                                            responseMarkdown = "I could not find information about \"$q\" in your vault. I do not guess or hallucinate facts that are not verified in your personal notes."
+                                        )
+                                    }
+                                } else {
+                                    uiState = uiState.copy(
+                                        inputText = "",
+                                        responseMarkdown = "Responding to: \"$q\" using on-device epistemic search..."
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
                 AskYaanUiAction.LaunchVoice -> {

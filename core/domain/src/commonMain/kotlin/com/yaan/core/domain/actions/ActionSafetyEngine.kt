@@ -1,5 +1,6 @@
 package com.yaan.core.domain.actions
 
+import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 
@@ -216,7 +217,7 @@ class TwoPhaseActionCommitter(
             actionType = proposal.actionType,
             entityId = entityId,
             previousStateJson = null,
-            executedAtEpochMs = System.currentTimeMillis()
+            executedAtEpochMs = Clock.System.now().toEpochMilliseconds()
         )
 
         stagedProposals[proposalId] = proposal.copy(isExecuted = true)

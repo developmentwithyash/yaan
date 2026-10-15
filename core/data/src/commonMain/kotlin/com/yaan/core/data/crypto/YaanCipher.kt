@@ -9,3 +9,11 @@ interface YaanCipher {
     suspend fun encrypt(plainText: String, key: ByteArray): YaanResult<ByteArray>
     suspend fun decrypt(cipherText: ByteArray, key: ByteArray): YaanResult<String>
 }
+
+/**
+ * Platform expect declaration for hardware-backed AES-GCM-256 authenticated encryption.
+ */
+expect class AesGcmYaanCipher() : YaanCipher {
+    override suspend fun encrypt(plainText: String, key: ByteArray): YaanResult<ByteArray>
+    override suspend fun decrypt(cipherText: ByteArray, key: ByteArray): YaanResult<String>
+}

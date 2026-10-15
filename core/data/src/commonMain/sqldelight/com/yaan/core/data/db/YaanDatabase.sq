@@ -1,0 +1,145 @@
+import kotlin.Boolean;
+
+-- Task Entity Table
+CREATE TABLE taskEntity (
+    id TEXT NOT NULL PRIMARY KEY,
+    title TEXT NOT NULL,
+    due_time TEXT,
+    is_completed INTEGER AS Boolean NOT NULL DEFAULT 0,
+    tag TEXT NOT NULL,
+    is_high_priority INTEGER AS Boolean NOT NULL DEFAULT 0,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL
+);
+
+selectAllTasks:
+SELECT * FROM taskEntity ORDER BY created_at DESC;
+
+selectTaskById:
+SELECT * FROM taskEntity WHERE id = ?;
+
+insertTask:
+INSERT OR REPLACE INTO taskEntity(id, title, due_time, is_completed, tag, is_high_priority, created_at, updated_at)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+
+toggleTaskCompleted:
+UPDATE taskEntity
+SET is_completed = CASE WHEN is_completed = 1 THEN 0 ELSE 1 END, updated_at = ?
+WHERE id = ?;
+
+deleteTask:
+DELETE FROM taskEntity WHERE id = ?;
+
+deleteAllTasks:
+DELETE FROM taskEntity;
+
+-- Note Entity Table
+CREATE TABLE noteEntity (
+    id TEXT NOT NULL PRIMARY KEY,
+    title TEXT NOT NULL,
+    content TEXT NOT NULL,
+    tag TEXT NOT NULL,
+    is_pinned INTEGER AS Boolean NOT NULL DEFAULT 0,
+    is_encrypted INTEGER AS Boolean NOT NULL DEFAULT 1,
+    audio_duration TEXT,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL
+);
+
+selectAllNotes:
+SELECT * FROM noteEntity ORDER BY is_pinned DESC, created_at DESC;
+
+selectNoteById:
+SELECT * FROM noteEntity WHERE id = ?;
+
+searchNotes:
+SELECT * FROM noteEntity
+WHERE title LIKE '%' || :query || '%' OR content LIKE '%' || :query || '%' OR tag LIKE '%' || :query || '%'
+ORDER BY is_pinned DESC, created_at DESC;
+
+insertNote:
+INSERT OR REPLACE INTO noteEntity(id, title, content, tag, is_pinned, is_encrypted, audio_duration, created_at, updated_at)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+deleteNote:
+DELETE FROM noteEntity WHERE id = ?;
+
+deleteAllNotes:
+DELETE FROM noteEntity;
+
+-- Reminder Entity Table
+CREATE TABLE reminderEntity (
+    id TEXT NOT NULL PRIMARY KEY,
+    title TEXT NOT NULL,
+    trigger_time INTEGER NOT NULL,
+    recurrence TEXT NOT NULL DEFAULT 'NONE',
+    is_dismissed INTEGER AS Boolean NOT NULL DEFAULT 0,
+    channel TEXT NOT NULL DEFAULT 'IN_APP',
+    created_at INTEGER NOT NULL
+);
+
+selectAllReminders:
+SELECT * FROM reminderEntity ORDER BY trigger_time ASC;
+
+selectReminderById:
+SELECT * FROM reminderEntity WHERE id = ?;
+
+insertReminder:
+INSERT OR REPLACE INTO reminderEntity(id, title, trigger_time, recurrence, is_dismissed, channel, created_at)
+VALUES (?, ?, ?, ?, ?, ?, ?);
+
+dismissReminder:
+UPDATE reminderEntity SET is_dismissed = 1 WHERE id = ?;
+
+deleteReminder:
+DELETE FROM reminderEntity WHERE id = ?;
+
+deleteAllReminders:
+DELETE FROM reminderEntity;
+
+-- Briefing Entity Table
+CREATE TABLE briefingEntity (
+    id TEXT NOT NULL PRIMARY KEY,
+    headline TEXT NOT NULL,
+    summary TEXT NOT NULL,
+    date TEXT NOT NULL,
+    is_listened INTEGER AS Boolean NOT NULL DEFAULT 0,
+    conflict_title TEXT,
+    conflict_slot TEXT,
+    conflict_resolution TEXT
+);
+
+selectLatestBriefing:
+SELECT * FROM briefingEntity ORDER BY id DESC LIMIT 1;
+
+insertBriefing:
+INSERT OR REPLACE INTO briefingEntity(id, headline, summary, date, is_listened, conflict_title, conflict_slot, conflict_resolution)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+
+-- Memory Entity Table
+CREATE TABLE memoryEntity (
+    id TEXT NOT NULL PRIMARY KEY,
+    content TEXT NOT NULL,
+    category TEXT NOT NULL,
+    confidence REAL NOT NULL,
+    source_id TEXT,
+    created_at INTEGER NOT NULL
+);
+
+selectAllMemories:
+SELECT * FROM memoryEntity ORDER BY created_at DESC;
+
+searchMemories:
+SELECT * FROM memoryEntity
+WHERE content LIKE '%' || :query || '%'
+ORDER BY confidence DESC;
+
+insertMemory:
+INSERT OR REPLACE INTO memoryEntity(id, content, category, confidence, source_id, created_at)
+VALUES (?, ?, ?, ?, ?, ?);
+
+deleteMemory:
+DELETE FROM memoryEntity WHERE id = ?;
+
+deleteAllMemories:
+DELETE FROM memoryEntity;
