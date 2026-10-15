@@ -150,7 +150,10 @@ fun YaanApp(
                 exit = slideOutVertically(targetOffsetY = { it }) + fadeOut()
             ) {
                 LiveVoiceModal(
-                    onDismiss = { isLiveVoiceOpen = false }
+                    onDismiss = { isLiveVoiceOpen = false },
+                    noteRepository = resolvedNoteRepo,
+                    taskRepository = resolvedTaskRepo,
+                    memoryRepository = resolvedMemoryRepo
                 )
             }
 

@@ -20,6 +20,12 @@
 	<string>1</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>YAAN uses your microphone for voice commands and live assistant conversations.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>YAAN uses speech recognition to transcribe your voice notes and instructions on-device.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

@@ -11,7 +11,11 @@ fun MainViewController(): UIViewController {
         initKoin()
         koinInitialized = true
     }
-    return ComposeUIViewController {
+    return ComposeUIViewController(
+        configure = {
+            enforceStrictPlistSanityCheck = false
+        }
+    ) {
         YaanApp()
     }
 }

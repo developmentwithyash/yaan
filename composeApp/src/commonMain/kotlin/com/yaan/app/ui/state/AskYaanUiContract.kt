@@ -14,6 +14,18 @@ data class ProposedActionUi(
 )
 
 /**
+ * Single turn in the Ask YAAN conversation thread.
+ */
+data class ChatMessageUi(
+    val id: String,
+    val sender: String, // "USER" or "YAAN"
+    val text: String,
+    val timestamp: String = "Just now",
+    val citations: List<String> = emptyList(),
+    val proposedAction: ProposedActionUi? = null
+)
+
+/**
  * Pure Presentation State for the Ask YAAN screen.
  */
 data class AskYaanUiState(
@@ -28,7 +40,15 @@ data class AskYaanUiState(
         isConfirmed = false
     ),
     val isStreaming: Boolean = false,
-    val responseMarkdown: String = "Based on your encrypted vault notes and schedule, I've mapped out today's priority commitments. You have a 25-minute conflict between your Dentist visit and the AWS spend review."
+    val responseMarkdown: String = "Based on your encrypted vault notes and schedule, I've mapped out today's priority commitments. You have a 25-minute conflict between your Dentist visit and the AWS spend review.",
+    val messages: List<ChatMessageUi> = listOf(
+        ChatMessageUi(
+            id = "msg_init_welcome",
+            sender = "YAAN",
+            text = "Welcome to YAAN, your personal autonomous navigator. How can I assist you today? I can help you manage tasks, capture notes, search your vault, or brief your schedule.",
+            timestamp = "Just now"
+        )
+    )
 )
 
 /**

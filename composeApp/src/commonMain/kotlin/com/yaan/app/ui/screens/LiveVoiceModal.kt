@@ -1,5 +1,6 @@
 package com.yaan.app.ui.screens
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -9,6 +10,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,6 +32,7 @@ import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.CallEnd
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.GraphicEq
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -38,14 +41,18 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material.icons.filled.Videocam
+import androidx.compose.material.icons.filled.VolumeOff
+import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -58,34 +65,103 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.yaan.app.ai.YaanAssistantEngine
 import com.yaan.app.ui.components.YaanCard
+import com.yaan.app.ui.components.YaanChip
 import com.yaan.app.ui.components.YaanPrimaryButton
+import com.yaan.app.ui.state.ProposedActionUi
 import com.yaan.app.ui.theme.YaanTheme
+import com.yaan.app.voice.PlatformVoiceSpeaker
+import com.yaan.core.common.datetime.nowInstant
+import com.yaan.core.domain.model.Task
+import com.yaan.core.domain.model.TaskPriority
+import com.yaan.core.domain.repository.MemoryRepository
+import com.yaan.core.domain.repository.NoteRepository
+import com.yaan.core.domain.repository.TaskRepository
+import com.yaan.feature.voice.VoiceSessionState
+import kotlinx.coroutines.launch
 
 @Composable
 fun LiveVoiceModal(
     onDismiss: () -> Unit,
+    noteRepository: NoteRepository? = null,
+    taskRepository: TaskRepository? = null,
+    memoryRepository: MemoryRepository? = null,
     modifier: Modifier = Modifier
 ) {
+    val coroutineScope = rememberCoroutineScope()
+    val assistantEngine = remember {
+        YaanAssistantEngine(noteRepository, taskRepository, memoryRepository)
+    }
+    val voiceSpeaker = remember { PlatformVoiceSpeaker() }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            voiceSpeaker.stop()
+        }
+    }
+
+    var sessionState by remember { mutableStateOf(VoiceSessionState.IDLE) }
+    var userUtterance by remember { mutableStateOf("Hold to talk or tap a voice prompt below...") }
+    var yaanResponse by remember { mutableStateOf("YAAN Live Voice Assistant is active. Speak any command, request a briefing, or search your encrypted vault.") }
+    var proposedAction by remember {
+        mutableStateOf<ProposedActionUi?>(
+            ProposedActionUi(
+                id = "voice_action_01",
+                title = "Schedule 45m Focus Block",
+                subtitle = "Today · 2:45 PM – 3:30 PM · Locked to local calendar",
+                actionType = "CALENDAR_RESCHEDULE",
+                isConfirmed = false
+            )
+        )
+    }
     var isConfirmed by remember { mutableStateOf(false) }
     var speedIndex by remember { mutableStateOf(0) }
-    val speeds = listOf("1.0x", "1.2x", "1.5x")
+    val speeds = listOf(1.0f, 1.2f, 1.5f)
+    val speedLabels = listOf("1.0x", "1.2x", "1.5x")
+    var isMuted by remember { mutableStateOf(false) }
 
+    fun executeVoiceCommand(command: String) {
+        userUtterance = "“$command”"
+        sessionState = VoiceSessionState.THINKING
+        voiceSpeaker.stop()
+
+        coroutineScope.launch {
+            val result = assistantEngine.processQuery(command)
+            yaanResponse = "“${result.replyText}”"
+            proposedAction = result.proposedAction ?: proposedAction
+            isConfirmed = false
+            sessionState = VoiceSessionState.SPEAKING
+
+            if (!isMuted) {
+                voiceSpeaker.speak(result.replyText, speeds[speedIndex])
+            }
+        }
+    }
+
+    // Dynamic Orb Animations
     val infiniteTransition = rememberInfiniteTransition()
+    val rotationSpeed = when (sessionState) {
+        VoiceSessionState.THINKING -> 3000
+        VoiceSessionState.SPEAKING -> 6000
+        VoiceSessionState.LISTENING -> 8000
+        else -> 14000
+    }
     val rotationAngle by infiniteTransition.animateFloat(
         initialValue = 0f,
         targetValue = 360f,
-        animationSpec = infiniteRepeatable(tween(12000, easing = LinearEasing), RepeatMode.Restart)
+        animationSpec = infiniteRepeatable(tween(rotationSpeed, easing = LinearEasing), RepeatMode.Restart)
     )
     val counterRotation by infiniteTransition.animateFloat(
         initialValue = 360f,
         targetValue = 0f,
-        animationSpec = infiniteRepeatable(tween(8000, easing = LinearEasing), RepeatMode.Restart)
+        animationSpec = infiniteRepeatable(tween(rotationSpeed / 2 + 2000, easing = LinearEasing), RepeatMode.Restart)
     )
+    val pulseMax = if (sessionState == VoiceSessionState.LISTENING || sessionState == VoiceSessionState.SPEAKING) 1.08f else 1.03f
     val orbPulse by infiniteTransition.animateFloat(
-        initialValue = 0.98f,
-        targetValue = 1.03f,
-        animationSpec = infiniteRepeatable(tween(1600), RepeatMode.Reverse)
+        initialValue = 0.97f,
+        targetValue = pulseMax,
+        animationSpec = infiniteRepeatable(tween(if (sessionState == VoiceSessionState.LISTENING) 800 else 1600), RepeatMode.Reverse)
     )
 
     Box(
@@ -108,7 +184,6 @@ fun LiveVoiceModal(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // YAAN LIVE · Whisper Neural pill
                 Row(
                     modifier = Modifier
                         .clip(CircleShape)
@@ -121,7 +196,14 @@ fun LiveVoiceModal(
                         modifier = Modifier
                             .size(6.dp)
                             .clip(CircleShape)
-                            .background(YaanTheme.extendedColors.bronzeAccent)
+                            .background(
+                                when (sessionState) {
+                                    VoiceSessionState.LISTENING -> Color(0xFFEF4444)
+                                    VoiceSessionState.THINKING -> Color(0xFF3B82F6)
+                                    VoiceSessionState.SPEAKING -> Color(0xFF10B981)
+                                    else -> YaanTheme.extendedColors.bronzeAccent
+                                }
+                            )
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
@@ -132,7 +214,12 @@ fun LiveVoiceModal(
                         )
                     )
                     Text(
-                        text = " · Push-to-Talk",
+                        text = when (sessionState) {
+                            VoiceSessionState.LISTENING -> " · Listening"
+                            VoiceSessionState.THINKING -> " · Thinking (0ms)"
+                            VoiceSessionState.SPEAKING -> " · Speaking"
+                            else -> " · Ready"
+                        },
                         style = MaterialTheme.typography.labelSmall.copy(
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -141,22 +228,28 @@ fun LiveVoiceModal(
 
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                     IconButton(
-                        onClick = onDismiss,
+                        onClick = {
+                            isMuted = !isMuted
+                            if (isMuted) voiceSpeaker.stop()
+                        },
                         modifier = Modifier
                             .size(36.dp)
                             .clip(CircleShape)
                             .background(YaanTheme.extendedColors.surfaceContainerLow)
                     ) {
                         Icon(
-                            imageVector = Icons.Default.KeyboardArrowDown,
-                            contentDescription = "Minimize",
+                            imageVector = if (isMuted) Icons.Default.VolumeOff else Icons.Default.VolumeUp,
+                            contentDescription = "Mute",
                             tint = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.size(20.dp)
+                            modifier = Modifier.size(18.dp)
                         )
                     }
 
                     IconButton(
-                        onClick = onDismiss,
+                        onClick = {
+                            voiceSpeaker.stop()
+                            onDismiss()
+                        },
                         modifier = Modifier
                             .size(36.dp)
                             .clip(CircleShape)
@@ -185,7 +278,7 @@ fun LiveVoiceModal(
                 )
                 Spacer(modifier = Modifier.width(5.dp))
                 Text(
-                    text = "Zero-cloud private audio stream • 100% On-device executive core",
+                    text = "Zero-cloud private audio stream · 100% On-device executive core",
                     style = MaterialTheme.typography.labelSmall.copy(
                         fontSize = 11.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -200,7 +293,7 @@ fun LiveVoiceModal(
                     .padding(vertical = 4.dp),
                 contentAlignment = Alignment.Center
             ) {
-                // Orbital Track Outer (Rotated ellipse)
+                // Orbital Track Outer
                 Box(
                     modifier = Modifier
                         .size(210.dp)
@@ -249,16 +342,15 @@ fun LiveVoiceModal(
                         .background(
                             Brush.radialGradient(
                                 colors = listOf(
-                                    Color(0xFFFBE48A), // Top specular highlight
-                                    Color(0xFFD4AF37), // Rich gold body
-                                    Color(0xFF8A6511)  // Shaded bronze rim
+                                    Color(0xFFFBE48A),
+                                    Color(0xFFD4AF37),
+                                    Color(0xFF8A6511)
                                 )
                             )
                         )
                         .border(2.dp, Color(0xFFFFF2B2).copy(alpha = 0.8f), CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
-                    // Specular reflection highlight at top left
                     Box(
                         modifier = Modifier
                             .size(38.dp)
@@ -283,11 +375,23 @@ fun LiveVoiceModal(
                     modifier = Modifier
                         .size(6.dp)
                         .clip(CircleShape)
-                        .background(YaanTheme.extendedColors.bronzeAccent)
+                        .background(
+                            when (sessionState) {
+                                VoiceSessionState.LISTENING -> Color(0xFFEF4444)
+                                VoiceSessionState.THINKING -> Color(0xFF3B82F6)
+                                VoiceSessionState.SPEAKING -> Color(0xFF10B981)
+                                else -> YaanTheme.extendedColors.bronzeAccent
+                            }
+                        )
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = "Speaking calmly",
+                    text = when (sessionState) {
+                        VoiceSessionState.LISTENING -> "Listening to audio..."
+                        VoiceSessionState.THINKING -> "Reasoning on-device..."
+                        VoiceSessionState.SPEAKING -> "Speaking aloud..."
+                        else -> "Tap Hold to Talk below"
+                    },
                     style = MaterialTheme.typography.labelSmall.copy(
                         fontWeight = FontWeight.SemiBold,
                         color = YaanTheme.extendedColors.bronzeAccent
@@ -313,7 +417,7 @@ fun LiveVoiceModal(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "“Can you review my afternoon commitments and see if I have time to draft the hiring spec?”",
+                    text = userUtterance,
                     style = MaterialTheme.typography.bodySmall.copy(
                         color = MaterialTheme.colorScheme.onSurface,
                         lineHeight = 18.sp
@@ -351,7 +455,7 @@ fun LiveVoiceModal(
                         }
 
                         Text(
-                            text = "140ms latency",
+                            text = "0ms on-device",
                             style = MaterialTheme.typography.labelSmall.copy(
                                 fontSize = 11.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -360,54 +464,103 @@ fun LiveVoiceModal(
                     }
 
                     Text(
-                        text = "“You have a 45–minute focus window between 2:45 PM and 3:30 PM after your client onboarding call. I can lock that for the hiring spec now.”",
+                        text = yaanResponse,
                         style = MaterialTheme.typography.bodyMedium.copy(
                             color = MaterialTheme.colorScheme.onSurface,
                             lineHeight = 21.sp
                         )
                     )
 
-                    // Embedded Schedule Confirmation Card
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(YaanTheme.extendedColors.sandSurface)
-                            .border(1.dp, YaanTheme.extendedColors.delicateBorder.copy(alpha = 0.6f), RoundedCornerShape(8.dp))
-                            .padding(8.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
+                    // Embedded Schedule / Action Confirmation Card
+                    proposedAction?.let { action ->
                         Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(YaanTheme.extendedColors.sandSurface)
+                                .border(1.dp, YaanTheme.extendedColors.delicateBorder.copy(alpha = 0.6f), RoundedCornerShape(8.dp))
+                                .padding(8.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.CalendarToday,
-                                contentDescription = null,
-                                tint = YaanTheme.extendedColors.bronzeAccent,
-                                modifier = Modifier.size(15.dp)
-                            )
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Text(
-                                text = "Schedule 45m Focus Block • Toda...",
-                                style = MaterialTheme.typography.labelSmall.copy(
-                                    fontWeight = FontWeight.Medium,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                ),
-                                maxLines = 1
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.CalendarToday,
+                                    contentDescription = null,
+                                    tint = YaanTheme.extendedColors.bronzeAccent,
+                                    modifier = Modifier.size(15.dp)
+                                )
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text(
+                                    text = action.title,
+                                    style = MaterialTheme.typography.labelSmall.copy(
+                                        fontWeight = FontWeight.Medium,
+                                        color = MaterialTheme.colorScheme.onSurface
+                                    ),
+                                    maxLines = 1
+                                )
+                            }
+
+                            YaanPrimaryButton(
+                                text = if (isConfirmed) "Committed" else "Confirm",
+                                onClick = {
+                                    if (!isConfirmed && taskRepository != null) {
+                                        coroutineScope.launch {
+                                            taskRepository.upsertTask(
+                                                Task(
+                                                    id = "task_voice_${nowInstant().toEpochMilliseconds()}",
+                                                    title = action.title,
+                                                    priority = TaskPriority.HIGH
+                                                )
+                                            )
+                                            isConfirmed = true
+                                            if (!isMuted) {
+                                                voiceSpeaker.speak("Action committed and locked to your vault.")
+                                            }
+                                        }
+                                    } else {
+                                        isConfirmed = true
+                                    }
+                                }
                             )
                         }
-
-                        YaanPrimaryButton(
-                            text = if (isConfirmed) "Locked" else "Confirm",
-                            onClick = { isConfirmed = true }
-                        )
                     }
                 }
             }
 
-            // ── 5. Mode Switcher Chips Row ────────────────────────────────────
+            // ── 5. Quick Voice Accelerator Pills ──────────────────────────────
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                YaanChip(
+                    text = "Review my commitments",
+                    leadingIcon = Icons.Default.CalendarToday,
+                    onClick = { executeVoiceCommand("Review my commitments and prepare daily plan") }
+                )
+                YaanChip(
+                    text = "What are my tasks?",
+                    leadingIcon = Icons.Default.AutoAwesome,
+                    onClick = { executeVoiceCommand("What are my tasks?") }
+                )
+                YaanChip(
+                    text = "Add task: Review Q3 financials",
+                    leadingIcon = Icons.Default.CalendarToday,
+                    onClick = { executeVoiceCommand("Add task: Review Q3 financials") }
+                )
+                YaanChip(
+                    text = "What's my day look like?",
+                    leadingIcon = Icons.Default.AutoAwesome,
+                    onClick = { executeVoiceCommand("What's my day look like?") }
+                )
+            }
+
+            // ── 6. Mode Switcher Chips Row ────────────────────────────────────
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
@@ -419,7 +572,10 @@ fun LiveVoiceModal(
                         .background(YaanTheme.extendedColors.sandSurface)
                         .border(1.dp, YaanTheme.extendedColors.delicateBorder, CircleShape)
                         .padding(horizontal = 10.dp, vertical = 6.dp)
-                        .clickable { onDismiss() },
+                        .clickable {
+                            voiceSpeaker.stop()
+                            onDismiss()
+                        },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
@@ -446,34 +602,9 @@ fun LiveVoiceModal(
                         .background(YaanTheme.extendedColors.sandSurface)
                         .border(1.dp, YaanTheme.extendedColors.delicateBorder, CircleShape)
                         .padding(horizontal = 10.dp, vertical = 6.dp)
-                        .clickable { /* Share view */ },
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Videocam,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.size(14.dp)
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = "Share view",
-                        style = MaterialTheme.typography.labelSmall.copy(
-                            fontWeight = FontWeight.Medium,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                    )
-                }
-
-                Spacer(modifier = Modifier.width(8.dp))
-
-                Row(
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .background(YaanTheme.extendedColors.sandSurface)
-                        .border(1.dp, YaanTheme.extendedColors.delicateBorder, CircleShape)
-                        .padding(horizontal = 10.dp, vertical = 6.dp)
-                        .clickable { speedIndex = (speedIndex + 1) % speeds.size },
+                        .clickable {
+                            speedIndex = (speedIndex + 1) % speeds.size
+                        },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
@@ -484,7 +615,7 @@ fun LiveVoiceModal(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = speeds[speedIndex],
+                        text = speedLabels[speedIndex],
                         style = MaterialTheme.typography.labelSmall.copy(
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurface
@@ -493,9 +624,9 @@ fun LiveVoiceModal(
                 }
             }
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(6.dp))
 
-            // ── 6. Bottom Floating Voice Controller Dock ──────────────────────
+            // ── 7. Bottom Floating Voice Controller Dock ──────────────────────
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -512,14 +643,27 @@ fun LiveVoiceModal(
                     modifier = Modifier
                         .size(46.dp)
                         .clip(CircleShape)
-                        .background(YaanTheme.extendedColors.surfaceContainerLow)
-                        .clickable { /* Mic */ },
+                        .background(
+                            if (sessionState == VoiceSessionState.LISTENING) Color(0xFFEF4444)
+                            else YaanTheme.extendedColors.surfaceContainerLow
+                        )
+                        .clickable {
+                            if (sessionState == VoiceSessionState.IDLE) {
+                                sessionState = VoiceSessionState.LISTENING
+                                userUtterance = "Listening... Tap 'Hold to talk' or speak a prompt"
+                            } else if (sessionState == VoiceSessionState.LISTENING) {
+                                executeVoiceCommand("Review my commitments and prepare daily plan")
+                            } else if (sessionState == VoiceSessionState.SPEAKING) {
+                                voiceSpeaker.stop()
+                                sessionState = VoiceSessionState.IDLE
+                            }
+                        },
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = Icons.Default.Mic,
                         contentDescription = "Mic",
-                        tint = MaterialTheme.colorScheme.onSurface,
+                        tint = if (sessionState == VoiceSessionState.LISTENING) Color.White else MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.size(20.dp)
                     )
                 }
@@ -539,7 +683,17 @@ fun LiveVoiceModal(
                                 )
                             )
                         )
-                        .clickable { /* Hold to talk */ },
+                        .clickable {
+                            if (sessionState == VoiceSessionState.IDLE) {
+                                sessionState = VoiceSessionState.LISTENING
+                                userUtterance = "Listening... Tap to execute command"
+                            } else if (sessionState == VoiceSessionState.LISTENING) {
+                                executeVoiceCommand("Review my commitments and prepare daily plan")
+                            } else if (sessionState == VoiceSessionState.SPEAKING) {
+                                voiceSpeaker.stop()
+                                sessionState = VoiceSessionState.IDLE
+                            }
+                        },
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -551,7 +705,12 @@ fun LiveVoiceModal(
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
-                        text = "Hold to talk",
+                        text = when (sessionState) {
+                            VoiceSessionState.LISTENING -> "Tap to Process"
+                            VoiceSessionState.THINKING -> "Thinking..."
+                            VoiceSessionState.SPEAKING -> "Tap to Stop"
+                            else -> "Tap to Speak"
+                        },
                         style = MaterialTheme.typography.labelLarge.copy(
                             fontWeight = FontWeight.Bold,
                             color = Color(0xFF141311),
@@ -566,7 +725,10 @@ fun LiveVoiceModal(
                         .size(46.dp)
                         .clip(CircleShape)
                         .background(Color(0xFFDC2626))
-                        .clickable { onDismiss() },
+                        .clickable {
+                            voiceSpeaker.stop()
+                            onDismiss()
+                        },
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
@@ -578,7 +740,7 @@ fun LiveVoiceModal(
                 }
             }
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }

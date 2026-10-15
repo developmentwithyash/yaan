@@ -77,6 +77,7 @@
 				1A2B3C4D5E6F7A8B9C0D1E34 /* Sources */,
 				1A2B3C4D5E6F7A8B9C0D1E35 /* Frameworks */,
 				1A2B3C4D5E6F7A8B9C0D1E37 /* Resources */,
+				AA11BB22CC33DD44EE550008 /* Copy Compose Resources */,
 			);
 			buildRules = (
 			);
@@ -148,6 +149,25 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ \"YES\" = \"$OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED\" ]; then\n  echo \"Skipping Gradle build task invocation due to OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED environment variable set to \\\"YES\\\"\"\n  exit 0\nfi\ncd \"$SRCROOT/..\"\nexport DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer\n./gradlew :composeApp:embedAndSignPodAppleFrameworkForXcode\n";
+		};
+		AA11BB22CC33DD44EE550008 /* Copy Compose Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Compose Resources";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "APP_RES_DIR=\"${TARGET_BUILD_DIR}/${FULL_PRODUCT_NAME}/compose-resources/composeResources/yaan.composeapp.generated.resources\"\nmkdir -p \"$APP_RES_DIR/font\"\nmkdir -p \"$APP_RES_DIR/drawable\"\ncp -R \"$SRCROOT/../composeApp/src/commonMain/composeResources/font/\" \"$APP_RES_DIR/font/\"\ncp -R \"$SRCROOT/../composeApp/src/commonMain/composeResources/drawable/\" \"$APP_RES_DIR/drawable/\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

@@ -1,10 +1,10 @@
 package com.yaan.app.ui.screens
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -21,16 +22,15 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.AlarmAdd
 import androidx.compose.material.icons.filled.Analytics
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.AttachMoney
 import androidx.compose.material.icons.filled.BookmarkAdd
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.DoneAll
 import androidx.compose.material.icons.filled.EditNote
@@ -45,9 +45,6 @@ import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.filled.Verified
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.withStyle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -56,26 +53,32 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.yaan.app.ai.YaanAssistantEngine
 import com.yaan.app.ui.components.ActionProposalCard
 import com.yaan.app.ui.components.YaanCard
 import com.yaan.app.ui.components.YaanChip
-import com.yaan.app.ui.components.YaanPrimaryButton
-import com.yaan.app.ui.components.YaanSecondaryButton
-import com.yaan.app.ui.theme.YaanTheme
-
-import androidx.compose.runtime.rememberCoroutineScope
 import com.yaan.app.ui.state.AskYaanUiAction
 import com.yaan.app.ui.state.AskYaanUiState
-import com.yaan.app.ui.state.ProposedActionUi
+import com.yaan.app.ui.state.ChatMessageUi
+import com.yaan.app.ui.theme.YaanTheme
+import com.yaan.core.common.datetime.nowInstant
 import com.yaan.core.domain.model.Task
 import com.yaan.core.domain.model.TaskPriority
 import com.yaan.core.domain.repository.MemoryRepository
@@ -97,6 +100,11 @@ fun AskYaanScreen(
 ) {
     var uiState by remember { mutableStateOf(AskYaanUiState()) }
     val coroutineScope = rememberCoroutineScope()
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+    val assistantEngine = remember {
+        YaanAssistantEngine(noteRepository, taskRepository, memoryRepository)
+    }
 
     AskYaanScreenContent(
         state = uiState,
@@ -158,60 +166,45 @@ fun AskYaanScreen(
                     }
                 }
                 AskYaanUiAction.SubmitQuery -> {
+                    // 1. Immediately dismiss virtual keyboard & clear focus
+                    keyboardController?.hide()
+                    focusManager.clearFocus()
+
                     val q = uiState.inputText.trim()
                     if (q.isNotEmpty()) {
-                        val lower = q.lowercase()
-                        val isActionIntent = lower.startsWith("reschedule") ||
-                                lower.startsWith("shift") ||
-                                lower.startsWith("create task") ||
-                                lower.startsWith("add task") ||
-                                lower.startsWith("new task") ||
-                                lower.startsWith("remind me") ||
-                                lower.startsWith("postpone")
+                        val userMsg = ChatMessageUi(
+                            id = "msg_${nowInstant().toEpochMilliseconds()}",
+                            sender = "USER",
+                            text = q
+                        )
+                        uiState = uiState.copy(
+                            inputText = "",
+                            messages = uiState.messages + userMsg,
+                            isStreaming = true
+                        )
 
-                        if (isActionIntent) {
-                            val proposal = ProposedActionUi(
-                                id = "action_${com.yaan.core.common.datetime.nowInstant().toEpochMilliseconds()}",
-                                title = "Proposed: $q",
-                                subtitle = "Grounded on user command · Requires affirmative tap to commit",
-                                actionType = "EXECUTIVE_ACTION",
-                                isConfirmed = false
+                        coroutineScope.launch {
+                            val result = assistantEngine.processQuery(q)
+                            val yaanMsg = ChatMessageUi(
+                                id = "msg_${nowInstant().toEpochMilliseconds()}_reply",
+                                sender = "YAAN",
+                                text = result.replyText,
+                                citations = result.citations,
+                                proposedAction = result.proposedAction
                             )
+
                             uiState = uiState.copy(
-                                inputText = "",
-                                proposedAction = proposal,
-                                responseMarkdown = "I've staged this action proposal for your review. No data has been modified. Please confirm below to commit."
+                                isStreaming = false,
+                                messages = uiState.messages + yaanMsg,
+                                responseMarkdown = result.replyText,
+                                proposedAction = result.proposedAction ?: uiState.proposedAction
                             )
-                        } else {
-                            coroutineScope.launch {
-                                if (noteRepository != null) {
-                                    val notesRes = noteRepository.searchNotes(q)
-                                    val matchedNotes = notesRes.getOrDefault(emptyList())
-
-                                    if (matchedNotes.isNotEmpty()) {
-                                        val top = matchedNotes.first()
-                                        uiState = uiState.copy(
-                                            inputText = "",
-                                            responseMarkdown = "Based on your encrypted vault notes:\n\n${top.contentCiphertext}\n\n[Citation: ${top.title} (ID: ${top.id})]"
-                                        )
-                                    } else {
-                                        // Honest abstention
-                                        uiState = uiState.copy(
-                                            inputText = "",
-                                            responseMarkdown = "I could not find information about \"$q\" in your vault. I do not guess or hallucinate facts that are not verified in your personal notes."
-                                        )
-                                    }
-                                } else {
-                                    uiState = uiState.copy(
-                                        inputText = "",
-                                        responseMarkdown = "Responding to: \"$q\" using on-device epistemic search..."
-                                    )
-                                }
-                            }
                         }
                     }
                 }
                 AskYaanUiAction.LaunchVoice -> {
+                    keyboardController?.hide()
+                    focusManager.clearFocus()
                     onLaunchVoice()
                 }
             }
@@ -230,15 +223,27 @@ fun AskYaanScreenContent(
     onAction: (AskYaanUiAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val scrollState = rememberScrollState()
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surface)
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onTap = {
+                        focusManager.clearFocus()
+                        keyboardController?.hide()
+                    }
+                )
+            }
     ) {
         Column(
             modifier = Modifier
                 .weight(1f)
-                .verticalScroll(rememberScrollState())
+                .verticalScroll(scrollState)
                 .padding(horizontal = 16.dp, vertical = 12.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
@@ -252,21 +257,18 @@ fun AskYaanScreenContent(
                         .clip(CircleShape)
                         .background(YaanTheme.extendedColors.surfaceContainerLow)
                         .border(1.dp, YaanTheme.extendedColors.delicateBorder, CircleShape)
-                        .padding(3.dp)
+                        .padding(3.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(
                         modifier = Modifier
                             .clip(CircleShape)
-                            .background(
-                                if (state.activeMode == "Chat") MaterialTheme.colorScheme.surface
-                                else YaanTheme.extendedColors.surfaceContainerLow
-                            )
+                            .background(if (state.activeMode == "Chat") MaterialTheme.colorScheme.surface else YaanTheme.extendedColors.surfaceContainerLow)
                             .clickable { onAction(AskYaanUiAction.SwitchMode("Chat")) }
-                            .padding(horizontal = 16.dp, vertical = 6.dp),
-                        contentAlignment = Alignment.Center
+                            .padding(horizontal = 16.dp, vertical = 6.dp)
                     ) {
                         Text(
-                            text = "Chat Stream",
+                            text = "Chat",
                             style = MaterialTheme.typography.labelSmall.copy(
                                 fontWeight = if (state.activeMode == "Chat") FontWeight.Bold else FontWeight.Medium,
                                 color = if (state.activeMode == "Chat") MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant
@@ -277,26 +279,20 @@ fun AskYaanScreenContent(
                     Box(
                         modifier = Modifier
                             .clip(CircleShape)
-                            .background(
-                                if (state.activeMode == "Voice") MaterialTheme.colorScheme.surface
-                                else YaanTheme.extendedColors.surfaceContainerLow
-                            )
-                            .clickable {
-                                onAction(AskYaanUiAction.SwitchMode("Voice"))
-                            }
-                            .padding(horizontal = 16.dp, vertical = 6.dp),
-                        contentAlignment = Alignment.Center
+                            .background(if (state.activeMode == "Voice") MaterialTheme.colorScheme.surface else YaanTheme.extendedColors.surfaceContainerLow)
+                            .clickable { onAction(AskYaanUiAction.SwitchMode("Voice")) }
+                            .padding(horizontal = 16.dp, vertical = 6.dp)
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(
                                 imageVector = Icons.Default.GraphicEq,
                                 contentDescription = null,
-                                tint = YaanTheme.extendedColors.bronzeAccent,
-                                modifier = Modifier.size(14.dp)
+                                tint = if (state.activeMode == "Voice") YaanTheme.extendedColors.bronzeAccent else MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.size(13.dp)
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
-                                text = "Live Voice",
+                                text = "Voice",
                                 style = MaterialTheme.typography.labelSmall.copy(
                                     fontWeight = if (state.activeMode == "Voice") FontWeight.Bold else FontWeight.Medium,
                                     color = if (state.activeMode == "Voice") MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant
@@ -328,7 +324,7 @@ fun AskYaanScreenContent(
                     )
                     Spacer(modifier = Modifier.width(5.dp))
                     Text(
-                        text = "On-Device Vault · Grounded Citations",
+                        text = "100% On-Device Vault · Zero Cloud Leakage",
                         style = MaterialTheme.typography.labelSmall.copy(
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Medium,
@@ -357,16 +353,10 @@ fun AskYaanScreenContent(
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
-                        text = "Ask YAAN Vault Assistant",
+                        text = "Ask YAAN Autonomous Navigator",
                         style = MaterialTheme.typography.labelSmall.copy(
                             fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.onSurface
-                        )
-                    )
-                    Text(
-                        text = " · Context: 48 Notes ...",
-                        style = MaterialTheme.typography.labelSmall.copy(
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     )
                 }
@@ -378,45 +368,189 @@ fun AskYaanScreenContent(
                 )
             }
 
-            // ── User Query Prompt Bubble ──────────────────────────────────────
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.End
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth(0.9f)
-                        .clip(RoundedCornerShape(16.dp, 4.dp, 16.dp, 16.dp))
-                        .background(YaanTheme.extendedColors.sandSurface)
-                        .border(1.dp, YaanTheme.extendedColors.delicateBorder, RoundedCornerShape(16.dp, 4.dp, 16.dp, 16.dp))
-                        .padding(14.dp)
-                ) {
-                    Text(
-                        text = "Draft an executive summary of my Q4 project roadmap for David, incorporating our discussion from yesterday's voice memo, and prepare a reminder to send it before 5 PM.",
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            color = MaterialTheme.colorScheme.onSurface,
-                            lineHeight = 22.sp
-                        )
-                    )
-                }
+            // ── Dynamic Conversation Messages Thread ──────────────────────────
+            state.messages.forEach { msg ->
+                if (msg.sender == "USER") {
+                    // User Query Prompt Bubble (Aligned Right)
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.End
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth(0.85f)
+                                .clip(RoundedCornerShape(16.dp, 4.dp, 16.dp, 16.dp))
+                                .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f))
+                                .border(1.dp, YaanTheme.extendedColors.delicateBorder, RoundedCornerShape(16.dp, 4.dp, 16.dp, 16.dp))
+                                .padding(12.dp)
+                        ) {
+                            Text(
+                                text = msg.text,
+                                style = MaterialTheme.typography.bodyMedium.copy(
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    lineHeight = 20.sp
+                                )
+                            )
+                        }
 
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(top = 4.dp, end = 4.dp)
+                        ) {
+                            Text(
+                                text = msg.timestamp,
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontSize = 10.sp,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Icon(
+                                imageVector = Icons.Default.DoneAll,
+                                contentDescription = "Read",
+                                tint = YaanTheme.extendedColors.bronzeAccent,
+                                modifier = Modifier.size(12.dp)
+                            )
+                        }
+                    }
+                } else {
+                    // YAAN Intelligence Dispatch Card (Aligned Left)
+                    YaanCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        backgroundColor = YaanTheme.extendedColors.surfaceContainerLowest,
+                        elevation = 2.dp
+                    ) {
+                        Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                            // Header Tag
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(24.dp)
+                                        .clip(RoundedCornerShape(6.dp))
+                                        .background(YaanTheme.extendedColors.champagneTint),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Psychology,
+                                        contentDescription = null,
+                                        tint = YaanTheme.extendedColors.bronzeAccent,
+                                        modifier = Modifier.size(14.dp)
+                                    )
+                                }
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = "YAAN EXECUTIVE INTELLIGENCE",
+                                    style = MaterialTheme.typography.labelSmall.copy(
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        letterSpacing = 0.05.sp
+                                    )
+                                )
+                            }
+
+                            Text(
+                                text = msg.text,
+                                style = MaterialTheme.typography.bodyMedium.copy(
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    lineHeight = 22.sp
+                                )
+                            )
+
+                            // Citations if available
+                            if (msg.citations.isNotEmpty()) {
+                                Column {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Icon(
+                                            imageVector = Icons.Default.Link,
+                                            contentDescription = null,
+                                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            modifier = Modifier.size(13.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Text(
+                                            text = "Grounded Citations",
+                                            style = MaterialTheme.typography.labelSmall.copy(
+                                                fontWeight = FontWeight.SemiBold,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                                fontSize = 11.sp
+                                            )
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    msg.citations.forEach { cite ->
+                                        CitationCard(
+                                            title = cite,
+                                            meta = "Encrypted On-Device Vault",
+                                            icon = Icons.Default.EditNote
+                                        )
+                                    }
+                                }
+                            }
+
+                            // Interactive Action Proposal Card
+                            (msg.proposedAction ?: (if (msg == state.messages.lastOrNull()) state.proposedAction else null))?.let { proposal ->
+                                ActionProposalCard(
+                                    proposal = proposal,
+                                    onConfirm = { onAction(AskYaanUiAction.ConfirmActionProposal) },
+                                    onDismiss = { onAction(AskYaanUiAction.DismissActionProposal) },
+                                    onUndo = { onAction(AskYaanUiAction.UndoActionProposal) }
+                                )
+                            }
+
+                            // Feedback Footer
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                                    IconButton(onClick = {}, modifier = Modifier.size(26.dp)) {
+                                        Icon(Icons.Default.ContentCopy, "Copy", modifier = Modifier.size(15.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    }
+                                    IconButton(onClick = {}, modifier = Modifier.size(26.dp)) {
+                                        Icon(Icons.Default.BookmarkAdd, "Save", modifier = Modifier.size(15.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    }
+                                    IconButton(onClick = {}, modifier = Modifier.size(26.dp)) {
+                                        Icon(Icons.Default.Share, "Share", modifier = Modifier.size(15.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    }
+                                }
+
+                                Text(
+                                    text = "0ms local inference",
+                                    style = MaterialTheme.typography.labelSmall.copy(
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        fontSize = 10.sp
+                                    )
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
+            // ── Streaming / Reasoning Indicator ──────────────────────────────
+            AnimatedVisibility(visible = state.isStreaming) {
                 Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(top = 4.dp, end = 4.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(YaanTheme.extendedColors.champagneTint)
+                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = "10:42 AM",
-                        style = MaterialTheme.typography.labelSmall.copy(
-                            fontSize = 11.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+                    Box(
+                        modifier = Modifier
+                            .size(6.dp)
+                            .clip(CircleShape)
+                            .background(YaanTheme.extendedColors.bronzeAccent)
                     )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Icon(
-                        imageVector = Icons.Default.DoneAll,
-                        contentDescription = "Read",
-                        tint = YaanTheme.extendedColors.bronzeAccent,
-                        modifier = Modifier.size(14.dp)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "YAAN is reasoning on-device...",
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            color = YaanTheme.extendedColors.bronzeAccent,
+                            fontWeight = FontWeight.Medium
+                        )
                     )
                 }
             }
@@ -446,7 +580,7 @@ fun AskYaanScreenContent(
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = "Thinking Process · Scanned 3 vault sources · 48ms",
+                            text = "Thinking Process · Scanned vault sources · 0ms",
                             style = MaterialTheme.typography.labelSmall.copy(
                                 fontWeight = FontWeight.SemiBold,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -471,180 +605,16 @@ fun AskYaanScreenContent(
                         verticalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
                         Text(
-                            text = "• Scanned local vector store: Found 'Voice Memo: Onboarding Flow' recorded yesterday 8:15 AM.",
+                            text = "• Checked on-device vault: Verified tasks, notes, and commitments.",
                             style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
                         )
                         Text(
-                            text = "• Verified deliverables: Extracted SOC2 readiness milestone, Core Rust engine migration, and Tier-1 Beta rollout.",
+                            text = "• Zero-cloud assurance: Request resolved locally with zero network egress.",
                             style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
                         )
                         Text(
-                            text = "• Calendar inspection: Cross-checked David Vance's schedule; identified no clashes prior to 5:00 PM cutoff.",
+                            text = "• Action safety: Any proposed state mutation requires explicit single-tap approval.",
                             style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        )
-                    }
-                }
-            }
-
-            // ── AI Editorial Dispatch Card ────────────────────────────────────
-            YaanCard(
-                modifier = Modifier.fillMaxWidth(),
-                backgroundColor = YaanTheme.extendedColors.surfaceContainerLowest,
-                elevation = 2.dp
-            ) {
-                Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    // Header Tag
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Box(
-                            modifier = Modifier
-                                .size(24.dp)
-                                .clip(RoundedCornerShape(6.dp))
-                                .background(YaanTheme.extendedColors.champagneTint),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Psychology,
-                                contentDescription = null,
-                                tint = YaanTheme.extendedColors.bronzeAccent,
-                                modifier = Modifier.size(14.dp)
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "EXECUTIVE DISPATCH",
-                            style = MaterialTheme.typography.labelSmall.copy(
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                letterSpacing = 0.05.sp
-                            )
-                        )
-                    }
-
-                    Text(
-                        text = "Here is the executive brief ready for David Vance, calibrated to your latest operational priorities:",
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            color = MaterialTheme.colorScheme.onSurface,
-                            lineHeight = 22.sp
-                        )
-                    )
-
-                    // Highlights Box
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(YaanTheme.extendedColors.surfaceContainerLow)
-                            .border(1.dp, YaanTheme.extendedColors.delicateBorder.copy(alpha = 0.6f), RoundedCornerShape(12.dp))
-                            .padding(12.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = "Q4 Strategic Milestones",
-                                style = MaterialTheme.typography.labelLarge.copy(
-                                    fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
-                            )
-                            YaanChip(
-                                text = "Confidence: High",
-                                containerColor = YaanTheme.extendedColors.champagneTint,
-                                contentColor = YaanTheme.extendedColors.bronzeAccent
-                            )
-                        }
-
-                        MilestoneRow(
-                            title = "Core Architecture Modernization",
-                            desc = "Final cutover to Rust micro-kernels scheduled for Nov 14. Performance gains expected to trim 40% memory latency."
-                        )
-                        MilestoneRow(
-                            title = "Tier-1 Beta Rollout",
-                            desc = "Phased cohort onboarding begins Dec 02 with 25 executive accounts as approved in yesterday's memo."
-                        )
-                        MilestoneRow(
-                            title = "SOC2 Type II Attestation",
-                            desc = "Evidence collection concludes Dec 18; audit window cleared with no architectural blockers."
-                        )
-                    }
-
-                    // Grounded Citations
-                    Column {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                imageVector = Icons.Default.Link,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.size(14.dp)
-                            )
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text(
-                                text = "Grounded Vault Sources",
-                                style = MaterialTheme.typography.labelSmall.copy(
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .horizontalScroll(rememberScrollState()),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            CitationCard(
-                                title = "Voice Memo: Onboarding",
-                                meta = "Yesterday · 8:15 AM · 4m 12s",
-                                icon = Icons.Default.Mic
-                            )
-                            CitationCard(
-                                title = "Note: Founders Sync",
-                                meta = "Oct 24 · 12 Key Points",
-                                icon = Icons.Default.EditNote
-                            )
-                        }
-                    }
-
-                    // Interactive Action Proposal Card (F-004, CUJ 7)
-                    state.proposedAction?.let { proposal ->
-                        ActionProposalCard(
-                            proposal = proposal,
-                            onConfirm = { onAction(AskYaanUiAction.ConfirmActionProposal) },
-                            onDismiss = { onAction(AskYaanUiAction.DismissActionProposal) },
-                            onUndo = { onAction(AskYaanUiAction.UndoActionProposal) }
-                        )
-                    }
-
-                    // Feedback Footer
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                            IconButton(onClick = {}, modifier = Modifier.size(28.dp)) {
-                                Icon(Icons.Default.ContentCopy, "Copy", modifier = Modifier.size(16.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
-                            }
-                            IconButton(onClick = {}, modifier = Modifier.size(28.dp)) {
-                                Icon(Icons.Default.BookmarkAdd, "Save", modifier = Modifier.size(16.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
-                            }
-                            IconButton(onClick = {}, modifier = Modifier.size(28.dp)) {
-                                Icon(Icons.Default.Share, "Share", modifier = Modifier.size(16.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
-                            }
-                        }
-
-                        Text(
-                            text = "Local inference · 48ms",
-                            style = MaterialTheme.typography.labelSmall.copy(
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                fontSize = 11.sp
-                            )
                         )
                     }
                 }
@@ -658,27 +628,33 @@ fun AskYaanScreenContent(
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 YaanChip(
-                    text = "Show pricing decision",
-                    leadingIcon = Icons.Default.AttachMoney,
-                    onClick = { onAction(AskYaanUiAction.UpdateInput("Show pricing decision")) }
-                )
-                YaanChip(
-                    text = "Summarize weekly workload",
-                    leadingIcon = Icons.Default.Analytics,
-                    onClick = { onAction(AskYaanUiAction.UpdateInput("Summarize weekly workload")) }
-                )
-                YaanChip(
-                    text = "Check David's free slots",
+                    text = "What are my tasks?",
                     leadingIcon = Icons.Default.EventAvailable,
-                    onClick = { onAction(AskYaanUiAction.UpdateInput("Check David's free slots")) }
+                    onClick = { onAction(AskYaanUiAction.UpdateInput("What are my tasks?")) }
+                )
+                YaanChip(
+                    text = "What's my day look like?",
+                    leadingIcon = Icons.Default.Analytics,
+                    onClick = { onAction(AskYaanUiAction.UpdateInput("What's my day look like?")) }
+                )
+                YaanChip(
+                    text = "Add task: Review Q3 financials",
+                    leadingIcon = Icons.Default.Add,
+                    onClick = { onAction(AskYaanUiAction.UpdateInput("Add task: Review Q3 financials")) }
+                )
+                YaanChip(
+                    text = "What can you do?",
+                    leadingIcon = Icons.Default.Verified,
+                    onClick = { onAction(AskYaanUiAction.UpdateInput("What can you do?")) }
                 )
             }
         }
 
-        // ── Signature Floating Pill Composer Dock ────────────────────────────
+        // ── Signature Floating Pill Composer Dock (with IME Padding for Keyboard) ─
         Box(
             modifier = Modifier
                 .fillMaxWidth()
+                .imePadding()
                 .padding(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 12.dp)
         ) {
             Row(
@@ -715,6 +691,14 @@ fun AskYaanScreenContent(
                             color = MaterialTheme.colorScheme.onSurface
                         ),
                         cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
+                        keyboardOptions = KeyboardOptions(
+                            imeAction = ImeAction.Send
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onSend = {
+                                onAction(AskYaanUiAction.SubmitQuery)
+                            }
+                        ),
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
