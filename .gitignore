@@ -25,3 +25,6 @@ Pods/
 .vscode/
 *.xcuserstate
 .kotlin/
+.env
+.env.*
+!.env.example

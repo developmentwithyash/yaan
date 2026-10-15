@@ -19,6 +19,8 @@ Every major architectural, product, technical, and commercial decision across th
 | **`JURY-2026-10-YAAN-004`** | 2026-10-14 | **Minimum-Cost Launch Plan (The Bootstrap Velocity Strategy)** | 12/12 Not Guilty (Unanimous) | Final Approved | **UNANIMOUS ACQUITTAL (12/12) — ZERO RESERVATIONS** | [Launch Plan](file:///Users/yash/Yash-Workspace/products/yaan/docs/YAAN_MINIMUM_COST_LAUNCH_PLAN.md) · [ADR-0004](file:///Users/yash/Yash-Workspace/products/yaan/docs/adr/0004-capital-efficient-launch-strategy.md) |
 | **`JURY-2026-10-YAAN-005`** | 2026-10-14 | **10,000-User Multi-Cohort Simulation & Hardening** | 12/12 Not Guilty (Unanimous) | Final Approved | **UNANIMOUS ACQUITTAL (12/12) — ZERO RESERVATIONS** | [Simulation Report](file:///Users/yash/Yash-Workspace/products/yaan/docs/YAAN_10000_USER_SIMULATION.md) · [ADR-0005](file:///Users/yash/Yash-Workspace/products/yaan/docs/adr/0005-post-simulation-hardening-architecture.md) |
 | **`JURY-2026-10-YAAN-006`** | 2026-10-14 | **End-to-End Hybrid AI Architecture & Edge SLM Mesh** | 7/12 Guilty (R1) → 12/12 Acquitted (R2) | Remediated (v2.0 Gold Master) | **UNANIMOUS ACQUITTAL (12/12) — ZERO RESERVATIONS** | [Trial Record](file:///Users/yash/Yash-Workspace/products/yaan/docs/YAAN_AI_ARCHITECTURE_JURY_TRIAL.md) · [AI Spec](file:///Users/yash/Yash-Workspace/products/yaan/docs/YAAN_AI_SYSTEM_ARCHITECTURE.md) · [ADR-0006](file:///Users/yash/Yash-Workspace/products/yaan/docs/adr/0006-hybrid-edge-cloud-ai-architecture.md) |
+| **`JURY-2026-10-YAAN-007`** | 2026-10-15 | **Grounded Ask YAAN Architecture (Supersedes ADR-0006)** | 12/12 Not Guilty (Unanimous) | Final Approved | **UNANIMOUS ACQUITTAL (12/12) — ZERO RESERVATIONS** | [Claims Register](file:///Users/yash/Yash-Workspace/products/yaan/CLAIMS_REGISTER.md) · [ADR-0007](file:///Users/yash/Yash-Workspace/products/yaan/docs/adr/0007-grounded-ask-yaan-architecture.md) |
+| **`JURY-2026-10-YAAN-008`** | 2026-10-15 | **Supabase Managed Auth, Schema & Zero-Knowledge Sync Relay** | 12/12 Not Guilty (Unanimous) | Final Approved | **UNANIMOUS ACQUITTAL (12/12) — ZERO RESERVATIONS** | [Trial Record](file:///Users/yash/Yash-Workspace/products/yaan/docs/YAAN_SUPABASE_INTEGRATION_JURY_TRIAL.md) · [ADR-0008](file:///Users/yash/Yash-Workspace/products/yaan/docs/adr/0008-supabase-auth-and-sync-relay.md) |
 
 
 
@@ -129,6 +131,34 @@ Every major architectural, product, technical, and commercial decision across th
   - Dynamic Hardware Profiler: Devices with < 4GB RAM default to lightweight regex intent routing.
   - `DeterministicMockEngine` with temperature=0.0 fixture replay for 100% stable CI/CD test suites.
 - **Disposition**: **UNANIMOUS ACQUITTAL (12/12) — Formalized in ADR-0006 & YAAN_AI_SYSTEM_ARCHITECTURE.md**.
+
+---
+
+### Docket `JURY-2026-10-YAAN-007`
+- **Date**: 2026-10-15
+- **Thesis**: Grounded "Ask YAAN" Architecture & Empirical Safety Invariants superseding theoretical claims in ADR-0006. Enforces deterministic state decoupled from probabilistic AI, consented minimal cloud egress (no speculative leakage), zero auto-pruning or note decay, honest abstention over hallucination, and truth in UI copy.
+- **Trial Progression**:
+  - **Round 1 (v1.0)**: `12/12 UNANIMOUS NOT GUILTY` — All 12 jurors fully satisfied with zero reservations.
+- **Key Invariants Committed**:
+  - Default 100% offline local search; cloud Q&A gated behind explicit user consent.
+  - User notes, tasks, and memory are never auto-deleted or decayed by algorithms.
+  - Every AI proposal requires affirmative single-tap user confirmation before commit.
+- **Disposition**: **UNANIMOUS ACQUITTAL (12/12) — Formalized in ADR-0007 & CLAIMS_REGISTER.md**.
+
+---
+
+### Docket `JURY-2026-10-YAAN-008`
+- **Date**: 2026-10-15
+- **Thesis**: Supabase Managed Auth, Online Database Schema, and Zero-Knowledge Sync Relay ensuring 100% offline local SQLite authority, client-side AES-GCM-256 encryption before transmission, Row Level Security (RLS) isolation, and DPDP Act 18+ compliance.
+- **Trial Progression**:
+  - **Round 1 (v1.0)**: `12/12 UNANIMOUS NOT GUILTY` — All 12 jurors fully satisfied with zero reservations.
+- **Key Invariants Committed**:
+  - Local SQLite / SQLDelight remains authoritative and functional offline without Supabase.
+  - Supabase database stores only blinded metadata and opaque AES-GCM-256 ciphertext blobs (`encrypted_sync_envelopes`); no plaintext vault data.
+  - All PostgreSQL tables (`profiles`, `devices`, `encrypted_sync_envelopes`) strictly protected with RLS `auth.uid() = user_id`.
+  - Schema migrations tracked in Git under `supabase/migrations/` for automated CI/CD execution.
+  - Offline-first mock fallback for CI/CD test runs without live cloud dependencies.
+- **Disposition**: **UNANIMOUS ACQUITTAL (12/12) — Formalized in ADR-0008 & YAAN_SUPABASE_INTEGRATION_JURY_TRIAL.md**.
 
 ---
 
