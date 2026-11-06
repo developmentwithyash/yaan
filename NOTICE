@@ -1,0 +1,27 @@
+YAAN (Your Autonomous Action Navigator)
+Copyright 2026 YaanStack Technologies & Contributors
+
+This product includes software developed by YaanStack Technologies and
+its open-source contributors (http://github.com/developmentwithyash/yaan).
+
+=========================================================================
+Upstream AI Model & Runtime Attributions
+=========================================================================
+
+1. Meta Llama 3.3
+   This project incorporates prompt templates and inference schemas optimized for
+   Llama 3.3 models.
+   "Built with Llama" — Meta Llama 3.3 is licensed under the Meta Llama 3.3 Community License.
+   Copyright © Meta Platforms, Inc. All Rights Reserved.
+
+2. SmolLM2
+   On-device intent detection and classification schemas are trained and formatted
+   for SmolLM2 (360M / 1.7B).
+   Licensed under Apache License 2.0. Copyright © Hugging Face.
+
+3. Kokoro-82M TTS & Piper TTS
+   Speech synthesis pipelines integrate Kokoro-82M (Apache 2.0) by hexgrad and
+   Piper TTS core engine (MIT) by Michael Hansen.
+
+4. SQLDelight & SQLite
+   Database persistence is powered by SQLDelight (Apache 2.0) by Block, Inc. / Cash App.
