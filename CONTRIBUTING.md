@@ -6,7 +6,7 @@ Thank you for your interest in contributing to **YAAN (Your Autonomous Action Na
 
 ## ✦ Code of Conduct
 
-All contributors and maintainers are expected to adhere to our [Code of Conduct](CODE_OF_CONDUCT.md). Please report unacceptable behavior to `security@yaan.ai`.
+All contributors and maintainers are expected to adhere to our [Code of Conduct](CODE_OF_CONDUCT.md). Please report unacceptable behavior to `work.developmentwithyash@gmail.com`.
 
 ---
 
@@ -75,4 +75,4 @@ We follow standard GitHub flow with Conventional Commits:
 
 ## ✦ Reporting Security Issues
 
-Please **do not** open public GitHub issues for security vulnerabilities. Instead, refer to our [Security Policy](SECURITY.md) and report vulnerabilities confidentially to `security@yaan.ai`.
+Please **do not** open public GitHub issues for security vulnerabilities. Instead, refer to our [Security Policy](SECURITY.md) and report vulnerabilities confidentially to `work.developmentwithyash@gmail.com`.

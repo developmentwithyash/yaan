@@ -157,6 +157,16 @@ Contributions are welcome! Please read our [Contributing Guidelines](CONTRIBUTIN
 
 ---
 
+## ✦ Contact & Maintainer
+
+For questions, collaborations, or private vulnerability disclosures, reach out to the project maintainer:
+
+* **Maintainer**: Yash Siwach
+* **Email**: [`work.developmentwithyash@gmail.com`](mailto:work.developmentwithyash@gmail.com)
+* **GitHub**: [@developmentwithyash](https://github.com/developmentwithyash)
+
+---
+
 ## ✦ License
 
 This project is licensed under the **Apache License 2.0** - see the [LICENSE](LICENSE) file for details.

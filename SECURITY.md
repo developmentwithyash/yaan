@@ -29,7 +29,7 @@ We take the security of YAAN and our users' privacy with utmost seriousness.
 If you believe you have discovered a vulnerability, security flaw, or cryptographic weakness:
 
 1. **Do not create a public GitHub issue.**
-2. Send an encrypted or confidential email to **`security@yaan.ai`**.
+2. Send an encrypted or confidential email to **`work.developmentwithyash@gmail.com`**.
 3. Include detailed steps to reproduce the vulnerability, including affected platform (Android/iOS/JVM) and code paths.
 4. You will receive an initial acknowledgment within **48 hours**.
 5. We will coordinate remediation and provide a timeline for publishing a security advisory.
