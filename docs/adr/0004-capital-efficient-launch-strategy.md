@@ -1,10 +1,10 @@
 # ADR 0004: Capital-Efficient Bootstrap Launch Strategy & Infinite Runway Governance
 
 ## Status
-Accepted (Unanimous 12/12 Acquittal by Idea Jury — Docket `JURY-2026-10-YAAN-004`)
+Accepted
 
 ## Context
-Standard AI product launches incur heavy upfront capital burn: expensive cloud Kubernetes clusters, paid marketing ad spend, and bloated customer support SaaS. To launch YAAN with maximum capital efficiency, the executive team formulated the "Bootstrap Velocity Launch Plan" designed to achieve Day-1 profitability, infinite runway, and $37,000+ upfront cash buffer on less than $30/month fixed infrastructure burn.
+Standard AI product launches incur heavy upfront capital burn: expensive cloud Kubernetes clusters, paid marketing ad spend, and bloated customer support SaaS. To launch YAAN with maximum capital efficiency, the strategy is designed to achieve Day-1 viability, extreme operational efficiency, and upfront sustainability on less than $30/month fixed infrastructure burn.
 
 ## Decision
 We adopt the **Bootstrap Velocity Launch Architecture**:
@@ -30,4 +30,4 @@ We adopt the **Bootstrap Velocity Launch Architecture**:
 - Day-1 profitability with over $37,000 net free cash buffer in the bank.
 - Fixed monthly burn capped at $22.50/month (over 1,600 months of runway).
 - Eliminates paid ad dependencies and SaaS vendor lock-in.
-- Unanimously acquitted by the 12 Institutional Jurors with zero fatal charges.
+- High capital efficiency and community-driven traction.

@@ -69,7 +69,7 @@ yaan/
 ├── backend/                      # Ktor server: CRDT blind relay, inference mesh, vault backup
 ├── shared/                       # KMP platform bridge (expect/actual)
 ├── iosApp/                       # Native iOS Xcode project
-├── docs/                         # Architecture, Governance, Security, and Jury records
+├── docs/                         # Architecture, Security, Design, and ADR specifications
 └── gradle/                       # Version catalog & wrapper
 ```
 
@@ -117,16 +117,14 @@ For vulnerability reporting, see [SECURITY.md](SECURITY.md).
 
 ## ✦ Documentation Index
 
-The repository maintains rigorous documentation under [`docs/`](docs/):
+The repository maintains comprehensive technical documentation under [`docs/`](docs/):
 
-| Category | Documents | Purpose |
+| Category | Directory | Purpose |
 |---|---|---|
-| **Architecture** | [`docs/architecture/`](docs/architecture/) | [Product Vision](docs/architecture/YAAN_PRODUCT_VISION_v2.md), [AI System Spec](docs/architecture/YAAN_AI_SYSTEM_ARCHITECTURE.md), [Cost Model](docs/architecture/COST_MODEL.md) |
-| **Decisions & Jury** | [`docs/decisions/`](docs/decisions/) | [Jury Decision Ledger](docs/JURY_DECISION_LEDGER.md), [Open Source Trial](docs/decisions/YAAN_OPEN_SOURCE_STRATEGY_JURY_TRIAL.md), [Backend Trials](docs/decisions/YAAN_AI_BACKEND_JURY_TRIAL.md) |
-| **Governance** | [`docs/governance/`](docs/governance/) | [Claims Register](docs/governance/CLAIMS_REGISTER.md), [Findings](docs/governance/FINDINGS_REGISTER.md), [Licenses](docs/governance/LICENSES.md) |
-| **Security** | [`docs/security/`](docs/security/) | [Security & Privacy Spec](docs/security/SECURITY_AND_PRIVACY.md), [Threat Model](docs/security/THREAT_MODEL.md) |
-| **Reports & Audits**| [`docs/reports/`](docs/reports/) & [`docs/audit/`](docs/audit/) | [Progress Tracker](docs/reports/PROGRESS_TRACKER.md), [Release Readiness](docs/reports/RELEASE_READINESS.md), [Scorecard](docs/reports/SCORECARD.md) |
-| **Architecture Records** | [`docs/adr/`](docs/adr/) | 8 Ratified Architecture Decision Records (ADRs) |
+| **Architecture** | [`docs/architecture/`](docs/architecture/) | [Product Vision](docs/architecture/YAAN_PRODUCT_VISION_v2.md), [AI System Architecture](docs/architecture/YAAN_AI_SYSTEM_ARCHITECTURE.md), [Cost Model](docs/architecture/COST_MODEL.md) |
+| **Architecture Decision Records** | [`docs/adr/`](docs/adr/) | 8 Ratified Architecture Decision Records (ADR 0001–0008) covering KMP, SQLite, Hybrid Inference, and Auth |
+| **Security & Privacy** | [`docs/security/`](docs/security/) | [Security & Privacy Specification](docs/security/SECURITY_AND_PRIVACY.md), [Threat Model](docs/security/THREAT_MODEL.md) |
+| **Design & UI Specifications** | [`docs/design/`](docs/design/) & [`stitch_designs/`](docs/stitch_designs/) | Design assets, UI component blueprints, and mobile prototypes |
 
 ---
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-DIR="/Users/yash/Yash-Workspace/products/yaan/docs/stitch_designs"
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 curl -s "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ6Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpZCiVodG1sXzAwMDY1ZGJkMDAwYWZlOTQwOTI1ZDQ2NDdiMDc2YjcxEgsSBxCUpajp1xkYAZIBIgoKcHJvamVjdF9pZBIUQhI4Mjk4OTE2ODUxMDMzNzMzODA&filename=&opi=89354086" -o "$DIR/home_command_center_light.html"
 curl -s "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ6Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpZCiVodG1sXzAwMDY1ZGJjZTUyODk0M2QwNzNhZDA1OTIzMzhhZTc4EgsSBxCUpajp1xkYAZIBIgoKcHJvamVjdF9pZBIUQhI4Mjk4OTE2ODUxMDMzNzMzODA&filename=&opi=89354086" -o "$DIR/home_command_center_dark.html"

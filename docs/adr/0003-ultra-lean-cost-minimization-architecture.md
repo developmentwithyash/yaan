@@ -1,10 +1,10 @@
 # ADR 0003: Ultra-Lean Cost Minimization Architecture & 98%+ Gross Margin Governance
 
 ## Status
-Accepted (Unanimous 12/12 Acquittal by Idea Jury — Docket `JURY-2026-10-YAAN-003`)
+Accepted
 
 ## Context
-Following the acceptance of ADR 0002 (Asymmetric Acceleration Hub), the executive team (CEO, CFO, CRO, CTO) conducted an architectural cost summit to aggressively crush operational expenditures across cloud infrastructure, AI tokens, databases, model delivery, and third-party APIs. The goal: drive blended COGS down from $0.92/user/month to under $0.18/user/month, achieving 98%+ gross margins while enhancing speed and privacy.
+Following the acceptance of ADR 0002 (Asymmetric Acceleration Hub), the engineering team conducted an architectural cost review to aggressively optimize operational expenditures across cloud infrastructure, AI tokens, databases, model delivery, and third-party APIs. The goal: drive blended COGS down from $0.92/user/month to under $0.18/user/month, achieving 98%+ gross margins while enhancing speed and privacy.
 
 ## Decision
 We adopt the **Ultra-Lean Cost Minimization Architecture**:
@@ -30,4 +30,4 @@ We adopt the **Ultra-Lean Cost Minimization Architecture**:
 - Blended COGS reduced by **84.8%** from $0.92 to **$0.14 / user / month**.
 - Pro tier gross margin expands to **99.2%** ($18/mo) and **98.9%** ($149/yr).
 - 95% edge execution enhances user privacy, eliminates network latency, and lowers compliance audit overhead.
-- Unanimously validated by the 12 Institutional Jurors with zero fatal charges.
+- Sustainable infrastructure cost profile from day one.

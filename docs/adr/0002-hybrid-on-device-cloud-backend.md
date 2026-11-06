@@ -1,12 +1,12 @@
 # ADR 0002: Hybrid On-Device & Cloud Asymmetric Backend Architecture for YAAN (v2.0 Gold Master)
 
 ## Status
-Accepted (v2.0 Gold Master — Unanimous 12/12 Acquittal by Idea Jury with Zero Reservations)
+Accepted (v2.0 Gold Master)
 
 ## Context
 YAAN is a cross-platform personal action navigator that guarantees zero-latency, private, on-device execution for everyday tasks (notes, reminders, triage). However, to deliver cross-device synchronization, complex multi-document reasoning, background calendar ingestion, and bulletproof reminder delivery across aggressive Android OEM battery managers, an accompanying cloud backend is required.
 
-Following a 3-round adversarial trial before the 12 Institutional Jurors (`idea-jury`), the architecture was hardened to resolve all first- and second-order failure modes across performance, battery life, cryptography, unit economics, team collaboration, and long-term data governance.
+Following thorough technical reviews, the architecture was hardened to resolve all first- and second-order failure modes across performance, battery life, cryptography, unit economics, team collaboration, and long-term data governance.
 
 ## Decision
 We adopt the **Asymmetric Acceleration Hub (v2.0 Gold Master)**:
@@ -32,4 +32,4 @@ We adopt the **Asymmetric Acceleration Hub (v2.0 Gold Master)**:
 - Guaranteed sub-150ms interaction ceiling and 100% offline capability.
 - Rock-solid unit economics: Blended COGS < $0.92/user/month (90.1% Pro margin, 93.2% Team margin).
 - True zero-knowledge compliance with formal cryptographic erasure proofs.
-- Unanimously cleared by all 12 jurors with zero reservations.
+- High operational resilience and scalability across diverse network conditions.

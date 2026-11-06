@@ -2,9 +2,7 @@
 ## Hybrid Edge-Cloud Inference Mesh, Epistemic Memory & Action Guardrails (v2.0 Gold Master)
 
 > **Document Identifier**: `YAAN-ARCH-AI-2026-006`  
-> **Author**: Yash Engineering Systems (`ai-ml-office` & `architecture-office`)  
-> **Governing Docket**: `JURY-2026-10-YAAN-006`  
-> **Status**: RATIFIED & COMMITTED (Unanimous 12-Juror Acquittal)  
+> **Status**: RATIFIED & COMMITTED  
 > **Effective Date**: 2026-10-14  
 
 ---

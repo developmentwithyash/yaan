@@ -1,12 +1,12 @@
 # ADR 0005: Post-Simulation Hardening Architecture for Diverse Socioeconomic Demographics
 
 ## Status
-Accepted (Unanimous 12/12 Acquittal by Idea Jury — Docket `JURY-2026-10-YAAN-005`)
+Accepted
 
 ## Context
-Prior to production engineering, a 10,000-user multi-cohort Monte Carlo simulation was executed across 7 socioeconomic and demographic archetypes (Knowledge Workers, Tech Engineers, Students, Parents, Healthcare Staff, Seniors, Tradespeople) testing hardware tiers from budget Android to flagship iPhones.
+Prior to production engineering, multi-cohort modeling was executed across diverse user archetypes (Knowledge Workers, Tech Engineers, Students, Parents, Healthcare Staff, Seniors, Tradespeople) testing hardware tiers from budget Android to flagship smartphones.
 
-While core PMF was confirmed (+76 to +84 NPS in primary ICPs, $230k Year-1 gross revenue on $612/mo burn), four edge-case friction points emerged: low-end Android RAM stutter, cryptographic terminology panic among seniors, student/household price resistance, and noisy-room dictation degradation.
+Four edge-case friction points were identified: low-end Android RAM constraints, complex security terminology, student/household price sensitivity, and noisy-room audio dictation degradation.
 
 ## Decision
 We adopt the **Post-Simulation Hardening Architecture**:
@@ -28,4 +28,4 @@ We adopt the **Post-Simulation Hardening Architecture**:
 - 100% elimination of out-of-memory crashes on low-end budget hardware.
 - Senior citizen NPS improved from +28 to +64.
 - High-margin capture of student and family cohorts with zero operational cost increase.
-- Unanimously cleared by all 12 jurors with zero reservations.
+- Broad device compatibility and resilient real-world performance.

@@ -1,7 +1,7 @@
 # ADR 0008: Supabase Managed Auth, Online Database Schema & Zero-Knowledge Sync Relay
 
 ## Status
-**ACCEPTED & RATIFIED** (2026-10-15 following JURY-2026-10-YAAN-007 Unanimous Acquittal)
+**ACCEPTED & RATIFIED**
 
 ---
 

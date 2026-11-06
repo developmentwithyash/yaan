@@ -1,12 +1,10 @@
 # YAAN Minimum-Cost Product Launch Plan: The Bootstrap Velocity Strategy
 ## Launching a High-Margin AI Product with <$30/Month Total Burn & Day-1 Profitability
 
-> **Docket**: `JURY-2026-10-YAAN-004`  
 > **Target Product**: YAAN (Your Autonomous Action Navigator)  
-> **Author**: Yash Engineering Systems (CEO, CFO, CRO, Architecture Office)  
 > **Target Launch Budget**: < $500 Total One-Time Setup · < $30/Month Total Fixed Cloud Burn  
 > **Target Day-1 Revenue**: $15,000 – $35,000 Upfront Non-Dilutive Capital  
-> **Status**: UNANIMOUSLY ACQUITTED (12/12) BY IDEA JURY  
+> **Status**: APPROVED  
 
 ---
 
@@ -152,31 +150,24 @@ Week 6: Phase 3 — The Product Hunt Launch & General Availability
 
 ---
 
-## 4. Idea Jury Adversarial Trial (`JURY-2026-10-YAAN-004`)
+## 4. Risk Assessment & Mitigation Analysis
 
-The Minimum-Cost Launch Plan was brought before the 12 Institutional Jurors of `Yash-Workspace` to evaluate feasibility, stress-test risks, and eliminate blindspots.
+The Minimum-Cost Launch Plan evaluated key risk areas to ensure sustainability, eliminate single points of failure, and protect unit economics:
 
-```
-TRIAL VERDICT: UNANIMOUS NOT GUILTY ░░░░░░░░░░░░ 12/12
-STATUS: ZERO FATAL CHARGES · CLEARED FOR IMMEDIATE EXECUTION
-```
-
-### Complete Twelve-Juror Deliberation Table
-
-| # | Juror Role | Office | Verdict | Juror Evaluation & Risk Mitigation Confirmed |
-|---|---|---|:---:|---|
-| **01** | **Seed Investor** | `revenue-agency` | **NOT GUILTY** | Capping the Lifetime Deal at strictly 250 users prevents long-term MRR cannibalization while securing $37k in upfront capital. Genius bootstrap discipline. |
-| **02** | **First Customer** | `client-onboarding`| **NOT GUILTY** | The $149 Founding Pass is an irresistible deal for early adopters. Clear value proposition and zero switching friction. |
-| **03** | **Second Customer**| `growth-office` | **NOT GUILTY** | Community support via Discord and GitHub Discussions creates an engaged advocate tribe before launching paid team tiers. |
-| **04** | **Staff Systems Eng**| `architecture/backend`| **NOT GUILTY** | GraalVM native binary on a 2-vCPU Hetzner ARM64 node can comfortably handle 50k active sync connections. Litestream to R2 provides real disaster recovery. |
-| **05** | **Product Designer**| `experience-eng` | **NOT GUILTY** | Free tier having 100% functionality locally ensures zero cold-start latency or server-down embarrassment on launch day. |
-| **06** | **Head of Growth** | `growth-marketing` | **NOT GUILTY** | The "Show HN" + r/LocalLLaMA narrative taps directly into the anti-cloud, local-first zeitgeist. Highly viral positioning. |
-| **07** | **Chief Financial Officer**| `finance-unit-econ` | **NOT GUILTY** | Day-1 profitability. $37k cash buffer against a $22.50/mo burn guarantees over 100 years of theoretical infrastructure runway. |
-| **08** | **Chief Legal & Trust**| `agent-security-trust`| **NOT GUILTY** | Clear terms of service for the Founding Member Pass (specifying fair-use cloud token quotas) insulate YAAN from future liability. |
-| **09** | **Incumbent Competitor**| `competitive-intel`| **NOT GUILTY** | Big tech cannot compete with a $0-cost on-device free tier because their revenue models depend on data harvesting and cloud lock-in. |
-| **10** | **Customer Operations**| `customer-experience` | **NOT GUILTY** | Self-hosted Umami and GlitchTip provide clean, privacy-respecting observability without $1,000/mo Datadog bills. |
-| **11** | **Skeptical Adversary**| `adversarial-qa` | **NOT GUILTY** | Verified that hardware qualification checks prevent older, underpowered Android phones from attempting heavy local SLM inference. |
-| **12** | **Future Operator** | `sre-office` | **NOT GUILTY** | Cloudflare R2 zero-egress completely immunizes YAAN against surprise bandwidth bills during viral download surges. |
+| # | Dimension | Focus | Mitigation Strategy |
+|---|---|---|---|
+| **01** | **Unit Economics** | Long-term MRR cannibalization | Capping Founding Lifetime passes at strictly 250 members with fair-use daily token limits prevents long-term compute liabilities. |
+| **02** | **Customer Value** | Product onboarding friction | $149 Founding Pass provides clear, transparent value with zero switching friction. |
+| **03** | **Community Support** | Support ticket scalability | Community-driven support via Discord and GitHub Discussions creates an engaged advocate base. |
+| **04** | **Systems Reliability** | Cloud sync capacity | GraalVM native binary on a 2-vCPU Hetzner ARM64 node handles up to 50k active sync connections. Litestream continuous replication to R2 provides reliable recovery. |
+| **05** | **Product Polish** | Cold-start latency | Free tier running 100% locally guarantees zero cold-start delay or server downtime on launch day. |
+| **06** | **Growth** | Distribution reach | Direct positioning on Hacker News ("Show HN") and developer communities taps into organic interest in local-first software. |
+| **07** | **Financial Stability** | Operating runway | Day-1 profitability and upfront cash buffer protect project longevity against variable costs. |
+| **08** | **Terms & Trust** | Fair usage terms | Explicit terms of service specifying cloud fair-use quotas protect resources. |
+| **09** | **Positioning** | Market differentiation | Local-first, zero-knowledge privacy differentiates YAAN clearly from centralized cloud-only assistants. |
+| **10** | **Telemetry** | Privacy-respecting tracking | Self-hosted Umami and GlitchTip provide lightweight observability without costly enterprise SaaS fees. |
+| **11** | **Device Compatibility** | Underpowered hardware | Hardware qualification checks prevent low-end mobile devices from attempting heavy on-device SLM inference. |
+| **12** | **Bandwidth** | Viral traffic surge costs | Cloudflare R2 zero-egress protects against surprise bandwidth bills during viral download surges. |
 
 ---
 

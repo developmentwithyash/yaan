@@ -1,7 +1,7 @@
 # ADR 0006: End-to-End Hybrid Edge-Cloud AI Architecture & Inference Mesh (v2.0 Gold Master)
 
 ## Status
-Accepted (v2.0 Gold Master — Unanimous 12/12 Acquittal by Idea Jury in Docket `JURY-2026-10-YAAN-006`)
+Accepted (v2.0 Gold Master)
 
 ## Context
 YAAN (*Your Autonomous Action Navigator*) requires an AI architecture that satisfies 4 non-negotiable invariants:
@@ -12,7 +12,7 @@ YAAN (*Your Autonomous Action Navigator*) requires an AI architecture that satis
 
 Existing industry architectures either funnel all context to costly cloud LLMs ($3–$10/user/mo), or rely on naive on-device models that suffer from JSON hallucination, memory bloat, and thermal throttling.
 
-Following a rigorous trial and appellate remediation before the 12 Institutional Jurors (`idea-jury`), this ADR ratifies the comprehensive end-to-end AI system architecture.
+Following technical evaluation, this ADR ratifies the comprehensive end-to-end AI system architecture.
 
 ## Decision
 We adopt the **Hybrid Edge-Cloud Cognitive Architecture (v2.0 Gold Master)**:
