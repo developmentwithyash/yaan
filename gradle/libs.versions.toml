@@ -8,7 +8,7 @@ compose-plugin          = "1.7.0"
 compose-compiler        = "1.5.15"
 
 # ── Android ───────────────────────────────────────────────────────────────
-agp                     = "8.7.0"
+agp                     = "9.5.1"
 android-minSdk          = "26"
 android-targetSdk       = "35"
 android-compileSdk      = "35"
