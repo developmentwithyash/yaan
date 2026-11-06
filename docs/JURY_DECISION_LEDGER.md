@@ -21,6 +21,7 @@ Every major architectural, product, technical, and commercial decision across th
 | **`JURY-2026-10-YAAN-006`** | 2026-10-14 | **End-to-End Hybrid AI Architecture & Edge SLM Mesh** | 7/12 Guilty (R1) → 12/12 Acquitted (R2) | Remediated (v2.0 Gold Master) | **UNANIMOUS ACQUITTAL (12/12) — ZERO RESERVATIONS** | [Trial Record](file:///Users/yash/Yash-Workspace/products/yaan/docs/YAAN_AI_ARCHITECTURE_JURY_TRIAL.md) · [AI Spec](file:///Users/yash/Yash-Workspace/products/yaan/docs/YAAN_AI_SYSTEM_ARCHITECTURE.md) · [ADR-0006](file:///Users/yash/Yash-Workspace/products/yaan/docs/adr/0006-hybrid-edge-cloud-ai-architecture.md) |
 | **`JURY-2026-10-YAAN-007`** | 2026-10-15 | **Grounded Ask YAAN Architecture (Supersedes ADR-0006)** | 12/12 Not Guilty (Unanimous) | Final Approved | **UNANIMOUS ACQUITTAL (12/12) — ZERO RESERVATIONS** | [Claims Register](file:///Users/yash/Yash-Workspace/products/yaan/CLAIMS_REGISTER.md) · [ADR-0007](file:///Users/yash/Yash-Workspace/products/yaan/docs/adr/0007-grounded-ask-yaan-architecture.md) |
 | **`JURY-2026-10-YAAN-008`** | 2026-10-15 | **Supabase Managed Auth, Schema & Zero-Knowledge Sync Relay** | 12/12 Not Guilty (Unanimous) | Final Approved | **UNANIMOUS ACQUITTAL (12/12) — ZERO RESERVATIONS** | [Trial Record](file:///Users/yash/Yash-Workspace/products/yaan/docs/YAAN_SUPABASE_INTEGRATION_JURY_TRIAL.md) · [ADR-0008](file:///Users/yash/Yash-Workspace/products/yaan/docs/adr/0008-supabase-auth-and-sync-relay.md) |
+| **`JURY-2026-11-YAAN-009`** | 2026-11-06 | **Open-Core Sovereign Engine Operating Model** | 8/12 Guilty (R1) → 12/12 Acquitted (R2) | Remediated (Open-Core) | **UNANIMOUS ACQUITTAL (12/12) — ZERO RESERVATIONS** | [Trial Record](file:///Users/yashdev/Desktop/Yash-Core/projects/yaan/docs/YAAN_OPEN_SOURCE_STRATEGY_JURY_TRIAL.md) |
 
 
 
@@ -159,6 +160,22 @@ Every major architectural, product, technical, and commercial decision across th
   - Schema migrations tracked in Git under `supabase/migrations/` for automated CI/CD execution.
   - Offline-first mock fallback for CI/CD test runs without live cloud dependencies.
 - **Disposition**: **UNANIMOUS ACQUITTAL (12/12) — Formalized in ADR-0008 & YAAN_SUPABASE_INTEGRATION_JURY_TRIAL.md**.
+
+---
+
+### Docket `JURY-2026-11-YAAN-009`
+- **Date**: 2026-11-06
+- **Thesis**: Transitioning YAAN to an Open-Source Operating Model by open-sourcing the client application, on-device AI engine, and local encrypted vault (Community Edition), while retaining managed cloud sync, automated backups, and multi-tenant services under a commercial Open-Core SaaS structure (YAAN Cloud Pro).
+- **Trial Progression**:
+  - **Round 1 (Naive 100% Free OSS)**: `8/12 GUILTY` (Charges: Free-rider cloud LLM cost erosion, competitor cloning, maintainer burnout, missing CLA, secret leak risks).
+  - **Round 2 (Remediated Open-Core Sovereign Model)**: `12/12 UNANIMOUS NOT GUILTY` — Fully acquitted across all 12 institutional dimensions.
+- **Key Invariants Committed**:
+  - Decouple `composeApp` + local encrypted vault into an open-source repository under Apache 2.0.
+  - Multi-device CRDT blind sync relay, nightly briefing workers, and managed cloud backup remain proprietary SaaS.
+  - Zero-secret client build: users bring their own LLM keys (BYOK) or subscribe to YAAN Cloud Pro ($15–$25/mo).
+  - Enforce Contributor License Agreement (CLA), protect YAAN trademark, and verify only permissive upstream models (SmolLM2, Kokoro-82M).
+  - Submit application to the OpenAI Codex for Open Source Program for maintainer support and API credits.
+- **Disposition**: **UNANIMOUS ACQUITTAL (12/12) — Formalized in YAAN_OPEN_SOURCE_STRATEGY_JURY_TRIAL.md**.
 
 ---
 

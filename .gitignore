@@ -28,3 +28,11 @@ Pods/
 .env
 .env.*
 !.env.example
+
+# Build & Compilation artifacts
+bin/
+**/bin/
+*.hprof
+*.pyc
+__pycache__/
+*.orig

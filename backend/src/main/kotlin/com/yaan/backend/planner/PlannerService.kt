@@ -178,7 +178,8 @@ class PlannerService(
             )
 
             // Server-Side Semantic Validation
-            val validation = ToolRegistry.validate(proposal, System.currentTimeMillis())
+            val currentNow = if (request.currentEpochMs > 0) request.currentEpochMs else System.currentTimeMillis()
+            val validation = ToolRegistry.validate(proposal, currentNow)
             if (!validation.isValid) {
                 recordAudit(requestId, clientIdHash, providerName, "planner", request.prompt.length, estimatedTokens, 0, 400, false, startTime)
                 return PlannerResponse(
