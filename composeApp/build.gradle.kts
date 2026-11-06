@@ -10,6 +10,7 @@ plugins {
 }
 
 kotlin {
+    jvm()
     androidTarget {
         compilations.all {
             kotlinOptions {
@@ -21,9 +22,6 @@ kotlin {
     iosX64()
     iosArm64()
     iosSimulatorArm64()
-
-    // Uncomment to add Desktop target
-    // jvm("desktop")
 
     cocoapods {
         summary = "YAAN iOS application shell"
@@ -78,6 +76,10 @@ kotlin {
             implementation(projects.core.data)
         }
 
+        jvmMain.dependencies {
+            implementation(compose.desktop.currentOs)
+        }
+
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
@@ -128,5 +130,20 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
+    }
+}
+
+compose.desktop {
+    application {
+        mainClass = "com.yaan.app.MainKt"
+        nativeDistributions {
+            targetFormats(
+                org.jetbrains.compose.desktop.application.dsl.TargetFormat.Dmg,
+                org.jetbrains.compose.desktop.application.dsl.TargetFormat.Msi,
+                org.jetbrains.compose.desktop.application.dsl.TargetFormat.Deb
+            )
+            packageName = "YAAN"
+            packageVersion = "1.0.0"
+        }
     }
 }

@@ -10,6 +10,7 @@ plugins {
 }
 
 kotlin {
+    jvm()
     androidTarget { compilations.all { kotlinOptions { jvmTarget = "21" } } }
     iosX64(); iosArm64(); iosSimulatorArm64()
 
@@ -35,6 +36,11 @@ kotlin {
             // Core modules
             implementation(projects.core.common)
             implementation(projects.core.domain)
+        }
+
+        jvmMain.dependencies {
+            implementation(libs.sqldelight.sqlite.driver)
+            implementation(libs.ktor.client.java)
         }
 
         androidMain.dependencies {

@@ -18,6 +18,15 @@
 
 ---
 
+<p align="center">
+  <img src="docs/design/assets/home_screen.png" width="24%" alt="Command Center" />
+  <img src="docs/design/assets/ask_yaan_screen.png" width="24%" alt="Ask YAAN Q&A" />
+  <img src="docs/design/assets/voice_mode_screen.png" width="24%" alt="Live Voice Mode" />
+  <img src="docs/design/assets/notes_vault_screen.png" width="24%" alt="Encrypted Vault" />
+</p>
+
+---
+
 ## ✦ What YAAN Does
 
 | Capability | How It Works |
@@ -138,14 +147,17 @@ cd yaan
 # 2. Run multiplatform unit tests
 ./gradlew test
 
-# 3. Build Android Debug APK
+# 3. Launch Desktop Application (macOS, Linux, Windows) — No mobile SDK needed!
+./gradlew :composeApp:run
+
+# 4. Build Android Debug APK
 ./gradlew :composeApp:assembleDebug
 # Output at: composeApp/build/outputs/apk/debug/composeApp-debug.apk
 
-# 4. Run Ktor Backend Relay locally
+# 5. Run Ktor Backend Relay locally
 ./gradlew :backend:run
 
-# 5. Open iOS project in Xcode
+# 6. Open iOS project in Xcode
 open iosApp/iosApp.xcodeproj
 ```
 
