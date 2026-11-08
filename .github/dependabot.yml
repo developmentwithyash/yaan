@@ -5,6 +5,18 @@ updates:
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 5
+    ignore:
+      # Keep core Kotlin & Android tooling synchronized manually during coordinated milestone upgrades
+      - dependency-name: "org.jetbrains.kotlinx:kotlinx-coroutines*"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+      - dependency-name: "org.jetbrains.kotlin:*"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+      - dependency-name: "com.android.tools.build:gradle"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "app.cash.sqldelight:*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "io.ktor:*"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "github-actions"
     directory: "/"
