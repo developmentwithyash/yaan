@@ -22,6 +22,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
@@ -45,6 +47,8 @@ fun YaanTopBar(
     title: String,
     isLoading: Boolean = false,
     subtitle: String = if (isLoading) "Loading... · Initializing Vault" else "Ready · Local Vault",
+    isDarkTheme: Boolean = false,
+    onThemeToggle: () -> Unit = {},
     onMicClick: () -> Unit = {},
     onAddClick: () -> Unit = {},
     onProfileClick: () -> Unit = {},
@@ -129,6 +133,19 @@ fun YaanTopBar(
                         )
                     )
                 }
+            }
+
+            // Theme Mode Toggle (Issue #11)
+            IconButton(
+                onClick = onThemeToggle,
+                modifier = Modifier.size(40.dp)
+            ) {
+                Icon(
+                    imageVector = if (isDarkTheme) Icons.Default.LightMode else Icons.Default.DarkMode,
+                    contentDescription = if (isDarkTheme) "Switch to Light Theme" else "Switch to Dark Theme",
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(20.dp)
+                )
             }
 
             // Quick Actions

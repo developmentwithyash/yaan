@@ -147,3 +147,12 @@ fun YaanTheme(
         )
     }
 }
+
+@Composable
+fun YaanTheme(
+    themeMode: ThemeMode,
+    content: @Composable () -> Unit
+) {
+    val isDark = themeMode.isDark(isSystemInDarkTheme())
+    YaanTheme(darkTheme = isDark, content = content)
+}

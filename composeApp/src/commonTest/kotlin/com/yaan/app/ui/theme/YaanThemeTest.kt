@@ -81,4 +81,24 @@ class YaanThemeTest {
         assertEquals(250, motion.normalMs)
         assertEquals(400, motion.emphasizedMs)
     }
+
+    @Test
+    fun testThemeModeResolutionAndCycling() {
+        // SYSTEM should defer to system flag
+        assertTrue(ThemeMode.SYSTEM.isDark(systemInDarkTheme = true))
+        assertTrue(!ThemeMode.SYSTEM.isDark(systemInDarkTheme = false))
+
+        // LIGHT should always be false
+        assertTrue(!ThemeMode.LIGHT.isDark(systemInDarkTheme = true))
+        assertTrue(!ThemeMode.LIGHT.isDark(systemInDarkTheme = false))
+
+        // DARK should always be true
+        assertTrue(ThemeMode.DARK.isDark(systemInDarkTheme = true))
+        assertTrue(ThemeMode.DARK.isDark(systemInDarkTheme = false))
+
+        // Cycle through modes: SYSTEM -> LIGHT -> DARK -> SYSTEM
+        assertEquals(ThemeMode.LIGHT, ThemeMode.SYSTEM.next())
+        assertEquals(ThemeMode.DARK, ThemeMode.LIGHT.next())
+        assertEquals(ThemeMode.SYSTEM, ThemeMode.DARK.next())
+    }
 }
