@@ -93,6 +93,8 @@ fun YaanApp(
                     YaanTopBar(
                         title = currentDestination.title,
                         isLoading = isAppInitializing,
+                        isDarkTheme = isDarkTheme,
+                        onThemeToggle = { isDarkTheme = !isDarkTheme },
                         onMicClick = { isLiveVoiceOpen = true },
                         onProfileClick = { currentDestination = YaanDestination.You },
                         onLogoClick = { isBrandScreenVisible = true }
