@@ -31,7 +31,7 @@ jobs:
         run: ./gradlew :composeApp:assembleDebug --stacktrace
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: composeApp/build/outputs/apk/debug/composeApp-debug.apk
           name: YAAN Release ${{ github.ref_name }}
