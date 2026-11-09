@@ -42,6 +42,9 @@ import com.yaan.core.domain.repository.MemoryRepository
 import com.yaan.core.domain.repository.NoteRepository
 import com.yaan.core.domain.repository.ReminderRepository
 import com.yaan.core.domain.repository.TaskRepository
+import com.yaan.app.desktop.DesktopKeyboardShortcutHandler
+import com.yaan.app.desktop.KeyboardShortcutAction
+import androidx.compose.ui.input.key.onPreviewKeyEvent
 import com.yaan.core.domain.repository.UserSessionRepository
 import com.yaan.core.domain.usecase.CaptureIntentUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -57,6 +60,7 @@ fun YaanApp(
     memoryRepository: MemoryRepository? = null,
     captureUseCase: CaptureIntentUseCase? = null,
     sessionRepository: UserSessionRepository? = null,
+    onRegisterShortcutHandler: (((KeyboardShortcutAction) -> Unit) -> Unit)? = null,
 ) {
     val koin = currentKoinScope()
     val resolvedTaskRepo = taskRepository ?: koin.getOrNull<TaskRepository>()
@@ -82,11 +86,33 @@ fun YaanApp(
         isAppInitializing = false
     }
 
+    val handleShortcutAction: (KeyboardShortcutAction) -> Unit = { action ->
+        when (action) {
+            KeyboardShortcutAction.OPEN_QUICK_CAPTURE -> isLiveVoiceOpen = true
+            KeyboardShortcutAction.NAVIGATE_HOME -> currentDestination = YaanDestination.Home
+            KeyboardShortcutAction.NAVIGATE_PLAN -> currentDestination = YaanDestination.Plan
+            KeyboardShortcutAction.NAVIGATE_NOTES -> currentDestination = YaanDestination.Notes
+            KeyboardShortcutAction.NAVIGATE_YOU -> currentDestination = YaanDestination.You
+            KeyboardShortcutAction.TOGGLE_THEME -> isDarkTheme = !isDarkTheme
+            KeyboardShortcutAction.DISMISS_MODAL -> {
+                if (isLiveVoiceOpen) isLiveVoiceOpen = false
+                else if (isBrandScreenVisible) isBrandScreenVisible = false
+            }
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        onRegisterShortcutHandler?.invoke(handleShortcutAction)
+    }
+
     YaanTheme(darkTheme = isDarkTheme) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.surface)
+                .onPreviewKeyEvent { event ->
+                    DesktopKeyboardShortcutHandler.handleKeyEvent(event, handleShortcutAction)
+                }
         ) {
             Scaffold(
                 topBar = {
