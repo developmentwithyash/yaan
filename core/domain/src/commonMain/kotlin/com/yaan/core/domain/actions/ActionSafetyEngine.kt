@@ -49,6 +49,87 @@ data class SemanticValidationResult(
 )
 
 /**
+ * Verdict classification for action and prompt safety inspection.
+ */
+enum class ActionSafetyVerdict {
+    APPROVED,
+    REJECTED_UNSAFE_INJECTION,
+    REJECTED_SEMANTIC_VIOLATION
+}
+
+/**
+ * Detailed inspection result from prompt injection and jailbreak analysis.
+ */
+data class ActionSafetyInspection(
+    val verdict: ActionSafetyVerdict,
+    val matchedVector: String? = null,
+    val reason: String? = null
+)
+
+/**
+ * Dedicated Prompt Injection & Jailbreak Defense Filter.
+ * Defends against OWASP Top 10 LLM01 Prompt Injection, direct jailbreaks,
+ * privilege escalation vectors, shell payloads, and multi-lingual evasion.
+ */
+object PromptInjectionDefenseFilter {
+
+    private val INJECTION_PATTERNS = listOf(
+        // Direct System Override & Jailbreaks
+        Regex("(?i)(ignore|disregard|forget)\\s+(all\\s+)?(previous|above|prior)\\s+(instructions|directives|prompts|rules)"),
+        Regex("(?i)you\\s+are\\s+now\\s+(dan|developer\\s+mode|chaosbot|unfiltered)"),
+        Regex("(?i)emergency\\s+override"),
+        Regex("(?i)system\\s+prompt\\s+(override|leak|injection|dump|reveal)"),
+        Regex("(?i)output\\s+(your\\s+)?(system\\s+prompt|initial\\s+instructions)"),
+        Regex("(?i)\\[DEBUG_MODE_ENABLED:"),
+        Regex("(?i)\\[SYSTEM_TOOL_CALL:"),
+        Regex("(?i)roleplay\\s+as\\s+[a-z0-9_-]+"),
+
+        // Destructive System Shell Payloads
+        Regex("(?i)rm\\s+-rf\\s+[/~]"),
+        Regex("(?i)drop\\s+table\\s+[a-z0-9_]+"),
+        Regex("(?i)eval\\s*\\("),
+        Regex("(?i)curl\\s+-[a-z]*s.*\\|\\s*(ba)?sh"),
+        Regex("(?i)wget\\s+.*\\|\\s*(ba)?sh"),
+        Regex("(?i)chmod\\s+(\\+x|[0-7]{3,4})"),
+        Regex("(?i)cat\\s+/etc/(passwd|shadow)"),
+        Regex("(?i)cat\\s+~/.ssh"),
+        Regex("(?i)powershell.*-enc"),
+        Regex("(?i)dump\\s+(credentials|keys|tokens|passwords)"),
+
+        // Script & Exfiltration Injections
+        Regex("(?i)<\\s*(script|iframe|object|embed)[^>]*>"),
+        Regex("(?i)javascript:"),
+        Regex("(?i)onerror\\s*="),
+        Regex("!\\[.*?\\]\\(https?://[^\\)]+\\)"),
+
+        // Multi-lingual & Hinglish Transliterations
+        Regex("(?i)(instructions?|baat)\\s+(bhool\\s+ja|bhol\\s+ja|bhula\\s+do)"),
+        Regex("(?i)sab\\s+kuch\\s+(bhool\\s+ja|bhol\\s+ja)"),
+        Regex("(?i)system\\s+prompt\\s+(batao|dikhao)"),
+        Regex("(?i)tum\\s+ab\\s+(dan|chaosbot)\\s+ho")
+    )
+
+    fun inspect(input: String): ActionSafetyInspection {
+        if (input.isBlank()) {
+            return ActionSafetyInspection(verdict = ActionSafetyVerdict.APPROVED)
+        }
+
+        for (pattern in INJECTION_PATTERNS) {
+            val match = pattern.find(input)
+            if (match != null) {
+                return ActionSafetyInspection(
+                    verdict = ActionSafetyVerdict.REJECTED_UNSAFE_INJECTION,
+                    matchedVector = match.value,
+                    reason = "Prompt injection or adversarial instruction detected: '${match.value}'"
+                )
+            }
+        }
+
+        return ActionSafetyInspection(verdict = ActionSafetyVerdict.APPROVED)
+    }
+}
+
+/**
  * Semantic Validator for Action Proposals.
  * Grammar (e.g. GBNF/JSON schema) only guarantees syntactic validity;
  * this validator guarantees temporal, causal, and entity integrity.
@@ -127,6 +208,16 @@ class ActionSemanticValidator(
         }
         if (proposal.title.contains("<script>", ignoreCase = true)) {
             violations.add("Script injection attempt detected in action proposal title.")
+        }
+
+        // 6. Prompt Injection & Jailbreak Defense Inspection
+        val fieldsToInspect = listOf(proposal.title, proposal.summary) + proposal.parameters.values
+        for (field in fieldsToInspect) {
+            val inspection = PromptInjectionDefenseFilter.inspect(field)
+            if (inspection.verdict == ActionSafetyVerdict.REJECTED_UNSAFE_INJECTION) {
+                violations.add("Prompt injection or adversarial instruction detected: ${inspection.matchedVector}")
+                break
+            }
         }
 
         return SemanticValidationResult(
