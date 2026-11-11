@@ -139,11 +139,34 @@ compose.desktop {
         nativeDistributions {
             targetFormats(
                 org.jetbrains.compose.desktop.application.dsl.TargetFormat.Dmg,
+                org.jetbrains.compose.desktop.application.dsl.TargetFormat.Pkg,
                 org.jetbrains.compose.desktop.application.dsl.TargetFormat.Msi,
-                org.jetbrains.compose.desktop.application.dsl.TargetFormat.Deb
+                org.jetbrains.compose.desktop.application.dsl.TargetFormat.Exe,
+                org.jetbrains.compose.desktop.application.dsl.TargetFormat.Deb,
+                org.jetbrains.compose.desktop.application.dsl.TargetFormat.Rpm
             )
             packageName = "YAAN"
             packageVersion = "1.0.0"
+            description = "YAAN — Your Autonomous Action Navigator"
+            copyright = "© 2026 YaanStack Technologies"
+            vendor = "YaanStack Technologies"
+
+            macOS {
+                bundleID = "com.yaan.app.desktop"
+                dockName = "YAAN"
+                minimumSystemVersion = "12.0"
+            }
+
+            linux {
+                packageName = "yaan-desktop"
+                menuGroup = "Utility"
+                shortcut = true
+            }
+
+            windows {
+                menuGroup = "YAAN"
+                shortcut = true
+            }
         }
     }
 }
