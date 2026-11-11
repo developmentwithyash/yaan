@@ -87,6 +87,7 @@ kotlin {
             implementation(libs.kotlinx.coroutines.android)
             implementation(libs.koin.android)
             implementation(libs.androidx.work.runtime)
+            implementation(libs.androidx.biometric)
         }
 
         commonTest.dependencies {
