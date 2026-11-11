@@ -30,10 +30,19 @@ jobs:
       - name: Build Android Release APK
         run: ./gradlew :composeApp:assembleDebug --stacktrace
 
+      - name: Build Desktop Runnable Uber JAR
+        run: |
+          ./gradlew :composeApp:packageUberJarForCurrentOS --stacktrace
+          mkdir -p artifacts
+          cp composeApp/build/outputs/apk/debug/composeApp-debug.apk artifacts/YAAN-android-debug.apk
+          cp composeApp/build/compose/jars/*.jar artifacts/composeApp-desktop.jar
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v3
         with:
-          files: composeApp/build/outputs/apk/debug/composeApp-debug.apk
+          files: |
+            artifacts/YAAN-android-debug.apk
+            artifacts/composeApp-desktop.jar
           name: YAAN Release ${{ github.ref_name }}
           draft: false
           prerelease: false
