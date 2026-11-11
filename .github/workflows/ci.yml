@@ -28,6 +28,9 @@ jobs:
       - name: Grant Execute Permission for Gradlew
         run: chmod +x gradlew
 
+      - name: Run Code Style & Static Analysis Linter
+        run: ./gradlew lintCheck --stacktrace
+
       - name: Run Multiplatform Unit Tests
         run: ./gradlew test --stacktrace
 

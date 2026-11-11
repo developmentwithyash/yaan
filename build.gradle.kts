@@ -12,3 +12,9 @@ plugins {
     alias(libs.plugins.kotlinxSerialization).apply(false)
     alias(libs.plugins.sqldelight).apply(false)
 }
+
+tasks.register<Exec>("lintCheck") {
+    group = "verification"
+    description = "Executes static analysis and Kotlin style checks across all modules."
+    commandLine("bash", "${project.rootDir}/scripts/lint_check.sh")
+}
