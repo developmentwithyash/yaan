@@ -49,6 +49,11 @@ CREATE TABLE noteEntity (
 selectAllNotes:
 SELECT * FROM noteEntity ORDER BY is_pinned DESC, created_at DESC;
 
+selectNotesPaged:
+SELECT * FROM noteEntity
+ORDER BY is_pinned DESC, created_at DESC
+LIMIT :limit OFFSET :offset;
+
 selectNoteById:
 SELECT * FROM noteEntity WHERE id = ?;
 

@@ -19,6 +19,14 @@ class InMemoryNoteRepository : NoteRepository {
         YaanResult.Success(notesFlow.value)
     }
 
+    override suspend fun getNotesPaged(limit: Long, offset: Long): YaanResult<List<Note>> = mutex.withLock {
+        val sorted = notesFlow.value.sortedWith(
+            compareByDescending<Note> { it.isPinned }.thenByDescending { it.createdAt.toEpochMilliseconds() }
+        )
+        val paged = sorted.drop(offset.toInt()).take(limit.toInt())
+        YaanResult.Success(paged)
+    }
+
     override suspend fun getNoteById(id: String): YaanResult<Note?> = mutex.withLock {
         YaanResult.Success(notesFlow.value.find { it.id == id })
     }

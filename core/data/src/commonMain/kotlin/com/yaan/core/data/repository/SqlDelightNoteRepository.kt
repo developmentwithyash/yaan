@@ -49,6 +49,15 @@ class SqlDelightNoteRepository(
         }
     }
 
+    override suspend fun getNotesPaged(limit: Long, offset: Long): YaanResult<List<Note>> = withContext(dispatchers.io) {
+        try {
+            val list = queries.selectNotesPaged(limit = limit, offset = offset).executeAsList().map { it.toDomain() }
+            YaanResult.Success(list)
+        } catch (e: Exception) {
+            YaanResult.Failure(YaanError.StorageError("Failed to fetch paged notes: ${e.message}", e))
+        }
+    }
+
     override suspend fun getNoteById(id: String): YaanResult<Note?> = withContext(dispatchers.io) {
         try {
             val entity = queries.selectNoteById(id).executeAsOneOrNull()
