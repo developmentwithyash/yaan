@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.Flow
 interface NoteRepository {
     fun observeNotes(): Flow<List<Note>>
     suspend fun getNotes(): YaanResult<List<Note>>
+    suspend fun getNotesPaged(limit: Long, offset: Long = 0): YaanResult<List<Note>> = getNotes()
     suspend fun getNoteById(id: String): YaanResult<Note?>
     suspend fun upsertNote(note: Note): YaanResult<Unit>
     suspend fun deleteNote(id: String): YaanResult<Unit>
