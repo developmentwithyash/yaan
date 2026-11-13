@@ -12,4 +12,7 @@ class ResolveTaskChecklistUseCase(
 
     suspend fun toggleCompleted(taskId: String): YaanResult<Task> =
         taskRepository.toggleTaskCompleted(taskId)
+
+    suspend fun deleteTask(taskId: String): YaanResult<Unit> =
+        taskRepository.deleteTask(taskId)
 }

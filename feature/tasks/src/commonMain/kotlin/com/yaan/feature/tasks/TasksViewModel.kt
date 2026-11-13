@@ -37,7 +37,9 @@ class TasksViewModel(
                 }
             }
             is TasksIntent.DeleteTask -> {
-                // Handled via repository
+                viewModelScope.launch(dispatchers.main) {
+                    resolveTaskChecklistUseCase.deleteTask(intent.id)
+                }
             }
         }
     }
