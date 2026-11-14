@@ -143,4 +143,79 @@ class VaultExporterTest {
         )
         assertTrue(exportResult is com.yaan.core.common.result.YaanResult.Failure)
     }
+
+    @Test
+    fun testExportAndParseArchiveWithRemindersAndMemories() {
+        val notes = listOf(Note(id = "n1", title = "Note 1", contentCiphertext = "Text 1"))
+        val tasks = listOf(Task(id = "t1", title = "Task 1", priority = TaskPriority.HIGH, status = com.yaan.core.domain.model.TaskStatus.PENDING))
+        val reminders = listOf(
+            com.yaan.core.domain.model.Reminder(
+                id = "rem_01",
+                title = "Quarterly Board Review",
+                triggerTime = kotlinx.datetime.Instant.fromEpochMilliseconds(1777000000000L)
+            )
+        )
+        val memories = listOf(
+            com.yaan.core.domain.model.MemoryItem(
+                id = "mem_01",
+                subject = "User",
+                predicate = "Prefers dark mode and concise summaries",
+                confidenceScore = 0.95
+            )
+        )
+
+        val timestamp = 1776800000000L
+        val jsonOutput = VaultExporter.exportToJson(
+            notes = notes,
+            tasks = tasks,
+            timestampMs = timestamp,
+            reminders = reminders,
+            memories = memories
+        )
+
+        assertTrue(jsonOutput.contains("\"remindersCount\": 1"))
+        assertTrue(jsonOutput.contains("\"memoriesCount\": 1"))
+        assertTrue(jsonOutput.contains("Quarterly Board Review"))
+        assertTrue(jsonOutput.contains("Prefers dark mode"))
+
+        val parsed = VaultExporter.parseArchive(jsonOutput)
+        assertEquals(1, parsed.remindersCount)
+        assertEquals(1, parsed.memoriesCount)
+        assertEquals(1, parsed.reminders.size)
+        assertEquals(1, parsed.memories.size)
+        assertEquals("Quarterly Board Review", parsed.reminders[0].title)
+        assertEquals("User", parsed.memories[0].subject)
+    }
+
+    @Test
+    fun testLegacyArchiveBackwardsCompatibility() {
+        // v1.0 payload without reminders or memories fields
+        val legacyJson = """
+            {
+              "exportVersion": "1.0",
+              "exportedAtEpochMs": 1776000000000,
+              "notesCount": 1,
+              "tasksCount": 0,
+              "notes": [
+                {
+                  "id": "legacy_n1",
+                  "title": "Legacy Note",
+                  "contentCiphertext": "Content",
+                  "tags": [],
+                  "createdAt": "2026-11-10T00:00:00Z",
+                  "updatedAt": "2026-11-10T00:00:00Z"
+                }
+              ],
+              "tasks": []
+            }
+        """.trimIndent()
+
+        val parsed = VaultExporter.parseArchive(legacyJson)
+        assertEquals("1.0", parsed.exportVersion)
+        assertEquals(1, parsed.notesCount)
+        assertEquals(0, parsed.remindersCount)
+        assertEquals(0, parsed.memoriesCount)
+        assertTrue(parsed.reminders.isEmpty())
+        assertTrue(parsed.memories.isEmpty())
+    }
 }

@@ -1,7 +1,9 @@
 package com.yaan.core.data.export
 
 import com.yaan.core.common.result.YaanResult
+import com.yaan.core.domain.model.MemoryItem
 import com.yaan.core.domain.model.Note
+import com.yaan.core.domain.model.Reminder
 import com.yaan.core.domain.model.Task
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
@@ -18,7 +20,11 @@ data class VaultExportArchive(
     val notesCount: Int,
     val tasksCount: Int,
     val notes: List<Note>,
-    val tasks: List<Task>
+    val tasks: List<Task>,
+    val remindersCount: Int = 0,
+    val memoriesCount: Int = 0,
+    val reminders: List<Reminder> = emptyList(),
+    val memories: List<MemoryItem> = emptyList()
 )
 
 /**
@@ -34,14 +40,24 @@ object VaultExporter {
 
     private val bundleManager = VaultBundleManager()
 
-    fun exportToJson(notes: List<Note>, tasks: List<Task>, timestampMs: Long): String {
+    fun exportToJson(
+        notes: List<Note>,
+        tasks: List<Task>,
+        timestampMs: Long,
+        reminders: List<Reminder> = emptyList(),
+        memories: List<MemoryItem> = emptyList()
+    ): String {
         val archive = VaultExportArchive(
             exportVersion = "1.0",
             exportedAtEpochMs = timestampMs,
             notesCount = notes.size,
             tasksCount = tasks.size,
             notes = notes,
-            tasks = tasks
+            tasks = tasks,
+            remindersCount = reminders.size,
+            memoriesCount = memories.size,
+            reminders = reminders,
+            memories = memories
         )
         return json.encodeToString(archive)
     }
@@ -59,14 +75,18 @@ object VaultExporter {
         tasks: List<Task>,
         password: String,
         timestampMs: Long,
-        iterations: Int = EncryptedVaultBundle.DEFAULT_PBKDF2_ITERATIONS
+        iterations: Int = EncryptedVaultBundle.DEFAULT_PBKDF2_ITERATIONS,
+        reminders: List<Reminder> = emptyList(),
+        memories: List<MemoryItem> = emptyList()
     ): YaanResult<String> {
         val bundleResult = bundleManager.createEncryptedBundle(
             notes = notes,
             tasks = tasks,
             password = password,
             timestampMs = timestampMs,
-            iterations = iterations
+            iterations = iterations,
+            reminders = reminders,
+            memories = memories
         )
         return when (bundleResult) {
             is YaanResult.Success -> YaanResult.Success(bundleManager.serializeBundle(bundleResult.data))
