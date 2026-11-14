@@ -4,7 +4,9 @@ import com.yaan.core.common.result.YaanError
 import com.yaan.core.common.result.YaanResult
 import com.yaan.core.data.crypto.AesGcmYaanCipher
 import com.yaan.core.data.crypto.VaultKeyDeriver
+import com.yaan.core.domain.model.MemoryItem
 import com.yaan.core.domain.model.Note
+import com.yaan.core.domain.model.Reminder
 import com.yaan.core.domain.model.Task
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -35,7 +37,9 @@ class VaultBundleManager(
         tasks: List<Task>,
         password: String,
         timestampMs: Long,
-        iterations: Int = EncryptedVaultBundle.DEFAULT_PBKDF2_ITERATIONS
+        iterations: Int = EncryptedVaultBundle.DEFAULT_PBKDF2_ITERATIONS,
+        reminders: List<Reminder> = emptyList(),
+        memories: List<MemoryItem> = emptyList()
     ): YaanResult<EncryptedVaultBundle> {
         if (password.isBlank()) {
             return YaanResult.Failure(
@@ -61,7 +65,11 @@ class VaultBundleManager(
                 notesCount = notes.size,
                 tasksCount = tasks.size,
                 notes = notes,
-                tasks = tasks
+                tasks = tasks,
+                remindersCount = reminders.size,
+                memoriesCount = memories.size,
+                reminders = reminders,
+                memories = memories
             )
             val plainText = json.encodeToString(archive)
 
