@@ -22,6 +22,25 @@ interface VaultKeyManager {
 }
 
 /**
+ * Overwrites every byte in the array with 0 to eliminate sensitive data from memory.
+ */
+fun ByteArray.zeroize() {
+    this.fill(0)
+}
+
+/**
+ * Executes [block] with this sensitive [ByteArray] and guarantees that the buffer
+ * is completely zeroized upon exit (whether normally or on exception).
+ */
+inline fun <R> ByteArray.useZeroized(block: (ByteArray) -> R): R {
+    try {
+        return block(this)
+    } finally {
+        this.zeroize()
+    }
+}
+
+/**
  * In-memory fallback key manager for headless unit tests or transient sessions.
  */
 class InMemoryVaultKeyManager(
@@ -34,7 +53,7 @@ class InMemoryVaultKeyManager(
     }
 
     override fun shredKey() {
-        key?.fill(0)
+        key?.zeroize()
         key = null
     }
 }
