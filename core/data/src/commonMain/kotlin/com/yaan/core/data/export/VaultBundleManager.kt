@@ -4,6 +4,8 @@ import com.yaan.core.common.result.YaanError
 import com.yaan.core.common.result.YaanResult
 import com.yaan.core.data.crypto.AesGcmYaanCipher
 import com.yaan.core.data.crypto.VaultKeyDeriver
+import com.yaan.core.data.crypto.useZeroized
+import com.yaan.core.data.crypto.zeroize
 import com.yaan.core.domain.model.MemoryItem
 import com.yaan.core.domain.model.Note
 import com.yaan.core.domain.model.Reminder
@@ -73,7 +75,9 @@ class VaultBundleManager(
             )
             val plainText = json.encodeToString(archive)
 
-            val encResult = cipher.encrypt(plainText, derivedKey)
+            val encResult = derivedKey.useZeroized { key ->
+                cipher.encrypt(plainText, key)
+            }
             if (encResult is YaanResult.Failure) {
                 return YaanResult.Failure(encResult.error)
             }
@@ -168,7 +172,11 @@ class VaultBundleManager(
             iv.copyInto(cipherPayload, 0)
             ciphertext.copyInto(cipherPayload, iv.size)
 
-            val decResult = cipher.decrypt(cipherPayload, derivedKey)
+            val decResult = derivedKey.useZeroized { key ->
+                cipher.decrypt(cipherPayload, key)
+            }
+            cipherPayload.zeroize()
+            iv.zeroize()
             if (decResult is YaanResult.Failure) {
                 return YaanResult.Failure(decResult.error)
             }
