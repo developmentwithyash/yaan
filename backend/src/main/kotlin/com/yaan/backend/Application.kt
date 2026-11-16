@@ -8,6 +8,7 @@ import com.yaan.backend.inference.inferenceRoutes
 import com.yaan.backend.metrics.metricsRoutes
 import com.yaan.backend.planner.PlannerService
 import com.yaan.backend.planner.plannerRoutes
+import com.yaan.backend.ratelimit.TokenBucketRateLimiter
 import com.yaan.backend.sync.CrdtRelayService
 import com.yaan.backend.sync.syncRoutes
 import com.yaan.backend.vault.VaultBackupService
@@ -41,7 +42,9 @@ fun Application.module(
     inferenceService: InferenceMeshService = InferenceMeshService(config),
     vaultService: VaultBackupService = VaultBackupService(),
     briefingService: BriefingWorkerService = BriefingWorkerService(),
-    plannerService: PlannerService = PlannerService(config)
+    plannerService: PlannerService = PlannerService(config),
+    syncRateLimiter: TokenBucketRateLimiter = TokenBucketRateLimiter(),
+    inferenceRateLimiter: TokenBucketRateLimiter = TokenBucketRateLimiter()
 ) {
     // 1. Serialization
     install(ContentNegotiation) {
@@ -123,8 +126,8 @@ data class ErrorResponse(
 
         // Domain Routes
         metricsRoutes(relayService)
-        syncRoutes(relayService)
-        inferenceRoutes(inferenceService)
+        syncRoutes(relayService, syncRateLimiter)
+        inferenceRoutes(inferenceService, inferenceRateLimiter)
         vaultRoutes(vaultService)
         briefingRoutes(briefingService)
         plannerRoutes(plannerService)
