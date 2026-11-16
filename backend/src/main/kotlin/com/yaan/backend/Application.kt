@@ -5,6 +5,7 @@ import com.yaan.backend.briefing.briefingRoutes
 import com.yaan.backend.config.AppConfig
 import com.yaan.backend.inference.InferenceMeshService
 import com.yaan.backend.inference.inferenceRoutes
+import com.yaan.backend.metrics.metricsRoutes
 import com.yaan.backend.planner.PlannerService
 import com.yaan.backend.planner.plannerRoutes
 import com.yaan.backend.sync.CrdtRelayService
@@ -121,6 +122,7 @@ data class ErrorResponse(
         }
 
         // Domain Routes
+        metricsRoutes(relayService)
         syncRoutes(relayService)
         inferenceRoutes(inferenceService)
         vaultRoutes(vaultService)

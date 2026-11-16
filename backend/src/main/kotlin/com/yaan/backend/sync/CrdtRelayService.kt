@@ -81,4 +81,10 @@ class CrdtRelayService {
         store.remove(userId)
         highestLamportPerUser.remove(userId)
     }
+
+    fun getActiveUserCount(): Int = store.size
+
+    fun getTotalEnvelopeCount(): Long = store.values.sumOf { synchronized(it) { it.size.toLong() } }
+
+    fun getHighestLamport(): Long = highestLamportPerUser.values.maxOfOrNull { it.get() } ?: 0L
 }
