@@ -1,8 +1,10 @@
 package com.yaan.backend.sync
 
 import com.yaan.backend.auth.AuthGuard
+import com.yaan.backend.ratelimit.TokenBucketRateLimiter
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.request.receive
+import io.ktor.server.response.header
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
@@ -16,13 +18,23 @@ import io.ktor.server.routing.route
  * - POST /api/v1/sync/push
  * - GET  /api/v1/sync/pull
  */
-fun Route.syncRoutes(relayService: CrdtRelayService) {
+fun Route.syncRoutes(
+    relayService: CrdtRelayService,
+    rateLimiter: TokenBucketRateLimiter = TokenBucketRateLimiter()
+) {
     route("/api/v1/sync") {
         post("/push") {
             try {
                 val request = call.receive<SyncPushRequest>()
                 if (!AuthGuard.validateUserAuth(call, request.userId)) {
                     call.respond(HttpStatusCode.Unauthorized, mapOf("error" to "Unauthorized: Invalid client token"))
+                    return@post
+                }
+
+                // Rate limiting check per user
+                if (!rateLimiter.tryAcquire(request.userId)) {
+                    call.response.header("Retry-After", "1")
+                    call.respond(HttpStatusCode.TooManyRequests, mapOf("error" to "Rate limit exceeded. Too many requests."))
                     return@post
                 }
 
