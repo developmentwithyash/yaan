@@ -20,7 +20,13 @@ class CaptureViewModel(
     fun onIntent(intent: CaptureIntent) {
         when (intent) {
             is CaptureIntent.UpdateInput -> {
-                _state.update { it.copy(inputText = intent.text) }
+                val urls = QuickCaptureParser.extractUrlPreviews(intent.text)
+                _state.update {
+                    it.copy(
+                        inputText = intent.text,
+                        detectedUrls = urls
+                    )
+                }
             }
             is CaptureIntent.Submit -> {
                 submitCurrentInput()
@@ -43,6 +49,7 @@ class CaptureViewModel(
                     _state.update {
                         it.copy(
                             inputText = "",
+                            detectedUrls = emptyList(),
                             isSubmitting = false,
                             feedbackMessage = message
                         )

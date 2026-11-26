@@ -56,4 +56,20 @@ class CaptureViewModelTest {
         assertNotNull(viewModel.state.value.feedbackMessage)
         assertEquals(1, taskRepo.tasks.size)
     }
+
+    @Test
+    fun testUpdateInputPopulatesUrlPreviewMetadataAndClearsOnSubmit() = runTest {
+        val taskRepo = TestTaskRepo()
+        val noteRepo = TestNoteRepo()
+        val useCase = CaptureIntentUseCase(taskRepo, noteRepo)
+        val viewModel = CaptureViewModel(useCase, com.yaan.core.common.dispatcher.TestCoroutineDispatchers())
+
+        viewModel.onIntent(CaptureIntent.UpdateInput("Review PR at https://github.com/developmentwithyash/yaan/pull/97?w=1"))
+        val previews = viewModel.state.value.detectedUrls
+        assertEquals(1, previews.size)
+        assertEquals("github.com", previews[0].host)
+
+        viewModel.onIntent(CaptureIntent.Submit)
+        assertEquals(0, viewModel.state.value.detectedUrls.size)
+    }
 }
