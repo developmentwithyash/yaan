@@ -26,6 +26,7 @@ import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.AttachFile
 import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.EditCalendar
+import androidx.compose.material.icons.filled.Link
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.RecordVoiceOver
 import androidx.compose.material3.Icon
@@ -45,6 +46,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.yaan.app.ui.theme.YaanTheme
+import com.yaan.feature.capture.QuickCaptureParser
 
 @Composable
 fun YaanQuickCaptureDock(
@@ -199,6 +201,26 @@ fun YaanQuickCaptureDock(
             }
 
             Spacer(modifier = Modifier.height(10.dp))
+
+            val detectedUrls = remember(text) { QuickCaptureParser.extractUrlPreviews(text) }
+            if (detectedUrls.isNotEmpty()) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    detectedUrls.forEach { preview ->
+                        YaanChip(
+                            text = preview.host,
+                            leadingIcon = Icons.Default.Link,
+                            selected = true,
+                            onClick = {}
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+            }
 
             // Micro-action chips row
             Row(
