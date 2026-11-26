@@ -36,3 +36,13 @@ jobs:
 
       - name: Run Backend Tests
         run: ./gradlew :backend:test --stacktrace
+
+      - name: Build Android Debug APK & Desktop Uber JAR
+        run: ./gradlew :composeApp:assembleDebug :composeApp:packageUberJarForCurrentOS --stacktrace
+
+      - name: Publish Binary Size & Dependency Report
+        run: |
+          chmod +x scripts/binary_size_report.sh
+          ./scripts/binary_size_report.sh
+        env:
+          GITHUB_STEP_SUMMARY: ${{ github.step_summary }}
